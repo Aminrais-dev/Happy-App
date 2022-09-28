@@ -1,0 +1,686 @@
+openapi: 3.0.0
+info:
+  title: Capstone Project
+  description: Tugas Untuk Peserta Immersive
+  version: 1.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/nawihusen/Capstone/1.0.0
+  # - description: 
+  #   url: 
+tags:
+  - name: Login
+    description: Login Page
+  - name: Sign Up
+    description: Sign Page
+  - name: User
+    description: User Page
+  - name: Community
+    description: Community Page
+
+paths:
+############################
+# GET TOKEN
+###########################
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Get token for access to account
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyLogin"
+      responses:
+        "200":
+          $ref: "#/components/responses/loginSuccess"
+        "400":
+          $ref: "#/components/responses/loginFailed"
+##########################
+# REGISTER
+##########################
+  /signup:
+    post:
+      tags:
+        - Sign Up
+      summary: Create a new account for customer only
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyUser"
+      responses:
+        "200":
+          $ref: "#/components/responses/successOperationNonData"
+        "400":
+          $ref: "#/components/responses/failedsign"
+##########################
+# USER
+##########################
+  /user/profile:
+    get:
+      tags:
+        - "User"
+      summary: Profile User
+      description: Berisi berbagai data yang di miliki oleh user
+      responses:
+        "200": 
+          $ref: "#/components/responses/getprofile"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+    post:
+      tags:
+        - "User"
+      summary: Add Community
+      description: User akan membuat sebuah community 
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyCommunity"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+    put:
+      tags:
+        - "User"
+      summary: Update User data
+      description: Digunakan untuk mengubah data yang dimiliki user
+      requestBody:
+        $ref: "#/components/requestBodies/updateuserrequestbody"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+    delete:
+      tags:
+        - "User"
+      summary: Delete User Account
+      description: menghapus akun yang dimiliki user
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+#########################
+# COMMUNITY
+#########################
+  /community:
+    get:
+      tags:
+        - "Community"
+      summary: List Community
+      description: Berisi list community yang terdaftar
+      responses:
+        "200":
+          $ref: "#/components/responses/successgetlistcommunity"
+        "400":
+          $ref: "#/components/responses/failedgetcommunity"
+  /community/{id}:
+    get:
+      tags:
+        - "Community"
+      summary: Go to Community Page
+      description: masuk ke page community
+      parameters:
+        - $ref: "#/components/parameters/ParamId"
+      responses:
+        "200":
+          $ref: "#/components/responses/community"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+  # /community/event:        
+    # get:
+    #   tags:
+    #     - "Community"
+    #   summary: Go To Communities event
+    #   description: Memasuki page event yang di adakan oleh community yang bersangkutan
+    #   responses:
+    #     "200":
+    #       $ref: "#/components/responses/community"
+    #     "400":
+    #       $ref: "#/components/responses/failedresponse"
+
+
+
+        
+
+
+components:
+##########################
+# SCHEMA
+###########################
+  schemas:
+    requestDataLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    responseLoginWithData:
+      type: object
+      properties:
+        Code:
+          type: integer
+        Data:
+          type: object
+          properties:
+            ID:
+              type: integer
+            Token:
+              type: string
+            Role:
+              type: string
+        Message:
+          type: string
+    requestDataUser:
+      type: object
+      required:
+        - name
+        - username
+        - gender
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          minLength: 1
+        username:
+          type: string
+          minLength: 1
+        gender:
+          enum:
+            - male
+            - female
+        email:
+          type: string
+          format: email
+          minLength: 5
+          description: email must be unique
+        password:
+          type: string
+          minLength: 6
+    updateDataUser:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        username:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 5
+          description: email must be unique
+        password:
+          type: string
+          minLength: 6
+        foto:
+          type: string
+          format: binary
+    listgetcommunity:
+      type: object
+      properties:
+        community:
+          type: array
+          items:
+            type: object
+            properties:
+              logo:
+                type: string
+                format: binary
+                description: "allowed file extension: jpg, png, jpeg && size <= 1050000 byte"
+              title:
+                type: string
+              description:
+                type: string
+              members:
+                type: integer
+    profile:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        foto:
+          type: string
+          format: binary
+        community:
+          type: array
+          items:
+            type: object
+            properties:
+              logo:
+                type: string
+                format: binary
+                description: "allowed file extension: jpg, png, jpeg && size <= 1050000 byte"
+              title:
+                type: string
+              status:
+                enum:
+                  - member
+                  - admin              
+    addcommunity:
+      type: object
+      required:
+        - "title"
+        - "description"
+        - "logo"
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        logo:
+          type: string
+          format: binary
+    detailcommunity:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        description:
+          type: string
+        members:
+          type: integer
+        member:
+          type: array
+          items:
+            type: string
+        feed:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              text:
+                type: string
+              comment:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  text:
+                    type: string
+    # listevent:
+
+              
+        
+
+
+
+    responseNonData:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
+
+###########################
+# REQUEST BODY
+###########################
+  requestBodies:
+    requestBodyLogin:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataLogin"
+          example:
+            email: mail@gmail.com
+            password: qwerty
+    requestBodyUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataUser"
+          examples:
+            example1:
+              value:
+                name: jack
+                username: jack
+                gender: male
+                email: jack@gmail.com
+                password: jackpassword
+            example2:
+              value:
+                name: Yamato
+                username: yamato
+                gender: female
+                email: yamato@gmail.com
+                password: yamatopassword
+    requestBodyCommunity:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/addcommunity"
+          example:
+            value:
+              title: Pengendali Api
+              description: Kami adalah pengendali api
+              logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/addcommunity"
+    updateuserrequestbody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/updateDataUser"
+          examples:
+            username and password:
+              value:
+                username: jackei
+                password: jackeipassword
+            just foto:
+              value:
+                foto: https://static.zerochan.net/Kaedehara.Kazuha.full.3490843.png
+            email:
+              value:
+                email: baru@gmail.com
+
+
+###########################
+# RESPONSE
+###########################
+  responses:
+    failedresponse:
+      description: Terjadi Kesalahan
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example: 
+            code: 400
+            message: Terjadi Kesalahan 
+    successresponse:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            code: 200
+            message: Success
+    loginSuccess:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseLoginWithData"
+          examples:
+            example1:
+              value:
+                code: 200
+                data:
+                  {
+                    id: 1,
+                    role: admin,
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
+                  }
+                message: Login Success
+            example2:
+              value:
+                code: 200
+                data:
+                  {
+                    id: 2,
+                    role: member,
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
+                  }
+                message: Login Success
+    loginFailed:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            example1:
+              $ref:  "#/components/examples/emailnotregistered"
+            example2:
+              $ref:  "#/components/examples/invalidPassword"
+            example3:
+              $ref:  "#/components/examples/invalidEmail"
+    successOperationNonData:
+      description: Success Response Non Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            code: 200
+            message: Success Melakukan ...
+    failedsign:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+              Email Already Exist:
+                $ref: "#/components/examples/emailAlreadyExist"
+              Nama Cant Blank:
+                $ref: "#/components/examples/nameCantBeEmpty"
+              Username Cant Blank:
+                $ref: "#/components/examples/usernameCantBeEmpty"
+              Gender Cant Blank:
+                $ref: "#/components/examples/genderCantBeEmpty"
+              Email Cant Blank:
+                $ref: "#/components/examples/emailCantBeEmpty"
+              Password Cant Blank:
+                $ref: "#/components/examples/passwordCantBeEmpty"             
+    successgetlistcommunity:
+      description: Mendapatkan list community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/listgetcommunity"
+          example:
+            community:
+              [
+                {
+                  logo: https://www.gensh.in/fileadmin/Content/Game/Elements/cryo_200.png,
+                  title: Genshin Players,
+                  members: 20313,
+                  description: Ini adalah community untuk para player genshin
+                },
+                {
+                  logo: https://www.gensh.in/fileadmin/Content/Game/Elements/dendro_200.png,
+                  title: Penggmar Tanaman,
+                  members: 2003,
+                  description: Selamat datang .............
+                }
+              ]          
+    failedgetcommunity:
+      description: Tidak bisa mendapatkan list community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Not Found:
+              $ref: "#/components/examples/communityNotFound"
+    getprofile:
+      description: Berisi Berbagai data yang di meiliki pengguna
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/profile"
+          example:
+            name: Jack
+            username: jack
+            email: jack@gmail.com
+            foto: https://www.nicepng.com/png/detail/136-1360042_png-jack-sparrow-pirates-of-the-caribbean-5.png
+            community:
+              [
+                {
+                  logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                  title: Pengendali Api,
+                  status: admin
+                },
+                {
+                  logo: https://www.gensh.in/fileadmin/Content/Game/Elements/hydro_200.png,
+                  title: Pengendali Air,
+                  status: member
+                },
+              ]
+    community:
+      description: Data yang akan di tampilakan saat user melihat sebuah community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/detailcommunity"
+          examples:
+            example1:
+              value:
+                logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                title: Pengendali Api
+                description: Kumpulan para pengendali api
+                members: 5
+                member: [
+                          "Diluc",
+                          "Yoimiya",
+                          "Amber",
+                          "Hu Tao",
+                          "Bennet"
+                        ]
+                feed: [
+                        {
+                          name: Diluc,
+                          text: Melakukan Pencarian Harta Karun,
+                          comment: [
+                                    {
+                                      name: Bennet,
+                                      text: wow .....
+                                    },
+                                    {
+                                      name: Yoimiya,
+                                      text: wow .....
+                                    }
+                                   ]
+                        },
+                        {
+                          name: Amber,
+                          text: Berpatroli di sekitar,
+                          comment: [
+                                    {
+                                      name: Diluc,
+                                      text: wow .....
+                                    },
+                                    {
+                                      name: Yoimiya,
+                                      text: wow .....
+                                    }
+                                   ]
+                        }
+                      ]
+    # communiteventlist:
+    #   description: ini adalah list event yang di adakan oleh community
+    #   content:
+    #     application/json:
+    #       schema:
+    #         $ref:
+
+###########################
+# PARAMETER
+##########################
+  parameters:
+    ParamId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+##########################
+# JWT AUTH
+###########################
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "use Token"
+##########################
+# EXAMPLE
+##########################
+  examples:
+    badRequest:
+      value:
+        code: 400
+        message: Bad Request
+    dataNotFound:
+      value:
+        code: 400
+        message: Data Not Found
+    communityNotFound:
+      value:
+        code: 400
+        message: Community tidak di temukan
+    emailAlreadyExist:
+      value:
+        code: 400
+        message: Email Already Exist
+    emailnotregistered:
+      value:
+        code: 400
+        message: Email belum terdaptar
+    invalidEmail:
+      value:
+        code: 400
+        message: Invalid Email
+    failedtoUploadFile:
+      value:
+        code: 500
+        message: Failed to Upload File
+    fileExtensionNotAllowed:
+      value:
+        code: 400
+        message: File Extension Not Allowed
+    invalidParam:
+      value:
+        code: 400
+        message: Invalid Param
+    invalidPassword:
+      value:
+        code: 400
+        message: Invalid Password
+    notAvailable:
+      value:
+        code: 400
+        message: Not Available
+    sizeFileTooBig:
+      value:
+        code: 400
+        message: Size File Too Big
+    nameCantBeEmpty:
+      value:
+        code: 400
+        message: Nama tidak boleh kosong
+    usernameCantBeEmpty:
+      value:
+        code: 400
+        message: Username tidak boleh kosong
+    genderCantBeEmpty:
+      value:
+        code: 400
+        message: Gender tidak boleh kosong
+    emailCantBeEmpty:
+      value:
+        code: 400
+        message: Email tidak boleh kosong
+    passwordCantBeEmpty:
+      value:
+        code: 400
+        message: Password tidak boleh kosong
