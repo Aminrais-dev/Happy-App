@@ -64,18 +64,6 @@ paths:
           $ref: "#/components/responses/getprofile"
         "400":
           $ref: "#/components/responses/failedresponse"
-    post:
-      tags:
-        - "User"
-      summary: Add Community
-      description: User akan membuat sebuah community 
-      requestBody:
-        $ref: "#/components/requestBodies/requestBodyCommunity"
-      responses:
-        "200":
-          $ref: "#/components/responses/successresponse"
-        "400":
-          $ref: "#/components/responses/failedresponse"
     put:
       tags:
         - "User"
@@ -112,6 +100,19 @@ paths:
           $ref: "#/components/responses/successgetlistcommunity"
         "400":
           $ref: "#/components/responses/failedgetcommunity"
+    post:
+      tags:
+        - "Community"
+      summary: Add Community
+      description: User akan membuat sebuah community 
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyCommunity"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
   /community/{id}:
     get:
       tags:
@@ -225,6 +226,8 @@ components:
           items:
             type: object
             properties:
+              id:
+                type: integer
               logo:
                 type: string
                 format: binary
@@ -490,12 +493,14 @@ components:
             community:
               [
                 {
+                  id: 1,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/cryo_200.png,
                   title: Genshin Players,
                   members: 20313,
                   description: Ini adalah community untuk para player genshin
                 },
                 {
+                  id: 2,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/dendro_200.png,
                   title: Penggmar Tanaman,
                   members: 2003,
@@ -548,13 +553,6 @@ components:
                 title: Pengendali Api
                 description: Kumpulan para pengendali api
                 members: 5
-                member: [
-                          "Diluc",
-                          "Yoimiya",
-                          "Amber",
-                          "Hu Tao",
-                          "Bennet"
-                        ]
                 feed: [
                         {
                           name: Diluc,
