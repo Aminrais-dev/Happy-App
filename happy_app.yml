@@ -18,6 +18,12 @@ tags:
     description: User Page
   - name: Community
     description: Community Page
+  - name: Community Event
+    description: Community Event Page
+  - name: Community Feed
+    description: Community Feed Page
+  - name: Community Store
+    description: Community Store Page
 
 paths:
 ############################
@@ -112,6 +118,27 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
+    delete:
+      tags:
+        - "Community"
+      summary: Out from A community
+      description: Keluar dari sebuah community
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+  /community/members:
+    get:
+      tags:
+        - "Community"
+      summary: Get All Community Members
+      description: digunkan untuk mendapatakan semua user yang ada dalam community
+      responses:
+        "200":
+          $ref: "#/components/responses/members"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
   /community/{id}:
     get:
@@ -126,17 +153,33 @@ paths:
           $ref: "#/components/responses/community"
         "400":
           $ref: "#/components/responses/failedresponse"
-  # /community/event:        
-    # get:
-    #   tags:
-    #     - "Community"
-    #   summary: Go To Communities event
-    #   description: Memasuki page event yang di adakan oleh community yang bersangkutan
-    #   responses:
-    #     "200":
-    #       $ref: "#/components/responses/community"
-    #     "400":
-    #       $ref: "#/components/responses/failedresponse"
+    put:
+      tags:
+        - "Community"
+      summary: Update Community
+      description: Update community hanya bisa dilakukan oleh admin
+      requestBody:
+        $ref:  "#/components/requestBodies/updaterequestBodyCommunity"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
+################################
+# EVENT
+################################
+  /community/{id}/event:        
+    get:
+      tags:
+        - "Community Event"
+      summary: Go To Communities event
+      description: Memasuki page event yang di adakan oleh community yang bersangkutan
+      responses:
+        "200":
+          $ref: "#/components/responses/communiteventlist"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
 
 
@@ -279,6 +322,16 @@ components:
         logo:
           type: string
           format: binary
+    updatecommunity:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        logo:
+          type: string
+          format: binary
     detailcommunity:
       type: object
       properties:
@@ -291,10 +344,6 @@ components:
           type: string
         members:
           type: integer
-        member:
-          type: array
-          items:
-            type: string
         feed:
           type: array
           items:
@@ -304,14 +353,40 @@ components:
                 type: string
               text:
                 type: string
-              comment:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  text:
-                    type: string
-    # listevent:
+              date:
+                type: string
+    listcommunityevent:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        description:
+          type: string
+        members:
+          type: integer
+        event:
+          type: array
+          items:
+            type: object
+            properties:
+              logo:
+                type: string
+                format: binary
+              title:
+                type: string
+              description:
+                type: string
+              date:
+                type: string
+              price:
+                type: string
+    memberschema:
+          type: array
+          items:
+            type: string
 
               
         
@@ -368,13 +443,33 @@ components:
           schema:
             $ref: "#/components/schemas/addcommunity"
           example:
-            value:
               title: Pengendali Api
               description: Kami adalah pengendali api
               logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/addcommunity"
+    updaterequestBodyCommunity:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/updatecommunity"
+          examples:
+            example1:
+              value:
+                title: Pengendali Api
+                description: Kami adalah pengendali api
+                logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
+            example2:
+              value:
+                logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
+            example3:
+              value:
+                title: Pengendali Api
+                description: Kami adalah pengendali api
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/updatecommunity"
     updateuserrequestbody:
       content:
         multipart/form-data:
@@ -557,38 +652,56 @@ components:
                         {
                           name: Diluc,
                           text: Melakukan Pencarian Harta Karun,
-                          comment: [
-                                    {
-                                      name: Bennet,
-                                      text: wow .....
-                                    },
-                                    {
-                                      name: Yoimiya,
-                                      text: wow .....
-                                    }
-                                   ]
+                          date: "2006-01-02 15:04:05"
                         },
                         {
                           name: Amber,
                           text: Berpatroli di sekitar,
-                          comment: [
-                                    {
-                                      name: Diluc,
-                                      text: wow .....
-                                    },
-                                    {
-                                      name: Yoimiya,
-                                      text: wow .....
-                                    }
-                                   ]
+                          date: "2022-01-02 12:12:12"
                         }
                       ]
-    # communiteventlist:
-    #   description: ini adalah list event yang di adakan oleh community
-    #   content:
-    #     application/json:
-    #       schema:
-    #         $ref:
+    communiteventlist:
+      description: ini adalah list event yang di adakan oleh community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/listcommunityevent"
+          examples:
+            example1:
+              value:
+                logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                title: Pengendali Api
+                description: Kumpulan para pengendali api
+                members: 5
+                event: [{
+                        logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                        title: Anniversary 2,
+                        description: Anniversary kedua Geshin Impact,
+                        date: "2022-12-01 15:04:05",
+                        price: 250000
+                        },
+                        {
+                        logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                        title: Perayaan Tahun Baru,
+                        description: Penyelenggaraan sebuah acara yang ...,
+                        date: "2023-01-01 00:00:01",
+                        price: 1000000
+                        }
+                      ]
+    members:
+      description: ini adalah list member yang ada di community ini
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/memberschema"
+          example:
+          [
+            "Yelan",
+            "Ayaka",
+            "Eula",
+            "Nahida",
+            "Keqing"
+          ]
 
 ###########################
 # PARAMETER
