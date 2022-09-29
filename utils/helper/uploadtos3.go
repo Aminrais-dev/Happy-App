@@ -30,7 +30,6 @@ func UploadFileToS3(DirName string, FileName string, Type string, fileData multi
 	}
 
 	return result.Location, nil
-
 }
 
 func CheckFileType(filename string) (string, error) {

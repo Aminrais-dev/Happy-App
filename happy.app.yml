@@ -390,6 +390,8 @@ components:
           type: string
         email:
           type: string
+        gender:
+          type: string
         foto:
           type: string
           format: binary
@@ -398,13 +400,15 @@ components:
           items:
             type: object
             properties:
+              id:
+                type: integer
               logo:
                 type: string
                 format: binary
                 description: "allowed file extension: jpg, png, jpeg && size <= 1050000 byte"
               title:
                 type: string
-              status:
+              role:
                 enum:
                   - member
                   - admin
@@ -781,18 +785,21 @@ components:
             name: Jack
             username: jack
             email: jack@gmail.com
+            gender: male
             foto: https://www.nicepng.com/png/detail/136-1360042_png-jack-sparrow-pirates-of-the-caribbean-5.png
             community:
               [
                 {
+                  id: 1,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                   title: Pengendali Api,
-                  status: admin,
+                  role: admin,
                 },
                 {
+                  id: 2,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/hydro_200.png,
                   title: Pengendali Air,
-                  status: member,
+                  role: member,
                 },
               ]
     community:

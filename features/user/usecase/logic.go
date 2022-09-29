@@ -41,4 +41,16 @@ func (usecase *usecaseInterface) UpdateUser(data user.CoreUser) int {
 
 	row := usecase.userData.UpdtUser(data)
 	return row
+
+}
+
+func (usecase *usecaseInterface) GetUser(id int) (user.CoreUser, []user.CommunityProfile, error) {
+
+	data, comu, err := usecase.userData.SelectUser(id)
+	if err != nil {
+		return user.CoreUser{}, nil, err
+	}
+
+	return data, comu, nil
+
 }
