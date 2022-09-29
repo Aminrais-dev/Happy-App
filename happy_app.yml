@@ -118,7 +118,7 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-  /community/members/{id}:
+  /community/members/{communityid}:
     get:
       tags:
         - "Community"
