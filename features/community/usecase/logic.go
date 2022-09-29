@@ -16,3 +16,8 @@ func (service *Service) GetListCommunity() ([]community.CoreCommunity, string, e
 	listcore, msg, err := service.do.SelectList()
 	return listcore, msg, err
 }
+
+func (service *Service) GetMembers(communityid int) ([]string, string, error) {
+	members, msg, err := service.do.SelectMembers(communityid)
+	return members, msg, err
+}

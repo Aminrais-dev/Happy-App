@@ -2,7 +2,9 @@ package delivery
 
 import (
 	"capstone/happyApp/features/community"
+	"capstone/happyApp/middlewares"
 	"capstone/happyApp/utils/helper"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,6 +18,7 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 		From: data,
 	}
 	e.GET("/community", handler.ListCommunity)
+	e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware())
 	// e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())
 }
 
@@ -35,4 +38,17 @@ func (user *Delivery) ListCommunity(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ToResponseList(listcore)))
+}
+
+func (user *Delivery) ListMembersCommunity(c echo.Context) error {
+	communityid, err := strconv.Atoi(c.Param("communityid"))
+	if err != nil {
+		c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+	members, msg, errs := user.From.GetMembers(communityid)
+	if errs != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper(msg, members))
 }
