@@ -695,13 +695,13 @@ components:
           schema:
             $ref: "#/components/schemas/memberschema"
           example:
-          [
-            "Yelan",
-            "Ayaka",
-            "Eula",
-            "Nahida",
-            "Keqing"
-          ]
+            [
+              "Yelan",
+              "Ayaka",
+              "Eula",
+              "Nahida",
+              "Keqing",
+            ]
 
 ###########################
 # PARAMETER
