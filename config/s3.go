@@ -9,9 +9,7 @@ import (
 )
 
 const DirImage = "image"
-const DirPdf = "pdf"
 const FileImageType = "images"
-const FilePdfType = "application/pdf"
 
 var testsess *session.Session
 

@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/user"
 	"capstone/happyApp/utils/helper"
 
@@ -27,6 +28,7 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error Bind"))
 	}
 
+	reqData.Photo = config.DEFAULT_PROFILE
 	row := delivery.userUsecase.PostUser(reqData.reqToCore())
 	if row == -2 {
 		return c.JSON(400, helper.FailedResponseHelper("please input all request"))
