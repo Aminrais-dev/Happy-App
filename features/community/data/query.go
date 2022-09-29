@@ -78,3 +78,24 @@ func (storage *Storage) Delete(userid, communityid int) (string, error) {
 	}
 	return "Sukses Keluar dari Community", nil
 }
+
+func (storage *Storage) GetUserRole(userid, communityid int) (string, error) {
+	var model JoinCommunity
+	tx := storage.query.Find(&model, "user_id = ? and community_id = ?", userid, communityid)
+	if tx.Error != nil {
+		return "Gagal mendapatkan role User", tx.Error
+	}
+
+	return model.Role, nil
+}
+
+func (storage *Storage) UpdateCommunity(communityid int, core community.CoreCommunity) (string, error) {
+	update := ToModel(core)
+	tx := storage.query.Model(&update).Where("id = ?", communityid).Updates(update)
+	if tx.Error != nil || tx.RowsAffected != 1 {
+		return "Gagal Update", tx.Error
+	}
+
+	return "Sukses Update", nil
+
+}

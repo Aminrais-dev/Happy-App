@@ -1,6 +1,9 @@
 package usecase
 
-import "capstone/happyApp/features/community"
+import (
+	"capstone/happyApp/features/community"
+	"errors"
+)
 
 type Service struct {
 	do community.DataInterface
@@ -30,4 +33,16 @@ func (service *Service) GetMembers(communityid int) ([]string, string, error) {
 func (service *Service) Leave(userid, communityid int) (string, error) {
 	msg, err := service.do.Delete(userid, communityid)
 	return msg, err
+}
+
+func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity) (string, error) {
+	role, err := service.do.GetUserRole(userid, int(core.ID))
+	if err != nil {
+		return "Gagal mendapatkan role user", err
+	} else if role != "admin" {
+		return "Hanya admin yang bisa mengupdate Community", errors.New("Dont have access")
+	}
+
+	msg, errs := service.do.UpdateCommunity(int(core.ID), core)
+	return msg, errs
 }

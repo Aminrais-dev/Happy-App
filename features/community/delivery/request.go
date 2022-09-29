@@ -15,3 +15,12 @@ func (req *Request) ToCore() community.CoreCommunity {
 		Logo:         req.Logo,
 	}
 }
+
+func (req *Request) ToCoreWithId(communityid int) community.CoreCommunity {
+	return community.CoreCommunity{
+		ID:           uint(communityid),
+		Title:        req.Title,
+		Descriptions: req.Descriptions,
+		Logo:         req.Logo,
+	}
+}
