@@ -224,7 +224,7 @@ paths:
       description: Memasuki page semua event list
       responses:
         "200":
-          $ref: "#/components/responses/communiteventlist"
+          $ref: "#/components/responses/eventlist"
         "400":
           $ref: "#/components/responses/failedresponse"
 
@@ -304,16 +304,16 @@ paths:
       parameters:
         - $ref: "#/components/parameters/FeedId"
       requestBody:
-        $ref:  "#/components/requestBodies/addcommenttofeed"
+        $ref: "#/components/requestBodies/addcommenttofeed"
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-        
-################################
-# STORE
-################################
+
+  ################################
+  # STORE
+  ################################
   /community/store/{communityid}:
     get:
       tags:
@@ -323,7 +323,7 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/listproduct"
-        "400": 
+        "400":
           $ref: "#/components/responses/failedresponse"
     post:
       tags:
@@ -333,9 +333,9 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       requestBody:
-        $ref:  "#/components/requestBodies/addproduct"
+        $ref: "#/components/requestBodies/addproduct"
       responses:
-        "200": 
+        "200":
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
@@ -351,7 +351,7 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/datailProduct"
-        "400": 
+        "400":
           $ref: "#/components/responses/failedresponse"
     put:
       tags:
@@ -359,11 +359,11 @@ paths:
       summary: Update Product
       description: Melakukan update pada sebuah produk yang di miliki oleh community
       parameters:
-        - $ref: "#/components/parameters/ParamProductId" 
+        - $ref: "#/components/parameters/ParamProductId"
       requestBody:
         $ref: "#/components/requestBodies/updateproduct"
       responses:
-        "200": 
+        "200":
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
@@ -374,7 +374,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       responses:
-        "200": 
+        "200":
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
@@ -382,13 +382,6 @@ paths:
 #############################
 # CART
 #############################
-
-
-
-
-
-
-
 
 ####################################
 # COMPONENTS
@@ -496,8 +489,6 @@ components:
         username:
           type: string
         email:
-          type: string
-        gender:
           type: string
         foto:
           type: string
@@ -857,7 +848,7 @@ components:
     addproduct:
       content:
         application/json:
-          schema: 
+          schema:
             $ref: "#/components/schemas/schemaaddproduct"
           example:
             name: Baju Kaos
@@ -868,7 +859,7 @@ components:
     updateproduct:
       content:
         application/json:
-          schema: 
+          schema:
             $ref: "#/components/schemas/schemaaddproduct"
           examples:
             example1:
@@ -878,7 +869,7 @@ components:
             example2:
               value:
                 photo: photobaru.jpg
-                name: namabaru 
+                name: namabaru
 
         multipart/form-data:
           schema:
@@ -1036,7 +1027,7 @@ components:
                 feed:
                   [
                     {
-                      id : 2,
+                      id: 2,
                       name: Diluc,
                       text: Melakukan Pencarian Harta Karun,
                       date: "2006-01-02 15:04:05",
@@ -1148,20 +1139,16 @@ components:
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
             members: 5
-            products: [
-                        {
-                          id: 1,
-                          name: baju kaos,
-                          price: 100000,
-                          photo: bajukaos.jpg
-                        },
-                        {
-                          id: 2,
-                          name: celana panjang,
-                          price: 200000,
-                          photo: celana.jpg
-                        }
-                      ]
+            products:
+              [
+                { id: 1, name: baju kaos, price: 100000, photo: bajukaos.jpg },
+                {
+                  id: 2,
+                  name: celana panjang,
+                  price: 200000,
+                  photo: celana.jpg,
+                },
+              ]
     datailProduct:
       description: berisi berbagai hal yang berkaitan dengan product
       content:
@@ -1173,14 +1160,45 @@ components:
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
             members: 5
-            product:  {
-                        id: 3,
-                        name: Baju Kaos,
-                        descriptions: ini adalah baju kaos terbaik sepanjang sejarah,
-                        price: 1000000,
-                        photo: bajukaos.jpg,
-                        stock: 100
-                      }
+            product:
+              {
+                id: 3,
+                name: Baju Kaos,
+                descriptions: ini adalah baju kaos terbaik sepanjang sejarah,
+                price: 1000000,
+                photo: bajukaos.jpg,
+                stock: 100,
+              }
+    eventlist:
+      description: ini adalah list event yang di adakan oleh community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/listcommunityevent"
+          examples:
+            example1:
+              value:
+                event:
+                  [
+                    {
+                      id: 2,
+                      logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                      title: Anniversary 2,
+                      penyelenggara: community genshin,
+                      descriptions: Anniversary kedua Geshin Impact,
+                      date: "2022-12-01 15:04:05 WIB",
+                      price: 250000,
+                    },
+                    {
+                      id: 5,
+                      logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                      title: Perayaan Tahun Baru,
+                      penyelenggara: community minecraft,
+                      descriptions: Penyelenggaraan sebuah acara yang ...,
+                      date: "2023-01-01 00:00:01 WIB",
+                      price: 1000000,
+                    },
+                  ]
 
   ###########################
   # PARAMETER
