@@ -2,6 +2,7 @@ package data
 
 import (
 	"capstone/happyApp/features/community"
+	user "capstone/happyApp/features/user/data"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +19,10 @@ func New(db *gorm.DB) community.DataInterface {
 
 func (storage *Storage) SelectList() ([]community.CoreCommunity, string, error) {
 	var models []Community
-	storage.query.Find(&models)
+	tx := storage.query.Find(&models)
+	if tx.Error != nil {
+		return nil, "Terjadi Kesalahan", tx.Error
+	}
 
 	listcore := ToCoreList(models)
 
@@ -30,4 +34,24 @@ func (storage *Storage) SelectList() ([]community.CoreCommunity, string, error) 
 	}
 
 	return listcore, "Sukses Mendapatkan Semua Data", nil
+}
+
+func (storage *Storage) SelectMembers(communityid int) ([]string, string, error) {
+	var models []JoinCommunity
+	tx := storage.query.Find(&models, "community_id = ?", communityid)
+	if tx.Error != nil {
+		return nil, "Terjadi Kesalahan pada pengambilan member", tx.Error
+	}
+
+	var names []string
+	for _, v := range models {
+		var temp user.User
+		txx := storage.query.Find(&temp, "id = ?", v.ID)
+		if txx.Error != nil {
+			return nil, "Terjadi Kesalahan pada pengambilan nama", txx.Error
+		}
+		names = append(names, temp.Name)
+	}
+
+	return names, "Sekses Mendapatkan Semua Nama", nil
 }

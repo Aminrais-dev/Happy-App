@@ -10,8 +10,10 @@ type CoreCommunity struct {
 
 type DataInterface interface {
 	SelectList() ([]CoreCommunity, string, error)
+	SelectMembers(communityid int) ([]string, string, error)
 }
 
 type UsecaseInterface interface {
 	GetListCommunity() ([]CoreCommunity, string, error)
+	GetMembers(communityid int) ([]string, string, error)
 }
