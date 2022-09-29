@@ -44,12 +44,6 @@ func CheckFileExtension(filename string, contentType string) (string, error) {
 		}
 	}
 
-	if contentType == config.FilePdfType {
-		if extension != "pdf" {
-			return "", fmt.Errorf("hanya menerima pdf")
-		}
-	}
-
 	return extension, nil
 }
 
@@ -63,10 +57,5 @@ func CheckFileSize(size int64, contentType string) error {
 		}
 	}
 
-	if contentType == config.FilePdfType {
-		if size > 10097152 {
-			return fmt.Errorf("file size too big")
-		}
-	}
 	return nil
 }
