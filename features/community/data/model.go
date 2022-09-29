@@ -21,6 +21,22 @@ type JoinCommunity struct {
 	Role        string
 }
 
+func GetLeader(userid, communityid int) JoinCommunity {
+	return JoinCommunity{
+		UserID:      uint(userid),
+		CommunityID: uint(communityid),
+		Role:        "admin",
+	}
+}
+
+func ToModel(data community.CoreCommunity) Community {
+	return Community{
+		Title:        data.Title,
+		Descriptions: data.Descriptions,
+		Logo:         data.Logo,
+	}
+}
+
 func ToCore(data Community) community.CoreCommunity {
 	return community.CoreCommunity{
 		ID:           data.ID,

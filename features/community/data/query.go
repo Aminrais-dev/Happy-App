@@ -17,6 +17,21 @@ func New(db *gorm.DB) community.DataInterface {
 	}
 }
 
+func (storage *Storage) Insert(userid int, core community.CoreCommunity) (string, error) {
+	model := ToModel(core)
+	tx := storage.query.Create(&model)
+	if tx.Error != nil {
+		return "Masalah Pada Insert Database", tx.Error
+	}
+	model2 := GetLeader(userid, int(model.ID))
+	tx2 := storage.query.Create(&model2)
+	if tx2.Error != nil {
+		return "Masalah saat bergabung ke community", tx.Error
+	}
+
+	return "Suksus Bergabung ke Community", nil
+}
+
 func (storage *Storage) SelectList() ([]community.CoreCommunity, string, error) {
 	var models []Community
 	tx := storage.query.Find(&models)
@@ -54,4 +69,12 @@ func (storage *Storage) SelectMembers(communityid int) ([]string, string, error)
 	}
 
 	return names, "Sekses Mendapatkan Semua Nama", nil
+}
+
+func (storage *Storage) Delete(userid, communityid int) (string, error) {
+	tx := storage.query.Unscoped().Delete(&JoinCommunity{}, "user_id = ? and community_id = ?", userid, communityid)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return "Terjadi Kesalahan", tx.Error
+	}
+	return "Sukses Keluar dari Community", nil
 }
