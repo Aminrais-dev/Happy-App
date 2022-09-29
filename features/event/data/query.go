@@ -37,3 +37,24 @@ func (repo *eventData) InsertEvent(data event.EventCore, id int) int {
 	return 1
 
 }
+
+func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
+
+	var dataEvent []event.Response
+	if search == "" {
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Group("events.id").Scan(&dataEvent)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+
+		return dataEvent, nil
+	} else {
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Where("events.title like ?", ("%" + search + "%")).Group("events.id").Scan(&dataEvent)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+
+		return dataEvent, nil
+	}
+
+}

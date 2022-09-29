@@ -19,6 +19,7 @@ func New(e *echo.Echo, data event.UsecaseInterface) {
 	}
 
 	e.POST("community/:id/event", handler.PostEventCommunity, middlewares.JWTMiddleware())
+	e.GET("/event", handler.GetEventList)
 
 }
 
@@ -50,4 +51,19 @@ func (delivery *eventDelivery) PostEventCommunity(c echo.Context) error {
 
 	return c.JSON(200, helper.SuccessResponseHelper("success create event"))
 
+}
+
+func (delivery *eventDelivery) GetEventList(c echo.Context) error {
+
+	search := c.QueryParam("title")
+
+	data, err := delivery.eventUsecase.GetEvent(search)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("failed to get list event"))
+	}
+
+	return c.JSON(200, map[string]interface{}{
+		"event":   data,
+		"massage": "success get list event",
+	})
 }

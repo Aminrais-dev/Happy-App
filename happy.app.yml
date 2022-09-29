@@ -1184,9 +1184,9 @@ components:
                       id: 2,
                       logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                       title: Anniversary 2,
-                      penyelenggara: community genshin,
+                      members: 5,
                       descriptions: Anniversary kedua Geshin Impact,
-                      date: "2022-12-01 15:04:05 WIB",
+                      date: "2022-12-01 15:04:05",
                       price: 250000,
                     },
                     {
@@ -1195,7 +1195,7 @@ components:
                       title: Perayaan Tahun Baru,
                       penyelenggara: community minecraft,
                       descriptions: Penyelenggaraan sebuah acara yang ...,
-                      date: "2023-01-01 00:00:01 WIB",
+                      date: "2023-01-01 00:00:01",
                       price: 1000000,
                     },
                   ]

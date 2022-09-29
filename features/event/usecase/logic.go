@@ -22,3 +22,13 @@ func (usecase *usecaseEvent) PostEvent(data event.EventCore, id int) int {
 	return row
 
 }
+
+func (usecase *usecaseEvent) GetEvent(search string) ([]event.Response, error) {
+
+	data, err := usecase.eventData.SelectEvent(search)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
