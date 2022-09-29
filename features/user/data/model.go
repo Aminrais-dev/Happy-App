@@ -32,6 +32,13 @@ type JoinCommunity struct {
 	Role        string
 }
 
+type myCommunity struct {
+	ID    uint
+	Title string
+	Logo  string
+	Role  string
+}
+
 func (data *User) toCore() user.CoreUser {
 	return user.CoreUser{
 		ID:        data.ID,
@@ -40,6 +47,7 @@ func (data *User) toCore() user.CoreUser {
 		Gender:    data.Gender,
 		Email:     data.Email,
 		Password:  data.Password,
+		Photo:     data.Photo,
 		Community: toCoreJoinList(data.Community),
 	}
 }
@@ -73,4 +81,23 @@ func fromCore(data user.CoreUser) User {
 		Password: data.Password,
 		Photo:    data.Photo,
 	}
+}
+
+func (data *myCommunity) toComuCore() user.CommunityProfile {
+	return user.CommunityProfile{
+		ID:    data.ID,
+		Title: data.Title,
+		Logo:  data.Logo,
+		Role:  data.Role,
+	}
+}
+
+func toList(data []myCommunity) []user.CommunityProfile {
+
+	var dataCore []user.CommunityProfile
+	for key := range data {
+		dataCore = append(dataCore, data[key].toComuCore())
+	}
+	return dataCore
+
 }

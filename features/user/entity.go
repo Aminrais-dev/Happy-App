@@ -29,14 +29,23 @@ type JoinCommunityCore struct {
 	Created_at  time.Time
 }
 
+type CommunityProfile struct {
+	ID    uint
+	Title string
+	Logo  string
+	Role  string
+}
+
 type DataInterface interface {
 	InsertUser(CoreUser) int
 	DelUser(int) int
 	UpdtUser(CoreUser) int
+	SelectUser(id int) (CoreUser, []CommunityProfile, error)
 }
 
 type UsecaseInterface interface {
 	PostUser(CoreUser) int
 	DeleteUser(int) int
 	UpdateUser(CoreUser) int
+	GetUser(id int) (CoreUser, []CommunityProfile, error)
 }

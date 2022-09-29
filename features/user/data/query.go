@@ -51,3 +51,20 @@ func (repo *userData) UpdtUser(data user.CoreUser) int {
 	return int(tx.RowsAffected)
 
 }
+
+func (repo *userData) SelectUser(id int) (user.CoreUser, []user.CommunityProfile, error) {
+
+	var data User
+	tx := repo.db.First(&data, "id = ? ", id)
+	if tx.Error != nil {
+		return user.CoreUser{}, nil, tx.Error
+	}
+
+	var comu []myCommunity
+	txComu := repo.db.Model(&Community{}).Select("communities.id as id, communities.title as title, communities.logo as logo, join_communities.role as role").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("join_communities.user_id = ? ", id).Scan(&comu)
+	if txComu.Error != nil {
+		return user.CoreUser{}, nil, txComu.Error
+	}
+
+	return data.toCore(), toList(comu), nil
+}
