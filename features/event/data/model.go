@@ -18,6 +18,19 @@ type Event struct {
 	Community   Community
 }
 
+type JoinEvent struct {
+	gorm.Model
+	UserID          uint
+	EventID         uint
+	Type_payment    string
+	Status_payment  string
+	Virtual_account string
+}
+
+type User struct {
+	gorm.Model
+}
+
 type Community struct {
 	gorm.Model
 	Logo  string
