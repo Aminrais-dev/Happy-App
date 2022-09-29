@@ -20,6 +20,7 @@ func New(e *echo.Echo, data event.UsecaseInterface) {
 
 	e.POST("community/:id/event", handler.PostEventCommunity, middlewares.JWTMiddleware())
 	e.GET("/event", handler.GetEventList)
+	e.GET("/community/:id/event", handler.GetEventListCommunity, middlewares.JWTMiddleware())
 
 }
 
@@ -66,4 +67,22 @@ func (delivery *eventDelivery) GetEventList(c echo.Context) error {
 		"event":   data,
 		"massage": "success get list event",
 	})
+}
+
+func (delivery *eventDelivery) GetEventListCommunity(c echo.Context) error {
+
+	id := c.Param("id")
+	idComu, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+	search := c.QueryParam("title")
+	userId := middlewares.ExtractToken(c)
+
+	data, errGet := delivery.eventUsecase.GetEventComu(search, idComu, userId)
+	if errGet != nil {
+		return c.JSON(400, helper.FailedResponseHelper("failed to get list event in community"))
+	}
+
+	return c.JSON(200, data)
 }

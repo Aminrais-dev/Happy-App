@@ -1048,6 +1048,8 @@ components:
           examples:
             example1:
               value:
+                id: 1
+                role: member
                 logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                 title: Pengendali Api
                 description: Kumpulan para pengendali api
@@ -1058,6 +1060,7 @@ components:
                       id: 2,
                       logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                       title: Anniversary 2,
+                      members: 4,
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
@@ -1066,6 +1069,7 @@ components:
                       id: 5,
                       logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                       title: Perayaan Tahun Baru,
+                      members: 5,
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
