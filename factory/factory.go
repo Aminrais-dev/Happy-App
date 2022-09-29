@@ -15,9 +15,17 @@ import (
 	communityData "capstone/happyApp/features/community/data"
 	communityDelivery "capstone/happyApp/features/community/delivery"
 	communityUsecase "capstone/happyApp/features/community/usecase"
+
+	eventData "capstone/happyApp/features/event/data"
+	eventDelivery "capstone/happyApp/features/event/delivery"
+	eventUsecase "capstone/happyApp/features/event/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
+
+	eventDataFactory := eventData.New(db)
+	eventUsecaseFactory := eventUsecase.New(eventDataFactory)
+	eventDelivery.New(e, eventUsecaseFactory)
 
 	communityDataFactory := communityData.New(db)
 	communityUsecaseFactory := communityUsecase.New(communityDataFactory)

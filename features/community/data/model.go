@@ -14,6 +14,11 @@ type Community struct {
 	Member       []JoinCommunity
 }
 
+type User struct {
+	gorm.Model
+	Community []JoinCommunity
+}
+
 type JoinCommunity struct {
 	gorm.Model
 	UserID      uint
