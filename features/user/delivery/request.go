@@ -18,5 +18,6 @@ func (req *Request) reqToCore() user.CoreUser {
 		Gender:   req.Gender,
 		Email:    req.Email,
 		Password: req.Password,
+		Photo:    req.Photo,
 	}
 }
