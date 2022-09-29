@@ -118,11 +118,13 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-  /community/members:
+  /community/{id}/members:
     get:
       tags:
         - "Community"
       summary: Get All Community Members
+      parameters:
+        - $ref: "#/components/parameters/ParamId"
       description: digunkan untuk mendapatakan semua user yang ada dalam community
       responses:
         "200":
