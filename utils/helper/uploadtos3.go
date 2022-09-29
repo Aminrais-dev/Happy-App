@@ -13,6 +13,7 @@ import (
 )
 
 func UploadFileToS3(DirName string, FileName string, Type string, fileData multipart.File) (string, error) {
+
 	sess := config.GetSession()
 	uploader := s3manager.NewUploader(sess)
 
@@ -29,7 +30,9 @@ func UploadFileToS3(DirName string, FileName string, Type string, fileData multi
 	}
 
 	return result.Location, nil
+
 }
+
 func CheckFileType(filename string) (string, error) {
 	extension := strings.ToLower(filename[strings.LastIndex(filename, ".")+1:])
 	return extension, nil

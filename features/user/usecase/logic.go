@@ -36,3 +36,9 @@ func (usecase *usecaseInterface) DeleteUser(id int) int {
 	return row
 
 }
+
+func (usecase *usecaseInterface) UpdateUser(data user.CoreUser) int {
+
+	row := usecase.userData.UpdtUser(data)
+	return row
+}

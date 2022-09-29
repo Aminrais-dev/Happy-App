@@ -38,3 +38,16 @@ func (repo *userData) DelUser(id int) int {
 	return 1
 
 }
+
+func (repo *userData) UpdtUser(data user.CoreUser) int {
+
+	newData := fromCore(data)
+
+	tx := repo.db.Model(&User{}).Where("id = ? ", int(data.ID)).Updates(newData)
+	if tx.Error != nil {
+		return -1
+	}
+
+	return int(tx.RowsAffected)
+
+}

@@ -71,5 +71,6 @@ func fromCore(data user.CoreUser) User {
 		Gender:   data.Gender,
 		Email:    data.Email,
 		Password: data.Password,
+		Photo:    data.Photo,
 	}
 }
