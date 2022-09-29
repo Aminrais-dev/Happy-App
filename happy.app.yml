@@ -24,8 +24,15 @@ tags:
     description: Community Feed Page
   - name: Community Store
     description: Community Store Page
+  - name: Cart
+    description: User Cart in a Community
+  - name: Community Store
+    description: Community Store Page
   - name: Join
     description: Join Event or Community Page
+  - name: Payment
+    description: Payment_Method
+
 
 paths:
   ############################
@@ -177,6 +184,20 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
+  /community/history/{communtyid}:
+    get:
+      tags:
+        - "Community"
+      summary: Get A Selled Product
+      parameters:
+        - $ref: "#/components/parameters/ParamCommunityId"
+      description: memdapatkan data produck yang di beli oleh user
+      responses:
+        "200":
+          $ref: "#/components/responses/responsehistory"
         "400":
           $ref: "#/components/responses/failedresponse"
   #########################
@@ -382,6 +403,45 @@ paths:
 #############################
 # CART
 #############################
+  /cart/{commuunityid}:
+    get:
+      tags:
+        - "Cart"
+      summary: Get a cart user from a community
+      description: mendapatkan list cart user yang ada di suatu community
+      parameters:
+        - $ref: "#/components/parameters/ParamCommunityId"
+      responses:
+        "200":
+          $ref: "#/components/responses/cartuser"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+  /cart/{productid}:
+    post:
+      tags:
+        - "Cart"
+      summary: Add product to Cart
+      description: Menambahkan sebuah barang yang ada di communinty kedalam Cart
+      parameters:
+        - $ref: "#/components/parameters/ParamProductId"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse" 
+  /cart/{cartid}:  
+    delete:
+      tags:
+        - "Cart"
+      summary: Delete from cart user
+      description: menghapus sebuah barang yang ada di cart
+      parameters:
+        - $ref: "#/components/parameters/ParamProductId"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse" 
 
 ####################################
 # COMPONENTS
@@ -717,7 +777,60 @@ components:
           type: integer
         price:
           type: integer
-
+    cart:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        descriptions:
+          type: string
+        members:
+          type: integer
+        cart:
+          type: array
+          items:
+            type: object
+            properties:
+              cartid:
+                type: integer
+              price:
+                type: integer
+              name:
+                type: string
+              photo:
+                type: string
+                format: binary
+              descriptions:
+                type: string
+    history:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        descriptions:
+          type: string
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              cartid:
+                type: string
+              name:
+                type: string
+              buyer:
+                type: string
+              photo:
+                type: string
+                format: binary
+              price:
+                type: integer
     responseNonData:
       type: object
       properties:
@@ -1203,6 +1316,58 @@ components:
                       price: 1000000,
                     },
                   ]
+    cartuser:
+      description: berisi suatu data cart yang dimiliki user
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/cart"
+          example:
+            logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+            title: Pengendali Api
+            descriptions: Kumpulan para pengendali api
+            members: 5
+            cart: [
+                    {
+                      name: Kaos,
+                      price: 100000,
+                      descriptions: kaos yang sangat nyaman,
+                      photo: kaos.jpg
+                    },
+                    {
+                      name: Celana,
+                      price: 233000,
+                      descriptions: celana yang sangat nyaman,
+                      photo: celana.jpg
+                    }
+                  ]
+    responsehistory:
+      description: berisi history pembelian barang yang dilakukan oleh user
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/history"
+          example:
+            logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+            title: Pengendali Api
+            descriptions: Kumpulan para pengendali api
+            list: [
+                    {
+                      name: Kaos,
+                      buyer: Diluc,
+                      photo: kaos.jpg,
+                      price: 100000
+                    },
+                    {
+                      name: celana,
+                      buyer: Amber,
+                      photo: celana.jpg,
+                      price: 50000
+                    }
+                  ]
+
+
+                  
 
   ###########################
   # PARAMETER
@@ -1238,6 +1403,13 @@ components:
         example: 1
     ParamProductId:
       name: productid
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+    CartId:
+      name: cartid
       in: path
       required: true
       schema:
