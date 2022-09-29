@@ -29,3 +29,10 @@ func (usecase *usecaseInterface) PostUser(data user.CoreUser) int {
 	return row
 
 }
+
+func (usecase *usecaseInterface) DeleteUser(id int) int {
+
+	row := usecase.userData.DelUser(id)
+	return row
+
+}

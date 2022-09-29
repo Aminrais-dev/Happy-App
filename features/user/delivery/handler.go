@@ -3,6 +3,7 @@ package delivery
 import (
 	"capstone/happyApp/config"
 	"capstone/happyApp/features/user"
+	"capstone/happyApp/middlewares"
 	"capstone/happyApp/utils/helper"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +19,7 @@ func New(e *echo.Echo, data user.UsecaseInterface) {
 	}
 
 	e.POST("/register", handler.CreateUser)
+	e.DELETE("/user/profile", handler.DeleteAccount, middlewares.JWTMiddleware())
 }
 
 func (delivery *userDelivery) CreateUser(c echo.Context) error {
@@ -37,5 +39,18 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper("success sign up"))
+
+}
+
+func (delivery *userDelivery) DeleteAccount(c echo.Context) error {
+
+	idToken := middlewares.ExtractToken(c)
+
+	row := delivery.userUsecase.DeleteUser(idToken)
+	if row != 1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete account"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success delete account"))
 
 }

@@ -36,9 +36,9 @@ func (delivery *loginDelivery) loginUser(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper(str))
 	} else {
 		return c.JSON(200, map[string]interface{}{
-			"acces_token": str,
-			"massage":     "login success",
-			"status":      "success",
+			"access_token": str,
+			"massage":      "login success",
+			"status":       "success",
 		})
 	}
 
