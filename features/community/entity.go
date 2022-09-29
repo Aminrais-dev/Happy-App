@@ -13,6 +13,8 @@ type DataInterface interface {
 	SelectList() ([]CoreCommunity, string, error)
 	SelectMembers(communityid int) ([]string, string, error)
 	Delete(userid, communityid int) (string, error)
+	UpdateCommunity(communityid int, core CoreCommunity) (string, error)
+	GetUserRole(Userid, communityid int) (string, error)
 }
 
 type UsecaseInterface interface {
@@ -20,4 +22,5 @@ type UsecaseInterface interface {
 	GetListCommunity() ([]CoreCommunity, string, error)
 	GetMembers(communityid int) ([]string, string, error)
 	Leave(userid, communityid int) (string, error)
+	UpdateCommunity(userid int, core CoreCommunity) (string, error)
 }

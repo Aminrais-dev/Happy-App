@@ -132,14 +132,14 @@ paths:
         "400":
           $ref: "#/components/responses/failedresponse"
 
-  /community/{id}:
+  /community/{communityid}:
     get:
       tags:
         - "Community Feed"
       summary: Go to Community Page
       description: masuk ke page community
       parameters:
-        - $ref: "#/components/parameters/ParamId"
+        - $ref: "#/components/parameters/ParamCommunityId"
       responses:
         "200":
           $ref: "#/components/responses/community"
@@ -151,7 +151,7 @@ paths:
       summary: Update Community
       description: Update community hanya bisa dilakukan oleh admin
       parameters:
-        - $ref: "#/components/parameters/ParamId"
+        - $ref: "#/components/parameters/ParamCommunityId"
       requestBody:
         $ref:  "#/components/requestBodies/updaterequestBodyCommunity"
       responses:
