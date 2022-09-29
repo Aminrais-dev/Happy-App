@@ -193,6 +193,19 @@ paths:
           $ref: "#/components/responses/successOperationNonData"
         "400":
           $ref: "#/components/responses/failedresponse"
+  /join/event/{id}:
+    post:
+      tags:
+        - "Join"
+      summary: Join To Community
+      description: user melakukan join ke sebuah community
+      parameters:
+        - $ref: "#/components/parameters/ParamId"
+      responses:
+        "200":
+          $ref: "#/components/responses/successOperationNonData"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
   ################################
   # EVENT
@@ -268,24 +281,118 @@ paths:
         "400":
           $ref: "#/components/responses/failedresponse"
 
-  /feed/{id}:
+  /feed/{feedid}:
     get:
       tags:
         - "Community Feed"
       summary: get feed details
       description: Menampilkan Feed serta Comment Feed
       parameters:
-        - $ref: "#/components/parameters/ParamFeedId"
+        - $ref: "#/components/parameters/FeedId"
       responses:
         "200":
           $ref: "#/components/responses/feed"
         "400":
           $ref: "#/components/responses/failedresponse"
 
+  /feed/comment/{feedid}:
+    post:
+      tags:
+        - "Community Feed"
+      summary: Add A Comment To A Feed
+      description: Menambahkan Comment pada sebuah postingan
+      parameters:
+        - $ref: "#/components/parameters/FeedId"
+      requestBody:
+        $ref:  "#/components/requestBodies/addcommenttofeed"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+        
 ################################
 # STORE
 ################################
+  /community/store/{communityid}:
+    get:
+      tags:
+        - "Community Store"
+      summary: Get List Product Of Community
+      description: Mendapatkan list dari produk produk yang dimiliki oleh sebuah community
+      responses:
+        "200":
+          $ref: "#/components/responses/listproduct"
+        "400": 
+          $ref: "#/components/responses/failedresponse"
+    post:
+      tags:
+        - "Community Store"
+      summary: Add Product in Community
+      description: Menambah kan product pada sebuah community
+      parameters:
+        - $ref: "#/components/parameters/ParamCommunityId"
+      requestBody:
+        $ref:  "#/components/requestBodies/addproduct"
+      responses:
+        "200": 
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
+  /store/{productid}:
+    get:
+      tags:
+        - "Community Store"
+      summary: Detail Product
+      description: digunakan untuk melihat detail yang di miliki oleh sebuah product
+      parameters:
+        - $ref: "#/components/parameters/ParamProductId"
+      responses:
+        "200":
+          $ref: "#/components/responses/datailProduct"
+        "400": 
+          $ref: "#/components/responses/failedresponse"
+    put:
+      tags:
+        - "Community Store"
+      summary: Update Product
+      description: Melakukan update pada sebuah produk yang di miliki oleh community
+      parameters:
+        - $ref: "#/components/parameters/ParamProductId" 
+      requestBody:
+        $ref: "#/components/requestBodies/updateproduct"
+      responses:
+        "200": 
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+    delete:
+      tags:
+        - "Community Store"
+      summary: Delete A Product
+      parameters:
+        - $ref: "#/components/parameters/ParamProductId"
+      responses:
+        "200": 
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
+#############################
+# CART
+#############################
+
+
+
+
+
+
+
+
+####################################
+# COMPONENTS
+####################################
 components:
   ##########################
   # SCHEMA
@@ -395,6 +502,10 @@ components:
         foto:
           type: string
           format: binary
+        gender:
+          enum:
+            - male
+            - female
         community:
           type: array
           items:
@@ -453,6 +564,8 @@ components:
           items:
             type: object
             properties:
+              id:
+                type: integer
               name:
                 type: string
               text:
@@ -544,6 +657,75 @@ components:
       properties:
         payment_method:
           type: string
+    schemalistprod:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        descriptions:
+          type: string
+        members:
+          type: integer
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              price:
+                type: string
+              photo:
+                type: string
+                format: binary
+    detailProduct:
+      type: object
+      properties:
+        logo:
+          type: string
+          format: binary
+        title:
+          type: string
+        descriptions:
+          type: string
+        members:
+          type: integer
+        product:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            descriptions:
+              type: string
+            photo:
+              type: string
+            price:
+              type: integer
+            stock:
+              type: integer
+            community_id:
+              type: integer
+    schemaaddproduct:
+      type: object
+      properties:
+        name:
+          type: string
+        descriptions:
+          type: string
+        photo:
+          type: string
+          format: binary
+        stock:
+          type: integer
+        price:
+          type: integer
 
     responseNonData:
       type: object
@@ -665,6 +847,42 @@ components:
             $ref: "#/components/schemas/joinevent"
           example:
             payment_method: "gopay"
+    addcommenttofeed:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/makefeed"
+          example:
+            text: di tunngu ...
+    addproduct:
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/schemaaddproduct"
+          example:
+            name: Baju Kaos
+            descriptions: Ini adalah
+            photo: kaos.jpg
+            stock: 100
+            price: 100000
+    updateproduct:
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/schemaaddproduct"
+          examples:
+            example1:
+              value:
+                stock: 200
+                price: 150000
+            example2:
+              value:
+                photo: photobaru.jpg
+                name: namabaru 
+
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/schemaaddproduct"
 
   ###########################
   # RESPONSE
@@ -818,11 +1036,13 @@ components:
                 feed:
                   [
                     {
+                      id : 2,
                       name: Diluc,
                       text: Melakukan Pencarian Harta Karun,
                       date: "2006-01-02 15:04:05",
                     },
                     {
+                      id: 4,
                       name: Amber,
                       text: Berpatroli di sekitar,
                       date: "2022-01-02 12:12:12",
@@ -917,12 +1137,64 @@ components:
                       date: "19 februari",
                     },
                   ]
+    listproduct:
+      description: Berisi daftar barang yang di jual oleh sebuah community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/schemalistprod"
+          example:
+            logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+            title: Pengendali Api
+            descriptions: Kumpulan para pengendali api
+            members: 5
+            products: [
+                        {
+                          id: 1,
+                          name: baju kaos,
+                          price: 100000,
+                          photo: bajukaos.jpg
+                        },
+                        {
+                          id: 2,
+                          name: celana panjang,
+                          price: 200000,
+                          photo: celana.jpg
+                        }
+                      ]
+    datailProduct:
+      description: berisi berbagai hal yang berkaitan dengan product
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/detailProduct"
+          example:
+            logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+            title: Pengendali Api
+            descriptions: Kumpulan para pengendali api
+            members: 5
+            product:  {
+                        id: 3,
+                        name: Baju Kaos,
+                        descriptions: ini adalah baju kaos terbaik sepanjang sejarah,
+                        price: 1000000,
+                        photo: bajukaos.jpg,
+                        stock: 100
+                      }
+
   ###########################
   # PARAMETER
   ##########################
   parameters:
     ParamId:
       name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+    FeedId:
+      name: feedid
       in: path
       required: true
       schema:
@@ -937,6 +1209,13 @@ components:
         example: 1
     ParamFeedId:
       name: communityid
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+    ParamProductId:
+      name: productid
       in: path
       required: true
       schema:
