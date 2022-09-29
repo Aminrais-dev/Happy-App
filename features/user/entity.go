@@ -32,9 +32,11 @@ type JoinCommunityCore struct {
 type DataInterface interface {
 	InsertUser(CoreUser) int
 	DelUser(int) int
+	UpdtUser(CoreUser) int
 }
 
 type UsecaseInterface interface {
 	PostUser(CoreUser) int
 	DeleteUser(int) int
+	UpdateUser(CoreUser) int
 }

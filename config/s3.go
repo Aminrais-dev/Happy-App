@@ -22,9 +22,11 @@ func GetSession() *session.Session {
 }
 
 func InitSession() *session.Session {
+
 	sessObj := session.Must(session.NewSession(&aws.Config{
 		Region:      aws.String(os.Getenv("AWS_REGION")),
 		Credentials: credentials.NewStaticCredentials(os.Getenv("S3_KEY"), os.Getenv("S3_SECRET"), ""),
 	}))
 	return sessObj
+
 }
