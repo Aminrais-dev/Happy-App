@@ -118,16 +118,6 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-    delete:
-      tags:
-        - "Community"
-      summary: Out from A community
-      description: Keluar dari sebuah community
-      responses:
-        "200":
-          $ref: "#/components/responses/successresponse"
-        "400":
-          $ref: "#/components/responses/failedresponse"
   /community/members:
     get:
       tags:
@@ -158,6 +148,8 @@ paths:
         - "Community"
       summary: Update Community
       description: Update community hanya bisa dilakukan oleh admin
+      parameters:
+        - $ref: "#/components/parameters/ParamId"
       requestBody:
         $ref:  "#/components/requestBodies/updaterequestBodyCommunity"
       responses:
@@ -165,7 +157,18 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-
+    delete:
+      tags:
+        - "Community"
+      summary: Out from A community
+      description: Keluar dari sebuah community
+      parameters:
+        - $ref: "#/components/parameters/ParamId"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 ################################
 # EVENT
 ################################
@@ -180,7 +183,32 @@ paths:
           $ref: "#/components/responses/communiteventlist"
         "400":
           $ref: "#/components/responses/failedresponse"
+    post:
+      tags:
+        - "Community Event"
+      summary: Add An Event In Community
+      description: Menambahkan event pada sebuah community 
+      requestBody: 
+        $ref: "#/components/requestBodies/eventrequestbody"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
+  /community/{id}/event/{id}:
+    get:
+      tags:
+        - "Community Event"
+      summary: Go to Event Detail Page
+      description: Menampilkan halaman yang memuat event secara rinci
+      responses:
+        "200":
+          $ref: "#/components/responses/eventdetail"
+        "400":
+          $ref: "#/components/responses/failedresponse"        
+
+        
 
 
         
@@ -277,7 +305,7 @@ components:
                 description: "allowed file extension: jpg, png, jpeg && size <= 1050000 byte"
               title:
                 type: string
-              description:
+              descriptions:
                 type: string
               members:
                 type: integer
@@ -312,12 +340,12 @@ components:
       type: object
       required:
         - "title"
-        - "description"
+        - "descriptions"
         - "logo"
       properties:
         title:
           type: string
-        description:
+        descriptions:
           type: string
         logo:
           type: string
@@ -327,7 +355,7 @@ components:
       properties:
         title:
           type: string
-        description:
+        descriptions:
           type: string
         logo:
           type: string
@@ -340,7 +368,7 @@ components:
           format: binary
         title:
           type: string
-        description:
+        descriptions:
           type: string
         members:
           type: integer
@@ -358,12 +386,14 @@ components:
     listcommunityevent:
       type: object
       properties:
+        id:
+          type: integer
         logo:
           type: string
           format: binary
         title:
           type: string
-        description:
+        descriptions:
           type: string
         members:
           type: integer
@@ -384,12 +414,40 @@ components:
               price:
                 type: string
     memberschema:
-          type: array
-          items:
-            type: string
+      type: array
+      items:
+        type: string
+    makeevent:
+      type: object
+      properties:
+        title:
+          type: string
+        descriptions:
+          type: string
+        date_event:
+          type: string
+        price:
+          type: integer
+        location:
+          type: string
+    eventdetail:
+      type: object
+      properties:
+        title:
+          type: string
+        descriptions:
+          type: string
+        penyelenggara:
+          type: string
+        location:
+          type: string
+        date_event:
+          type: string
+        partisipasi:
+          type: integer
+        price:
+          type: integer
 
-              
-        
 
 
 
@@ -444,7 +502,7 @@ components:
             $ref: "#/components/schemas/addcommunity"
           example:
               title: Pengendali Api
-              description: Kami adalah pengendali api
+              descriptions: Kami adalah pengendali api
               logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
         multipart/form-data:
           schema:
@@ -458,7 +516,7 @@ components:
             example1:
               value:
                 title: Pengendali Api
-                description: Kami adalah pengendali api
+                descriptions: Kami adalah pengendali api
                 logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
             example2:
               value:
@@ -466,7 +524,7 @@ components:
             example3:
               value:
                 title: Pengendali Api
-                description: Kami adalah pengendali api
+                descriptions: Kami adalah pengendali api
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/updatecommunity"
@@ -486,7 +544,18 @@ components:
             email:
               value:
                 email: baru@gmail.com
-
+    eventrequestbody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/makeevent"
+          example:
+            title: Anniversary
+            descriptions: Perayaan Ulang Tahun
+            date_event: "2022-10-20 14:30:00"
+            price: 250000
+            location: Japan
 
 ###########################
 # RESPONSE
@@ -592,14 +661,14 @@ components:
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/cryo_200.png,
                   title: Genshin Players,
                   members: 20313,
-                  description: Ini adalah community untuk para player genshin
+                  descriptions: Ini adalah community untuk para player genshin
                 },
                 {
                   id: 2,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/dendro_200.png,
                   title: Penggmar Tanaman,
                   members: 2003,
-                  description: Selamat datang .............
+                  descriptions: Selamat datang .............
                 }
               ]          
     failedgetcommunity:
@@ -646,7 +715,7 @@ components:
               value:
                 logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                 title: Pengendali Api
-                description: Kumpulan para pengendali api
+                descriptions: Kumpulan para pengendali api
                 members: 5
                 feed: [
                         {
@@ -674,16 +743,18 @@ components:
                 description: Kumpulan para pengendali api
                 members: 5
                 event: [{
+                        id: 2,
                         logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                         title: Anniversary 2,
-                        description: Anniversary kedua Geshin Impact,
+                        descriptions: Anniversary kedua Geshin Impact,
                         date: "2022-12-01 15:04:05",
                         price: 250000
                         },
                         {
+                        id: 5,
                         logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                         title: Perayaan Tahun Baru,
-                        description: Penyelenggaraan sebuah acara yang ...,
+                        descriptions: Penyelenggaraan sebuah acara yang ...,
                         date: "2023-01-01 00:00:01",
                         price: 1000000
                         }
@@ -700,8 +771,24 @@ components:
               "Ayaka",
               "Eula",
               "Nahida",
-              "Keqing",
+              "Keqing"
             ]
+    eventdetail:
+      description: Ini untuk Halaman Event
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/eventdetail"
+          examples:
+            example1:
+              value:
+                title: Anniversary
+                descriptions: Perayaan ulang tahun yang ke 1000
+                penyelenggara: XXX
+                date_event: "2022-10-20 14:30:00"
+                partisipasi: 34
+                price: 250000
+
 
 ###########################
 # PARAMETER
