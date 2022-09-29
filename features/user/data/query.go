@@ -27,3 +27,14 @@ func (repo *userData) InsertUser(data user.CoreUser) int {
 	return 1
 
 }
+
+func (repo *userData) DelUser(id int) int {
+
+	tx := repo.db.Where("id = ? ", id).Delete(&User{})
+	if tx.Error != nil {
+		return -1
+	}
+
+	return 1
+
+}

@@ -7,8 +7,8 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/nawihusen/Capstone/1.0.0
-  # - description: 
-  #   url: 
+  # - description:
+  #   url:
 tags:
   - name: Login
     description: Login Page
@@ -24,11 +24,13 @@ tags:
     description: Community Feed Page
   - name: Community Store
     description: Community Store Page
+  - name: Join
+    description: Join Event or Community Page
 
 paths:
-############################
-# GET TOKEN
-###########################
+  ############################
+  # GET TOKEN
+  ###########################
   /login:
     post:
       tags:
@@ -41,10 +43,10 @@ paths:
           $ref: "#/components/responses/loginSuccess"
         "400":
           $ref: "#/components/responses/loginFailed"
-##########################
-# REGISTER
-##########################
-  /signup:
+  ##########################
+  # REGISTER
+  ##########################
+  /register:
     post:
       tags:
         - Sign Up
@@ -56,9 +58,9 @@ paths:
           $ref: "#/components/responses/successOperationNonData"
         "400":
           $ref: "#/components/responses/failedsign"
-##########################
-# USER
-##########################
+  ##########################
+  # USER
+  ##########################
   /user/profile:
     get:
       tags:
@@ -66,7 +68,7 @@ paths:
       summary: Profile User
       description: Berisi berbagai data yang di miliki oleh user
       responses:
-        "200": 
+        "200":
           $ref: "#/components/responses/getprofile"
         "400":
           $ref: "#/components/responses/failedresponse"
@@ -92,14 +94,20 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-#########################
-# COMMUNITY
-#########################
+  #########################
+  # COMMUNITY
+  #########################
   /community:
     get:
       tags:
         - "Community"
       summary: List Community
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: query param untuk mencari community by title
       description: Berisi list community yang terdaftar
       responses:
         "200":
@@ -110,7 +118,7 @@ paths:
       tags:
         - "Community"
       summary: Add Community
-      description: User akan membuat sebuah community 
+      description: User akan membuat sebuah community
       requestBody:
         $ref: "#/components/requestBodies/requestBodyCommunity"
       responses:
@@ -153,7 +161,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       requestBody:
-        $ref:  "#/components/requestBodies/updaterequestBodyCommunity"
+        $ref: "#/components/requestBodies/updaterequestBodyCommunity"
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
@@ -171,14 +179,47 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse"
-################################
-# EVENT
-################################
-  /community/{id}/event:        
+  #########################
+  # JOIN
+  #########################
+  /join/community/{communityid}:
+    post:
+      tags:
+        - "Join"
+      summary: Join To Community
+      description: user melakukan join ke sebuah community
+      responses:
+        "200":
+          $ref: "#/components/responses/successOperationNonData"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
+  ################################
+  # EVENT
+  ################################
+  /event:
     get:
       tags:
         - "Community Event"
-      summary: Go To Communities event
+      summary: Go To Event List
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: query param untuk mencari event by title
+      description: Memasuki page semua event list
+      responses:
+        "200":
+          $ref: "#/components/responses/communiteventlist"
+        "400":
+          $ref: "#/components/responses/failedresponse"
+
+  /community/{id}/event:
+    get:
+      tags:
+        - "Community Event"
+      summary: Go To Communities Event
       description: Memasuki page event yang di adakan oleh community yang bersangkutan
       responses:
         "200":
@@ -189,8 +230,8 @@ paths:
       tags:
         - "Community Event"
       summary: Add An Event In Community
-      description: Menambahkan event pada sebuah community 
-      requestBody: 
+      description: Menambahkan event pada sebuah community
+      requestBody:
         $ref: "#/components/requestBodies/eventrequestbody"
       responses:
         "200":
@@ -208,18 +249,47 @@ paths:
         "200":
           $ref: "#/components/responses/eventdetail"
         "400":
-          $ref: "#/components/responses/failedresponse"        
+          $ref: "#/components/responses/failedresponse"
 
-        
+  ################################
+  # FEED
+  ################################
+  /community/{communityid}/feed:
+    post:
+      tags:
+        - "Community Feed"
+      summary: add feed in community
+      description: Menambahkan feed pada community
+      requestBody:
+        $ref: "#/components/requestBodies/feedrequestbody"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
+  /feed/{id}:
+    get:
+      tags:
+        - "Community Feed"
+      summary: get feed details
+      description: Menampilkan Feed serta Comment Feed
+      parameters:
+        - $ref: "#/components/parameters/ParamFeedId"
+      responses:
+        "200":
+          $ref: "#/components/responses/feed"
+        "400":
+          $ref: "#/components/responses/failedresponse"
 
-        
-
+################################
+# STORE
+################################
 
 components:
-##########################
-# SCHEMA
-###########################
+  ##########################
+  # SCHEMA
+  ###########################
   schemas:
     requestDataLogin:
       type: object
@@ -337,7 +407,7 @@ components:
               status:
                 enum:
                   - member
-                  - admin              
+                  - admin
     addcommunity:
       type: object
       required:
@@ -437,6 +507,8 @@ components:
       properties:
         title:
           type: string
+        status:
+          type: string
         descriptions:
           type: string
         penyelenggara:
@@ -449,9 +521,25 @@ components:
           type: integer
         price:
           type: integer
-
-
-
+    makefeed:
+      type: object
+      properties:
+        text:
+          type: string
+    feeddetail:
+      type: object
+      properties:
+        name:
+          type: string
+        text:
+          type: string
+        date:
+          type: string
+    joinevent:
+      type: object
+      properties:
+        payment_method:
+          type: string
 
     responseNonData:
       type: object
@@ -461,10 +549,9 @@ components:
         message:
           type: string
 
-
-###########################
-# REQUEST BODY
-###########################
+  ###########################
+  # REQUEST BODY
+  ###########################
   requestBodies:
     requestBodyLogin:
       required: true
@@ -503,9 +590,9 @@ components:
           schema:
             $ref: "#/components/schemas/addcommunity"
           example:
-              title: Pengendali Api
-              descriptions: Kami adalah pengendali api
-              logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
+            title: Pengendali Api
+            descriptions: Kami adalah pengendali api
+            logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/addcommunity"
@@ -558,10 +645,26 @@ components:
             date_event: "2022-10-20 14:30:00"
             price: 250000
             location: Japan
+    feedrequestbody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/makefeed"
+          example:
+            text: hari ini cuaca cerah
+    joineventrequestbody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/joinevent"
+          example:
+            payment_method: "gopay"
 
-###########################
-# RESPONSE
-###########################
+  ###########################
+  # RESPONSE
+  ###########################
   responses:
     failedresponse:
       description: Terjadi Kesalahan
@@ -569,9 +672,9 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
-          example: 
+          example:
             code: 400
-            message: Terjadi Kesalahan 
+            message: Terjadi Kesalahan
     successresponse:
       description: Success Response Data
       content:
@@ -591,19 +694,9 @@ components:
             example1:
               value:
                 code: 200
-                data:
-                  {
-                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
-                  }
-                message: Login Success
-            example2:
-              value:
-                code: 200
-                data:
-                  {
-                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
-                  }
-                message: Login Success
+                access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
+                message: login success
+                status: success
     loginFailed:
       description: Bad Request Response
       content:
@@ -612,11 +705,11 @@ components:
             $ref: "#/components/schemas/responseNonData"
           examples:
             example1:
-              $ref:  "#/components/examples/emailnotregistered"
+              $ref: "#/components/examples/emailnotregistered"
             example2:
-              $ref:  "#/components/examples/invalidPassword"
+              $ref: "#/components/examples/invalidPassword"
             example3:
-              $ref:  "#/components/examples/invalidEmail"
+              $ref: "#/components/examples/invalidEmail"
     successOperationNonData:
       description: Success Response Non Data
       content:
@@ -633,18 +726,18 @@ components:
           schema:
             $ref: "#/components/schemas/responseNonData"
           examples:
-              Email Already Exist:
-                $ref: "#/components/examples/emailAlreadyExist"
-              Nama Cant Blank:
-                $ref: "#/components/examples/nameCantBeEmpty"
-              Username Cant Blank:
-                $ref: "#/components/examples/usernameCantBeEmpty"
-              Gender Cant Blank:
-                $ref: "#/components/examples/genderCantBeEmpty"
-              Email Cant Blank:
-                $ref: "#/components/examples/emailCantBeEmpty"
-              Password Cant Blank:
-                $ref: "#/components/examples/passwordCantBeEmpty"             
+            Email Already Exist:
+              $ref: "#/components/examples/emailAlreadyExist"
+            Nama Cant Blank:
+              $ref: "#/components/examples/nameCantBeEmpty"
+            Username Cant Blank:
+              $ref: "#/components/examples/usernameCantBeEmpty"
+            Gender Cant Blank:
+              $ref: "#/components/examples/genderCantBeEmpty"
+            Email Cant Blank:
+              $ref: "#/components/examples/emailCantBeEmpty"
+            Password Cant Blank:
+              $ref: "#/components/examples/passwordCantBeEmpty"
     successgetlistcommunity:
       description: Mendapatkan list community
       content:
@@ -659,16 +752,16 @@ components:
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/cryo_200.png,
                   title: Genshin Players,
                   members: 20313,
-                  descriptions: Ini adalah community untuk para player genshin
+                  descriptions: Ini adalah community untuk para player genshin,
                 },
                 {
                   id: 2,
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/dendro_200.png,
                   title: Penggmar Tanaman,
                   members: 2003,
-                  descriptions: Selamat datang .............
-                }
-              ]          
+                  descriptions: Selamat datang .............,
+                },
+              ]
     failedgetcommunity:
       description: Tidak bisa mendapatkan list community
       content:
@@ -694,12 +787,12 @@ components:
                 {
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
                   title: Pengendali Api,
-                  status: admin
+                  status: admin,
                 },
                 {
                   logo: https://www.gensh.in/fileadmin/Content/Game/Elements/hydro_200.png,
                   title: Pengendali Air,
-                  status: member
+                  status: member,
                 },
               ]
     community:
@@ -715,18 +808,19 @@ components:
                 title: Pengendali Api
                 descriptions: Kumpulan para pengendali api
                 members: 5
-                feed: [
-                        {
-                          name: Diluc,
-                          text: Melakukan Pencarian Harta Karun,
-                          date: "2006-01-02 15:04:05"
-                        },
-                        {
-                          name: Amber,
-                          text: Berpatroli di sekitar,
-                          date: "2022-01-02 12:12:12"
-                        }
-                      ]
+                feed:
+                  [
+                    {
+                      name: Diluc,
+                      text: Melakukan Pencarian Harta Karun,
+                      date: "2006-01-02 15:04:05",
+                    },
+                    {
+                      name: Amber,
+                      text: Berpatroli di sekitar,
+                      date: "2022-01-02 12:12:12",
+                    },
+                  ]
     communiteventlist:
       description: ini adalah list event yang di adakan oleh community
       content:
@@ -740,37 +834,32 @@ components:
                 title: Pengendali Api
                 description: Kumpulan para pengendali api
                 members: 5
-                event: [{
-                        id: 2,
-                        logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
-                        title: Anniversary 2,
-                        descriptions: Anniversary kedua Geshin Impact,
-                        date: "2022-12-01 15:04:05",
-                        price: 250000
-                        },
-                        {
-                        id: 5,
-                        logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
-                        title: Perayaan Tahun Baru,
-                        descriptions: Penyelenggaraan sebuah acara yang ...,
-                        date: "2023-01-01 00:00:01",
-                        price: 1000000
-                        }
-                      ]
+                event:
+                  [
+                    {
+                      id: 2,
+                      logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                      title: Anniversary 2,
+                      descriptions: Anniversary kedua Geshin Impact,
+                      date: "2022-12-01 15:04:05",
+                      price: 250000,
+                    },
+                    {
+                      id: 5,
+                      logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
+                      title: Perayaan Tahun Baru,
+                      descriptions: Penyelenggaraan sebuah acara yang ...,
+                      date: "2023-01-01 00:00:01",
+                      price: 1000000,
+                    },
+                  ]
     members:
       description: ini adalah list member yang ada di community ini
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/memberschema"
-          example:
-            [
-              "Yelan",
-              "Ayaka",
-              "Eula",
-              "Nahida",
-              "Keqing"
-            ]
+          example: ["Yelan", "Ayaka", "Eula", "Nahida", "Keqing"]
     eventdetail:
       description: Ini untuk Halaman Event
       content:
@@ -781,16 +870,49 @@ components:
             example1:
               value:
                 title: Anniversary
+                status: join
                 descriptions: Perayaan ulang tahun yang ke 1000
                 penyelenggara: XXX
                 date_event: "2022-10-20 14:30:00"
                 partisipasi: 34
                 price: 250000
-
-
-###########################
-# PARAMETER
-##########################
+            example2:
+              value:
+                title: Anniversary
+                status: not join
+                descriptions: Perayaan ulang tahun yang ke 1000
+                penyelenggara: XXX
+                date_event: "2022-10-20 14:30:00"
+                partisipasi: 34
+                price: 250000
+    feed:
+      description: Data yang akan di tampilakan saat user melihat sebuah community
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/feeddetail"
+          examples:
+            example1:
+              value:
+                name: Rendi
+                text: Cuaca cerah
+                date: "26 januari"
+                comment:
+                  [
+                    {
+                      name: Diluc,
+                      text: Melakukan Pencarian Harta Karun,
+                      date: "15 februari",
+                    },
+                    {
+                      name: Amber,
+                      text: Berpatroli di sekitar,
+                      date: "19 februari",
+                    },
+                  ]
+  ###########################
+  # PARAMETER
+  ##########################
   parameters:
     ParamId:
       name: id
@@ -806,18 +928,25 @@ components:
       schema:
         type: integer
         example: 1
-##########################
-# JWT AUTH
-###########################
+    ParamFeedId:
+      name: communityid
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+  ##########################
+  # JWT AUTH
+  ###########################
   securitySchemes:
     JWTAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
       description: "use Token"
-##########################
-# EXAMPLE
-##########################
+  ##########################
+  # EXAMPLE
+  ##########################
   examples:
     badRequest:
       value:
