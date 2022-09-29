@@ -28,12 +28,24 @@ type Response struct {
 	Price        int64     `json:"price"`
 }
 
+type CommunityEvent struct {
+	ID          uint       `json:"id"`
+	Role        string     `json:"role"`
+	Logo        string     `json:"logo"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Count       int64      `json:"members"`
+	Event       []Response `json:"event"`
+}
+
 type DataInterface interface {
 	InsertEvent(EventCore, int) int
 	SelectEvent(string) ([]Response, error)
+	SelectEventComu(search string, idComu, userId int) (CommunityEvent, error)
 }
 
 type UsecaseInterface interface {
 	PostEvent(EventCore, int) int
 	GetEvent(string) ([]Response, error)
+	GetEventComu(search string, idComu, userId int) (CommunityEvent, error)
 }
