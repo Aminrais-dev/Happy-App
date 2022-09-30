@@ -230,6 +230,8 @@ paths:
       summary: Join To Community
       security:
         - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ParamCommunityId"
       description: user melakukan join ke sebuah community
       responses:
         "200":
@@ -243,7 +245,9 @@ paths:
       summary: Join To Community
       security:
         - JWTAuth: []
-      description: user melakukan join ke sebuah community
+      requestBody: 
+        $ref: "#/components/requestBodies/paymentmethod"
+      description: user melakukan join ke sebuah event menggunakan id event
       parameters:
         - $ref: "#/components/parameters/ParamId"
       responses:
@@ -373,7 +377,7 @@ paths:
   ################################
   # STORE
   ################################
-  /community/store/{communityid}:
+  /community/{communityid}/store:
     get:
       tags:
         - "Community Store"
@@ -496,6 +500,24 @@ paths:
           $ref: "#/components/responses/successresponse"
         "400":
           $ref: "#/components/responses/failedresponse" 
+  /checkout:
+    post:
+      tags:
+        - "Cart"
+      summary: Checkout Item
+      description: Melakukan checkout pada item yang ada di cart
+      security:
+        - JWTAuth: []
+      requestBody: 
+        $ref: "#/components/requestBodies/bodycheckout"
+      responses:
+        "200":
+          $ref: "#/components/responses/successresponse"
+        "400":
+          $ref: "#/components/responses/failedresponse" 
+
+
+  
 
 ####################################
 # COMPONENTS
@@ -696,6 +718,8 @@ components:
           items:
             type: object
             properties:
+              location:
+                type: string
               logo:
                 type: string
                 format: binary
@@ -892,6 +916,24 @@ components:
           type: integer
         message:
           type: string
+    bayarevent:
+      type: object
+      properties:
+        type_payment:
+          type: string
+    checkout:
+      type: object
+      properties:
+        cartid:
+          type: array
+        street:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        type_payment:
+          type: string
 
   ###########################
   # REQUEST BODY
@@ -1041,6 +1083,40 @@ components:
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/schemaaddproduct"
+    paymentmethod:
+      content:
+        application/json: 
+          schema:
+            $ref: "#/components/schemas/bayarevent"
+          examples:
+            example1:
+              value:
+                type_payment: GOPAY
+            example2:
+              value:
+                type_payment: BCA Virtual Account
+    bodycheckout:
+      content: 
+        application/json:
+          schema:
+            $ref: "#/components/schemas/checkout"
+          examples:
+            example1:
+              value:
+                cartid: [1,4,5,7]
+                street: jalan raya
+                city: Malang
+                province: Jawa
+                type_payment: GOPAY
+            example2:
+              value:
+                cartid: [2]
+                street: jalan baru
+                city: amuntai
+                province: kalimantan selatan
+                type_payment: BCA Virtual Account
+
+            
 
   ###########################
   # RESPONSE
@@ -1231,6 +1307,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
+                      location: japan
                     },
                     {
                       id: 5,
@@ -1240,6 +1317,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
+                      location: warung
                     },
                   ]
     members:
@@ -1265,6 +1343,7 @@ components:
                 date_event: "2022-10-20 14:30:00"
                 partisipasi: 34
                 price: 250000
+                location: Japan
             example2:
               value:
                 title: Anniversary
@@ -1274,6 +1353,7 @@ components:
                 date_event: "2022-10-20 14:30:00"
                 partisipasi: 34
                 price: 250000
+                location: Malang
     feed:
       description: Data yang akan di tampilakan saat user melihat sebuah community
       content:
@@ -1359,6 +1439,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
+                      location: japan
                     },
                     {
                       id: 5,
@@ -1368,6 +1449,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
+                      location: cafe nama
                     },
                   ]
     cartuser:
