@@ -38,3 +38,14 @@ func (usecase *productUsecase) UpdateProduct(data product.ProductCore, userId in
 	return row
 
 }
+
+func (usecase *productUsecase) GetProduct(idProduct, userId int) (product.Comu, product.ProductCore, error) {
+
+	dataComu, dataProduct, err := usecase.productData.SelectProduct(idProduct, userId)
+	if err != nil {
+		return dataComu, dataProduct, err
+	}
+
+	return dataComu, dataProduct, nil
+
+}

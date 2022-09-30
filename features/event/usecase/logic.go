@@ -37,7 +37,7 @@ func (usecase *usecaseEvent) GetEventComu(search string, idComu, userId int) (ev
 
 	data, err := usecase.eventData.SelectEventComu(search, idComu, userId)
 	if err != nil {
-		return event.CommunityEvent{}, err
+		return data, err
 	}
 
 	return data, nil
@@ -47,7 +47,7 @@ func (usecase *usecaseEvent) GetEventDetail(idEvent, userId int) (event.EventDet
 
 	data, err := usecase.eventData.SelectEventDetail(idEvent, userId)
 	if err != nil {
-		return event.EventDetail{}, err
+		return data, err
 	}
 
 	return data, nil
