@@ -19,9 +19,17 @@ import (
 	eventData "capstone/happyApp/features/event/data"
 	eventDelivery "capstone/happyApp/features/event/delivery"
 	eventUsecase "capstone/happyApp/features/event/usecase"
+
+	productData "capstone/happyApp/features/product/data"
+	productDelivery "capstone/happyApp/features/product/delivery"
+	productUsecase "capstone/happyApp/features/product/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
+
+	productDataFactory := productData.New(db)
+	productUsecaseFactory := productUsecase.New(productDataFactory)
+	productDelivery.New(e, productUsecaseFactory)
 
 	eventDataFactory := eventData.New(db)
 	eventUsecaseFactory := eventUsecase.New(eventDataFactory)
