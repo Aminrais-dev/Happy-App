@@ -32,3 +32,11 @@ func (req *Request) ToCoreWithId(communityid int) community.CoreCommunity {
 		Logo:         req.Logo,
 	}
 }
+
+func (feed *FeedRequst) ToCore(userid, communityid int) community.CoreFeed {
+	return community.CoreFeed{
+		UserID:      uint(userid),
+		CommunityID: uint(communityid),
+		Text:        feed.Text,
+	}
+}

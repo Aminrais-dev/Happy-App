@@ -25,10 +25,11 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 	e.GET("/community", handler.ListCommunity)                                                          // selesai
 	e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())                             // selesai
 	e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware()) // selesai
-	e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           //belum di test
 	e.PUT("/community/:communityid", handler.UpdateCommunity, middlewares.JWTMiddleware())              // selesai
 	e.DELETE("/community/:communityid", handler.OutFromCommunity, middlewares.JWTMiddleware())          // selesai
 	e.POST("/join/community/:communityid", handler.JoinCommunity, middlewares.JWTMiddleware())          // selesai
+	e.POST("/community/:communityid/feed", handler.AddFeed, middlewares.JWTMiddleware())                // selesai
+	e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           // selesai
 }
 
 func (user *Delivery) AddCommunity(c echo.Context) error {
@@ -178,5 +179,27 @@ func (user *Delivery) GetDetailCommunity(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper(msg))
 
 	}
-	return c.JSON(200, helper.SuccessDataResponseHelper(msg, data))
+
+	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseWithFeed(data)))
+}
+
+func (user *Delivery) AddFeed(c echo.Context) error {
+	userid := middlewares.ExtractToken(c)
+	communityid, err := strconv.Atoi(c.Param("communityid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+
+	var feed FeedRequst
+	errb := c.Bind(&feed)
+	if errb != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+	}
+
+	msg, errs := user.From.PostFeed(feed.ToCore(userid, communityid))
+	if errs != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper(msg))
 }

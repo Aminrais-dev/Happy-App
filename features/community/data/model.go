@@ -84,16 +84,29 @@ func ToCoreList(data []Community) []community.CoreCommunity {
 	return list
 }
 
-// func ToCoreWithFeed(data Community) community.CoreCommunity {
-// 	var feed []community.CoreFeed
-// 	for _,v := range data.Feeds{
-// 		feed = append(feed, )
-// 	}
+func ToModelFeed(data community.CoreFeed) Feed {
+	return Feed{
+		UserID:      data.UserID,
+		CommunityID: data.CommunityID,
+		Text:        data.Text,
+	}
+}
 
-// 	return community.CoreCommunity{
-// 		ID:           data.ID,
-// 		Title:        data.Title,
-// 		Descriptions: data.Descriptions,
-// 		Logo:         data.Logo,
-// 	}
-// }
+func ToCoreFeed(data Feed, name string) community.CoreFeed {
+	return community.CoreFeed{
+		Name: name,
+		Text: data.Text,
+		Date: data.CreatedAt,
+	}
+}
+
+func ToCoreWithFeed(data Community, sum int64, feeds []community.CoreFeed) community.CoreCommunity {
+	return community.CoreCommunity{
+		ID:           data.ID,
+		Title:        data.Title,
+		Descriptions: data.Descriptions,
+		Logo:         data.Logo,
+		Members:      sum,
+		Feeds:        feeds,
+	}
+}

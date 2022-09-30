@@ -4,7 +4,6 @@ import (
 	"capstone/happyApp/features/community"
 	user "capstone/happyApp/features/user/data"
 	"errors"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -125,13 +124,41 @@ func (storage *Storage) InsertToJoin(userid, communityid int) (string, error) {
 	return "Sukses Begabung Ke Community", nil
 }
 
+func (storage *Storage) InsertFeed(core community.CoreFeed) (string, error) {
+	feed := ToModelFeed(core)
+	tx := storage.query.Create(&feed)
+	if tx.Error != nil {
+		return "Gagal menambahkan Feed", tx.Error
+	}
+
+	return "Sukses Menambahkan Feed", nil
+}
+
 func (storage *Storage) SelectCommunity(communityid int) (community.CoreCommunity, string, error) {
 	var get Community
 	tx := storage.query.Preload("Feeds").Find(&get, "id = ?", communityid)
 	if tx.Error != nil {
 		return community.CoreCommunity{}, "Gagal Ke database", tx.Error
 	}
-	fmt.Println(get)
 
-	return community.CoreCommunity{}, "Sukses mendapat Data", nil
+	//harusnya bisa bikin interface sendiri
+	var sum int64
+	Count := storage.query.Model(&JoinCommunity{}).Where("community_id = ?", communityid).Count(&sum)
+	if Count.Error != nil {
+		return community.CoreCommunity{}, "Terjadi Kesalahan Saat Menghitung Member", Count.Error
+	}
+
+	var corefeed []community.CoreFeed
+	for _, v := range get.Feeds {
+		var name user.User
+		tx1 := storage.query.Find(&name, "id = ?", v.UserID)
+		if tx1.Error != nil {
+			return community.CoreCommunity{}, "Gagal Pada Pengambilan Nama", tx1.Error
+		}
+		corefeed = append(corefeed, ToCoreFeed(v, name.Name))
+	}
+
+	last := ToCoreWithFeed(get, sum, corefeed)
+
+	return last, "Sukses mendapat Data", nil
 }
