@@ -25,6 +25,7 @@ func New(e *echo.Echo, data product.UsecaseInterface) {
 	e.POST("/community/:id/store", handler.PostNewProduct, middlewares.JWTMiddleware())
 	e.DELETE("/store/:id", handler.DeleteProductCommunity, middlewares.JWTMiddleware())
 	e.PUT("/store/:id", handler.UpdateProductCommunity, middlewares.JWTMiddleware())
+	e.GET("/store/:id", handler.GetProductDetail, middlewares.JWTMiddleware())
 
 }
 
@@ -168,5 +169,25 @@ func (delivery *productDelivery) UpdateProductCommunity(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper("success update product"))
+
+}
+
+func (delivery *productDelivery) GetProductDetail(c echo.Context) error {
+
+	userId := middlewares.ExtractToken(c)
+	id := c.Param("id")
+	idProduct, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(400, "param must be number")
+	}
+
+	dataComu, dataProduct, err := delivery.productUsecase.GetProduct(idProduct, userId)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Failed get product detail"))
+	} else if dataProduct.ID != uint(idProduct) {
+		return c.JSON(404, helper.FailedResponseHelper("product not found"))
+	}
+
+	return c.JSON(200, ResponseDetail(dataComu, dataProduct))
 
 }
