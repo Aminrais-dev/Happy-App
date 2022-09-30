@@ -14,4 +14,6 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(communityModel.JoinCommunity{})
 	db.AutoMigrate(eventModel.Event{})
 	db.AutoMigrate(eventModel.JoinEvent{})
+	db.AutoMigrate(communityModel.Feed{})
+	db.AutoMigrate(communityModel.Comment{})
 }

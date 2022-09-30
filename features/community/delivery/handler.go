@@ -22,11 +22,13 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 	handler := &Delivery{
 		From: data,
 	}
-	e.GET("/community", handler.ListCommunity)
-	e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware())
-	e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())
-	e.PUT("/community/:communityid", handler.UpdateCommunity, middlewares.JWTMiddleware())
-	e.DELETE("/community/:communityid", handler.OutFromCommunity, middlewares.JWTMiddleware())
+	e.GET("/community", handler.ListCommunity)                                                          // selesai
+	e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())                             // selesai
+	e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware()) // selesai
+	e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           //belum di test
+	e.PUT("/community/:communityid", handler.UpdateCommunity, middlewares.JWTMiddleware())              // selesai
+	e.DELETE("/community/:communityid", handler.OutFromCommunity, middlewares.JWTMiddleware())          // selesai
+	e.POST("/join/community/:communityid", handler.JoinCommunity, middlewares.JWTMiddleware())          // selesai
 }
 
 func (user *Delivery) AddCommunity(c echo.Context) error {
@@ -82,7 +84,7 @@ func (user *Delivery) ListCommunity(c echo.Context) error {
 func (user *Delivery) ListMembersCommunity(c echo.Context) error {
 	communityid, err := strconv.Atoi(c.Param("communityid"))
 	if err != nil {
-		c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
 	members, msg, errs := user.From.GetMembers(communityid)
 	if errs != nil {
@@ -96,7 +98,7 @@ func (user *Delivery) OutFromCommunity(c echo.Context) error {
 	userid := middlewares.ExtractToken(c)
 	communityid, err := strconv.Atoi(c.Param("communityid"))
 	if err != nil {
-		c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
 
 	msg, errs := user.From.Leave(userid, communityid)
@@ -111,7 +113,7 @@ func (user *Delivery) UpdateCommunity(c echo.Context) error {
 	userid := middlewares.ExtractToken(c)
 	communityid, err := strconv.Atoi(c.Param("communityid"))
 	if err != nil {
-		c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
 
 	var reqcom Request
@@ -150,4 +152,31 @@ func (user *Delivery) UpdateCommunity(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper(msg))
+}
+
+func (user *Delivery) JoinCommunity(c echo.Context) error {
+	userid := middlewares.ExtractToken(c)
+	communityid, err := strconv.Atoi(c.Param("communityid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+	msg, er := user.From.JoinCommunity(userid, communityid)
+	if er != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper(msg))
+}
+
+func (user *Delivery) GetDetailCommunity(c echo.Context) error {
+	communityid, err := strconv.Atoi(c.Param("communityid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+	data, msg, errs := user.From.GetCommunityFeed(communityid)
+	if errs != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+
+	}
+	return c.JSON(200, helper.SuccessDataResponseHelper(msg, data))
 }
