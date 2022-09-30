@@ -43,6 +43,7 @@ type DataInterface interface {
 	CheckJoin(userid, communityid int) (string, error)
 	InsertFeed(CoreFeed) (string, error)
 	SelectCommunity(communityid int) (CoreCommunity, string, error)
+	SelectFeed(feedid int) (CoreFeed, string, error)
 }
 
 type UsecaseInterface interface {
@@ -54,4 +55,5 @@ type UsecaseInterface interface {
 	JoinCommunity(userid, communityid int) (string, error)
 	PostFeed(CoreFeed) (string, error)
 	GetCommunityFeed(communityid int) (CoreCommunity, string, error)
+	GetDetailFeed(feedid int) (CoreFeed, string, error)
 }

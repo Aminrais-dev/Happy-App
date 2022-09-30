@@ -110,3 +110,20 @@ func ToCoreWithFeed(data Community, sum int64, feeds []community.CoreFeed) commu
 		Feeds:        feeds,
 	}
 }
+
+func ToCoreComment(data Comment, name string) community.CoreComment {
+	return community.CoreComment{
+		Name: name,
+		Text: data.Text,
+		Date: data.CreatedAt,
+	}
+}
+
+func ToCoreWithComment(data Feed, name string, comment []community.CoreComment) community.CoreFeed {
+	return community.CoreFeed{
+		Name:     name,
+		Text:     data.Text,
+		Date:     data.CreatedAt,
+		Comments: comment,
+	}
+}
