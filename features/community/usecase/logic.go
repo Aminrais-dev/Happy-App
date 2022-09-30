@@ -66,3 +66,8 @@ func (service *Service) PostFeed(core community.CoreFeed) (string, error) {
 	msg, err := service.do.InsertFeed(core)
 	return msg, err
 }
+
+func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, error) {
+	core, msg, err := service.do.SelectFeed(feedid)
+	return core, msg, err
+}

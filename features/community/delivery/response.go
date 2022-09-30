@@ -89,3 +89,29 @@ func GetDateHour(data time.Time) string {
 	jam := time[11:19]
 	return tanggal + " " + jam
 }
+
+func ToResponseComment(data community.CoreComment) ResponseComment {
+	return ResponseComment{
+		Name: data.Name,
+		Text: data.Text,
+		Date: GetDateHour(data.Date),
+	}
+}
+
+func ToResponseCommentList(data []community.CoreComment) []ResponseComment {
+	var list []ResponseComment
+	for _, v := range data {
+		list = append(list, ToResponseComment(v))
+	}
+
+	return list
+}
+
+func ResponseFeedWithComment(core community.CoreFeed) ResponseFeed {
+	return ResponseFeed{
+		Name:     core.Name,
+		Text:     core.Text,
+		Date:     GetDateHour(core.Date),
+		Comments: ToResponseCommentList(core.Comments),
+	}
+}

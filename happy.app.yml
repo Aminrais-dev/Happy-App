@@ -356,7 +356,7 @@ paths:
         "400":
           $ref: "#/components/responses/failedresponse"
 
-  /feed/comment/{feedid}:
+  /feed/{feedid}/comment:
     post:
       tags:
         - "Community Feed"

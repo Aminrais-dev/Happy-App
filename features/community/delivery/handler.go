@@ -30,6 +30,8 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 	e.POST("/join/community/:communityid", handler.JoinCommunity, middlewares.JWTMiddleware())          // selesai
 	e.POST("/community/:communityid/feed", handler.AddFeed, middlewares.JWTMiddleware())                // selesai
 	e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           // selesai
+	e.GET("/feed/:feedid", handler.GetDetailFeed, middlewares.JWTMiddleware())                          // belum di test
+
 }
 
 func (user *Delivery) AddCommunity(c echo.Context) error {
@@ -202,4 +204,17 @@ func (user *Delivery) AddFeed(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper(msg))
+}
+
+func (user *Delivery) GetDetailFeed(c echo.Context) error {
+	feedid, err := strconv.Atoi(c.Param("feedid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+	feed, msg, ers := user.From.GetDetailFeed(feedid)
+	if ers != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseFeedWithComment(feed)))
 }
