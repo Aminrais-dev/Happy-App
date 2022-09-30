@@ -51,3 +51,21 @@ func (repo *productData) DelProduct(idProduct, userId int) int {
 	return 1
 
 }
+
+func (repo *productData) UpdtProduct(data product.ProductCore, userId int) int {
+
+	var check string
+	repo.db.Model(&Community{}).Select("join_communities.role").Joins("inner join products on products.community_id = communities.id").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("products.id = ? AND join_communities.user_id = ? ", data.ID, userId).Scan(&check)
+	if check != "admin" {
+		return -2
+	}
+
+	var newData = fromCore(data)
+	tx := repo.db.Model(&Product{}).Where("id = ? ", int(data.ID)).Updates(newData)
+	if tx.Error != nil {
+		return -1
+	}
+
+	return 1
+
+}

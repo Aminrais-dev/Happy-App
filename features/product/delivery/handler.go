@@ -24,6 +24,7 @@ func New(e *echo.Echo, data product.UsecaseInterface) {
 
 	e.POST("/community/:id/store", handler.PostNewProduct, middlewares.JWTMiddleware())
 	e.DELETE("/store/:id", handler.DeleteProductCommunity, middlewares.JWTMiddleware())
+	e.PUT("/store/:id", handler.UpdateProductCommunity, middlewares.JWTMiddleware())
 
 }
 
@@ -56,7 +57,7 @@ func (delivery *productDelivery) PostNewProduct(c echo.Context) error {
 			}
 
 			waktu := fmt.Sprintf("%v", time.Now())
-			imageName := strconv.Itoa(userId) + "_" + newData.Name + waktu + "." + ext
+			imageName := strconv.Itoa(idComu) + "_" + newData.Name + waktu + "." + ext
 
 			imageaddress, errupload := helper.UploadFileToS3(config.DirImage, imageName, config.FileImageType, fileData)
 			if errupload != nil {
@@ -83,13 +84,12 @@ func (delivery *productDelivery) PostNewProduct(c echo.Context) error {
 
 func (delivery *productDelivery) DeleteProductCommunity(c echo.Context) error {
 
+	userId := middlewares.ExtractToken(c)
 	id := c.Param("id")
 	idProduct, errConv := strconv.Atoi(id)
 	if errConv != nil {
 		return c.JSON(400, "param must be number")
 	}
-
-	userId := middlewares.ExtractToken(c)
 
 	row := delivery.productUsecase.DeleteProduct(idProduct, userId)
 	if row == -2 {
@@ -99,5 +99,74 @@ func (delivery *productDelivery) DeleteProductCommunity(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper("success delete product"))
+
+}
+
+func (delivery *productDelivery) UpdateProductCommunity(c echo.Context) error {
+
+	userId := middlewares.ExtractToken(c)
+	id := c.Param("id")
+	idProduct, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(400, "param must be number")
+	}
+
+	var dataBind Request
+	err := c.Bind(&dataBind)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	fileData, fileInfo, fileErr := c.Request().FormFile("photo")
+	if fileErr != http.ErrMissingFile || fileErr == nil {
+		ext, errs := helper.CheckFileType(fileInfo.Filename)
+		if errs != nil {
+			return c.JSON(400, helper.FailedResponseHelper("gagal membaca file exetension"))
+		}
+
+		if ext == "jpg" || ext == "png" || ext == "jpeg" {
+			err_size := helper.CheckFileSize(fileInfo.Size, config.FileImageType)
+			if err_size != nil {
+				return c.JSON(400, helper.FailedResponseHelper("image size error"))
+			}
+
+			waktu := fmt.Sprintf("%v", time.Now())
+			imageName := strconv.Itoa(idProduct) + "_" + dataBind.Name + waktu + "." + ext
+
+			imageaddress, errupload := helper.UploadFileToS3(config.DirImage, imageName, config.FileImageType, fileData)
+			if errupload != nil {
+				return c.JSON(400, helper.FailedResponseHelper("failed to upload file"))
+			}
+			dataBind.Photo = imageaddress
+		}
+	}
+
+	var UpdateData product.ProductCore
+	if dataBind.Name != "" {
+		UpdateData.Name = dataBind.Name
+	}
+	if dataBind.Description != "" {
+		UpdateData.Description = dataBind.Description
+	}
+	if dataBind.Photo != "" {
+		UpdateData.Photo = dataBind.Photo
+	}
+	if dataBind.Stock != 0 {
+		UpdateData.Stock = dataBind.Stock
+	}
+	if dataBind.Price != 0 {
+		UpdateData.Price = dataBind.Price
+	}
+
+	UpdateData.ID = uint(idProduct)
+
+	row := delivery.productUsecase.UpdateProduct(UpdateData, userId)
+	if row == -2 {
+		return c.JSON(400, helper.FailedResponseHelper("not have access in community"))
+	} else if row == -1 {
+		return c.JSON(500, helper.FailedResponseHelper("Failed update product"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success update product"))
 
 }
