@@ -24,6 +24,7 @@ type DataInterface interface {
 	DelProduct(idProduct, userId int) int
 	UpdtProduct(ProductCore, int) int
 	SelectProduct(idProduct, userId int) (Comu, ProductCore, error)
+	SelectProductComu(idComu, userId int) (Comu, []ProductCore, error)
 }
 
 type UsecaseInterface interface {
@@ -31,4 +32,5 @@ type UsecaseInterface interface {
 	DeleteProduct(idProduct, userId int) int
 	UpdateProduct(ProductCore, int) int
 	GetProduct(idProduct, userId int) (Comu, ProductCore, error)
+	GetProductComu(idComu, userId int) (Comu, []ProductCore, error)
 }

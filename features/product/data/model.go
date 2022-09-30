@@ -71,3 +71,13 @@ func (data *Product) toCore() product.ProductCore {
 		Price:       data.Price,
 	}
 }
+
+func toListProduct(data []Product) []product.ProductCore {
+
+	var dataProduct []product.ProductCore
+	for key := range data {
+		dataProduct = append(dataProduct, data[key].toCore())
+	}
+
+	return dataProduct
+}
