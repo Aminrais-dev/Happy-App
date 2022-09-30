@@ -1,6 +1,8 @@
 package usecase
 
-import "capstone/happyApp/features/product"
+import (
+	"capstone/happyApp/features/product"
+)
 
 type productUsecase struct {
 	productData product.DataInterface
@@ -19,6 +21,13 @@ func (usecase *productUsecase) PostProduct(data product.ProductCore, userId int)
 	}
 
 	row := usecase.productData.InsertProduct(data, userId)
+	return row
+
+}
+
+func (usecase *productUsecase) DeleteProduct(idProduct, userId int) int {
+
+	row := usecase.productData.DelProduct(idProduct, userId)
 	return row
 
 }

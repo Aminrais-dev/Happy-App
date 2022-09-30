@@ -23,6 +23,8 @@ func New(e *echo.Echo, data product.UsecaseInterface) {
 	}
 
 	e.POST("/community/:id/store", handler.PostNewProduct, middlewares.JWTMiddleware())
+	e.DELETE("/store/:id", handler.DeleteProductCommunity, middlewares.JWTMiddleware())
+
 }
 
 func (delivery *productDelivery) PostNewProduct(c echo.Context) error {
@@ -76,5 +78,26 @@ func (delivery *productDelivery) PostNewProduct(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper("success add product"))
+
+}
+
+func (delivery *productDelivery) DeleteProductCommunity(c echo.Context) error {
+
+	id := c.Param("id")
+	idProduct, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(400, "param must be number")
+	}
+
+	userId := middlewares.ExtractToken(c)
+
+	row := delivery.productUsecase.DeleteProduct(idProduct, userId)
+	if row == -2 {
+		return c.JSON(400, helper.FailedResponseHelper("not have access in community"))
+	} else if row == -1 {
+		return c.JSON(500, helper.FailedResponseHelper("Failed delete product"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success delete product"))
 
 }
