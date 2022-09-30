@@ -74,6 +74,8 @@ paths:
         - "User"
       summary: Profile User
       description: Berisi berbagai data yang di miliki oleh user
+      security:
+        - JWTAuth: []
       responses:
         "200":
           $ref: "#/components/responses/getprofile"
@@ -84,6 +86,8 @@ paths:
         - "User"
       summary: Update User data
       description: Digunakan untuk mengubah data yang dimiliki user
+      security:
+        - JWTAuth: []
       requestBody:
         $ref: "#/components/requestBodies/updateuserrequestbody"
       responses:
@@ -96,6 +100,8 @@ paths:
         - "User"
       summary: Delete User Account
       description: menghapus akun yang dimiliki user
+      security:
+        - JWTAuth: []
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
@@ -109,6 +115,8 @@ paths:
       tags:
         - "Community"
       summary: List Community
+      security:
+        - JWTAuth: []
       parameters:
         - in: query
           name: title
@@ -126,6 +134,8 @@ paths:
         - "Community"
       summary: Add Community
       description: User akan membuat sebuah community
+      security:
+        - JWTAuth: []
       requestBody:
         $ref: "#/components/requestBodies/requestBodyCommunity"
       responses:
@@ -139,6 +149,8 @@ paths:
         - "Community"
       summary: Get All Community Members
       description: digunkan untuk mendapatakan semua user yang ada dalam community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       responses:
@@ -153,6 +165,8 @@ paths:
         - "Community Feed"
       summary: Go to Community Page
       description: masuk ke page community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       responses:
@@ -165,6 +179,8 @@ paths:
         - "Community"
       summary: Update Community
       description: Update community hanya bisa dilakukan oleh admin
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       requestBody:
@@ -179,6 +195,8 @@ paths:
         - "Community"
       summary: Out from A community
       description: Keluar dari sebuah community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamId"
       responses:
@@ -192,6 +210,8 @@ paths:
       tags:
         - "Community"
       summary: Get A Selled Product
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       description: memdapatkan data produck yang di beli oleh user
@@ -208,6 +228,8 @@ paths:
       tags:
         - "Join"
       summary: Join To Community
+      security:
+        - JWTAuth: []
       description: user melakukan join ke sebuah community
       responses:
         "200":
@@ -219,6 +241,8 @@ paths:
       tags:
         - "Join"
       summary: Join To Community
+      security:
+        - JWTAuth: []
       description: user melakukan join ke sebuah community
       parameters:
         - $ref: "#/components/parameters/ParamId"
@@ -236,6 +260,8 @@ paths:
       tags:
         - "Community Event"
       summary: Go To Event List
+      security:
+        - JWTAuth: []
       parameters:
         - in: query
           name: title
@@ -255,6 +281,8 @@ paths:
         - "Community Event"
       summary: Go To Communities Event
       description: Memasuki page event yang di adakan oleh community yang bersangkutan
+      security:
+        - JWTAuth: []
       responses:
         "200":
           $ref: "#/components/responses/communiteventlist"
@@ -265,6 +293,8 @@ paths:
         - "Community Event"
       summary: Add An Event In Community
       description: Menambahkan event pada sebuah community
+      security:
+        - JWTAuth: []
       requestBody:
         $ref: "#/components/requestBodies/eventrequestbody"
       responses:
@@ -279,6 +309,8 @@ paths:
         - "Community Event"
       summary: Go to Event Detail Page
       description: Menampilkan halaman yang memuat event secara rinci
+      security:
+        - JWTAuth: []
       responses:
         "200":
           $ref: "#/components/responses/eventdetail"
@@ -294,6 +326,8 @@ paths:
         - "Community Feed"
       summary: add feed in community
       description: Menambahkan feed pada community
+      security:
+        - JWTAuth: []
       requestBody:
         $ref: "#/components/requestBodies/feedrequestbody"
       responses:
@@ -308,6 +342,8 @@ paths:
         - "Community Feed"
       summary: get feed details
       description: Menampilkan Feed serta Comment Feed
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/FeedId"
       responses:
@@ -321,6 +357,8 @@ paths:
       tags:
         - "Community Feed"
       summary: Add A Comment To A Feed
+      security:
+        - JWTAuth: []
       description: Menambahkan Comment pada sebuah postingan
       parameters:
         - $ref: "#/components/parameters/FeedId"
@@ -340,6 +378,8 @@ paths:
       tags:
         - "Community Store"
       summary: Get List Product Of Community
+      security:
+        - JWTAuth: []
       description: Mendapatkan list dari produk produk yang dimiliki oleh sebuah community
       responses:
         "200":
@@ -351,6 +391,8 @@ paths:
         - "Community Store"
       summary: Add Product in Community
       description: Menambah kan product pada sebuah community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       requestBody:
@@ -367,6 +409,8 @@ paths:
         - "Community Store"
       summary: Detail Product
       description: digunakan untuk melihat detail yang di miliki oleh sebuah product
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       responses:
@@ -379,6 +423,8 @@ paths:
         - "Community Store"
       summary: Update Product
       description: Melakukan update pada sebuah produk yang di miliki oleh community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       requestBody:
@@ -392,6 +438,8 @@ paths:
       tags:
         - "Community Store"
       summary: Delete A Product
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       responses:
@@ -409,6 +457,8 @@ paths:
         - "Cart"
       summary: Get a cart user from a community
       description: mendapatkan list cart user yang ada di suatu community
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamCommunityId"
       responses:
@@ -422,6 +472,8 @@ paths:
         - "Cart"
       summary: Add product to Cart
       description: Menambahkan sebuah barang yang ada di communinty kedalam Cart
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       responses:
@@ -435,6 +487,8 @@ paths:
         - "Cart"
       summary: Delete from cart user
       description: menghapus sebuah barang yang ada di cart
+      security:
+        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/ParamProductId"
       responses:
