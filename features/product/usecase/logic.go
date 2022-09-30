@@ -31,3 +31,10 @@ func (usecase *productUsecase) DeleteProduct(idProduct, userId int) int {
 	return row
 
 }
+
+func (usecase *productUsecase) UpdateProduct(data product.ProductCore, userId int) int {
+
+	row := usecase.productData.UpdtProduct(data, userId)
+	return row
+
+}

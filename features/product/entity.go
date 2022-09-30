@@ -13,9 +13,11 @@ type ProductCore struct {
 type DataInterface interface {
 	InsertProduct(ProductCore, int) int
 	DelProduct(idProduct, userId int) int
+	UpdtProduct(ProductCore, int) int
 }
 
 type UsecaseInterface interface {
 	PostProduct(ProductCore, int) int
 	DeleteProduct(idProduct, userId int) int
+	UpdateProduct(ProductCore, int) int
 }
