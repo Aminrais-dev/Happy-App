@@ -34,3 +34,20 @@ func (repo *productData) InsertProduct(data product.ProductCore, userId int) int
 	return 1
 
 }
+
+func (repo *productData) DelProduct(idProduct, userId int) int {
+
+	var check string
+	repo.db.Model(&Community{}).Select("join_communities.role").Joins("inner join products on products.community_id = communities.id").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("products.id = ? AND join_communities.user_id = ? ", idProduct, userId).Scan(&check)
+	if check != "admin" {
+		return -2
+	}
+
+	tx := repo.db.Delete(&Product{}, "id = ? ", idProduct)
+	if tx.Error != nil {
+		return -1
+	}
+
+	return 1
+
+}
