@@ -72,8 +72,8 @@ func (repo *productData) UpdtProduct(data product.ProductCore, userId int) int {
 
 func (repo *productData) SelectProduct(idProduct, userId int) (product.Comu, product.ProductCore, error) {
 
-	var EventComu temp
-	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Joins("inner join products on products.community_id = communities.id").Where("products.id = ? ", idProduct).Group("communities.id").Scan(&EventComu)
+	var ProductComu temp
+	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.user_id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Joins("inner join products on products.community_id = communities.id").Where("products.id = ? AND join_communities.deleted_at IS NULL", idProduct).Group("communities.id").Scan(&ProductComu)
 	if tx.Error != nil {
 		return product.Comu{}, product.ProductCore{}, tx.Error
 	}
@@ -82,8 +82,26 @@ func (repo *productData) SelectProduct(idProduct, userId int) (product.Comu, pro
 	repo.db.First(&dataProduct, "id = ? ", idProduct)
 
 	var role JoinCommunity
-	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, EventComu.ID)
+	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, ProductComu.ID)
 
-	return EventComu.dataComu(role.Role), dataProduct.toCore(), nil
+	return ProductComu.dataComu(role.Role), dataProduct.toCore(), nil
+
+}
+
+func (repo *productData) SelectProductComu(idComu, userId int) (product.Comu, []product.ProductCore, error) {
+
+	var ProductComu temp
+	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.user_id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("communities.id = ? AND join_communities.deleted_at IS NULL", idComu).Group("communities.id").Scan(&ProductComu)
+	if tx.Error != nil {
+		return product.Comu{}, nil, tx.Error
+	}
+
+	var dataProduct []Product
+	repo.db.Find(&dataProduct, "community_id = ? ", idComu)
+
+	var role JoinCommunity
+	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, ProductComu.ID)
+
+	return ProductComu.dataComu(role.Role), toListProduct(dataProduct), nil
 
 }

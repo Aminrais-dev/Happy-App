@@ -15,10 +15,10 @@ type Response struct {
 type dataProductRespon struct {
 	ID          uint   `json:"id"`
 	Name        string `json:"name"`
-	Description string `json:"descriptions"`
+	Description string `json:"descriptions,omitempty"`
 	Photo       string `json:"photo"`
 	Price       uint64 `json:"price"`
-	Stock       uint64 `json:"stock"`
+	Stock       uint64 `json:"stock,omitempty"`
 }
 
 func ResponseDetail(dataComu product.Comu, dataProduct product.ProductCore) Response {

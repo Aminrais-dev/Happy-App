@@ -83,19 +83,19 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 
 	var dataEvent []event.Response
 	if search == "" {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Where("events.community_id = ?", idComu).Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Where("events.community_id = ? ", idComu).Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return event.CommunityEvent{}, tx.Error
 		}
 	} else {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Where("events.title like ? AND events.community_id = ?", ("%" + search + "%"), idComu).Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("inner join join_events on join_events.event_id = events.id").Where("events.title like ? AND events.community_id = ? ", ("%" + search + "%"), idComu).Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return event.CommunityEvent{}, tx.Error
 		}
 	}
 
 	var EventComu temp
-	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("communities.id = ? ", idComu).Group("communities.id").Scan(&EventComu)
+	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.user_id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("communities.id = ? AND join_communities.deleted_at IS NULL ", idComu).Group("communities.id").Scan(&EventComu)
 	if tx.Error != nil {
 		return event.CommunityEvent{}, tx.Error
 	}

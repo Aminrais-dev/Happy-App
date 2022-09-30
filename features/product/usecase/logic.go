@@ -49,3 +49,14 @@ func (usecase *productUsecase) GetProduct(idProduct, userId int) (product.Comu, 
 	return dataComu, dataProduct, nil
 
 }
+
+func (usecase *productUsecase) GetProductComu(idProduct, userId int) (product.Comu, []product.ProductCore, error) {
+
+	dataComu, dataProduct, err := usecase.productData.SelectProductComu(idProduct, userId)
+	if err != nil {
+		return dataComu, dataProduct, err
+	}
+
+	return dataComu, dataProduct, nil
+
+}
