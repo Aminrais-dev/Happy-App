@@ -61,3 +61,8 @@ func (service *Service) JoinCommunity(userid, communityid int) (string, error) {
 	msg2, err2 := service.do.InsertToJoin(userid, communityid)
 	return msg2, err2
 }
+
+func (service *Service) PostFeed(core community.CoreFeed) (string, error) {
+	msg, err := service.do.InsertFeed(core)
+	return msg, err
+}
