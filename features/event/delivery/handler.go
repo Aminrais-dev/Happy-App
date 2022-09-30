@@ -21,6 +21,7 @@ func New(e *echo.Echo, data event.UsecaseInterface) {
 	e.POST("community/:id/event", handler.PostEventCommunity, middlewares.JWTMiddleware())
 	e.GET("/event", handler.GetEventList)
 	e.GET("/community/:id/event", handler.GetEventListCommunity, middlewares.JWTMiddleware())
+	e.GET("/event/:id", handler.GetEventDetailbyId, middlewares.JWTMiddleware())
 
 }
 
@@ -82,7 +83,30 @@ func (delivery *eventDelivery) GetEventListCommunity(c echo.Context) error {
 	data, errGet := delivery.eventUsecase.GetEventComu(search, idComu, userId)
 	if errGet != nil {
 		return c.JSON(400, helper.FailedResponseHelper("failed to get list event in community"))
+	} else if data.ID != uint(idComu) {
+		return c.JSON(404, helper.FailedResponseHelper("community not found"))
 	}
 
 	return c.JSON(200, data)
+}
+
+func (delivery *eventDelivery) GetEventDetailbyId(c echo.Context) error {
+
+	id := c.Param("id")
+	idEvent, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+
+	userId := middlewares.ExtractToken(c)
+
+	data, errGet := delivery.eventUsecase.GetEventDetail(idEvent, userId)
+	if errGet != nil {
+		return c.JSON(400, helper.FailedResponseHelper("failed to get event detail"))
+	} else if data.ID != uint(idEvent) {
+		return c.JSON(404, helper.FailedResponseHelper("event not found"))
+	}
+
+	return c.JSON(200, data)
+
 }

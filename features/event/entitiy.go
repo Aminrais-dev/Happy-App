@@ -38,14 +38,28 @@ type CommunityEvent struct {
 	Event       []Response `json:"event"`
 }
 
+type EventDetail struct {
+	ID            uint      `json:"id"`
+	Title         string    `json:"title"`
+	Status        string    `json:"status"`
+	Description   string    `json:"descriptions"`
+	Penyelenggara string    `json:"penyelenggara"`
+	Date          time.Time `json:"date_event"`
+	Partisipasi   int64     `json:"partisipasi"`
+	Price         uint64    `json:"price"`
+	Location      string    `json:"location"`
+}
+
 type DataInterface interface {
 	InsertEvent(EventCore, int) int
 	SelectEvent(string) ([]Response, error)
 	SelectEventComu(search string, idComu, userId int) (CommunityEvent, error)
+	SelectEventDetail(idEvent, userId int) (EventDetail, error)
 }
 
 type UsecaseInterface interface {
 	PostEvent(EventCore, int) int
 	GetEvent(string) ([]Response, error)
 	GetEventComu(search string, idComu, userId int) (CommunityEvent, error)
+	GetEventDetail(idEvent, userId int) (EventDetail, error)
 }
