@@ -15,6 +15,8 @@ type User struct {
 	Password  string
 	Photo     string
 	Community []JoinCommunity
+	Feeds     []Feed
+	Comments  []Comment
 }
 
 type Community struct {
@@ -37,6 +39,21 @@ type myCommunity struct {
 	Title string
 	Logo  string
 	Role  string
+}
+
+type Feed struct {
+	gorm.Model
+	Text        string
+	UserID      uint
+	CommunityID uint
+	Comments    []Comment
+}
+
+type Comment struct {
+	gorm.Model
+	Text   string
+	FeedID uint
+	UserID uint
 }
 
 func (data *User) toCore() user.CoreUser {

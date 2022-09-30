@@ -46,3 +46,18 @@ func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity
 	msg, errs := service.do.UpdateCommunity(int(core.ID), core)
 	return msg, errs
 }
+
+func (service *Service) GetCommunityFeed(communityid int) (community.CoreCommunity, string, error) {
+	core, msg, err := service.do.SelectCommunity(communityid)
+	return core, msg, err
+}
+
+func (service *Service) JoinCommunity(userid, communityid int) (string, error) {
+	msg1, err1 := service.do.CheckJoin(userid, communityid)
+	if err1 != nil {
+		return msg1, err1
+	}
+
+	msg2, err2 := service.do.InsertToJoin(userid, communityid)
+	return msg2, err2
+}

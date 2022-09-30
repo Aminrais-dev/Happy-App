@@ -1,11 +1,31 @@
 package community
 
+import (
+	"time"
+)
+
 type CoreCommunity struct {
 	ID           uint
 	Title        string
 	Descriptions string
 	Logo         string
 	Members      int64
+	Feeds        []CoreFeed
+}
+
+type CoreFeed struct {
+	ID       uint
+	Name     string
+	Text     string
+	Date     time.Time
+	Comments []CoreComment
+}
+
+type CoreComment struct {
+	ID   uint
+	Name string
+	Text string
+	Date time.Time
 }
 
 type DataInterface interface {
@@ -15,6 +35,9 @@ type DataInterface interface {
 	Delete(userid, communityid int) (string, error)
 	UpdateCommunity(communityid int, core CoreCommunity) (string, error)
 	GetUserRole(Userid, communityid int) (string, error)
+	InsertToJoin(userid, communityid int) (string, error)
+	CheckJoin(userid, communityid int) (string, error)
+	SelectCommunity(communityid int) (CoreCommunity, string, error)
 }
 
 type UsecaseInterface interface {
@@ -23,4 +46,6 @@ type UsecaseInterface interface {
 	GetMembers(communityid int) ([]string, string, error)
 	Leave(userid, communityid int) (string, error)
 	UpdateCommunity(userid int, core CoreCommunity) (string, error)
+	JoinCommunity(userid, communityid int) (string, error)
+	GetCommunityFeed(communityid int) (CoreCommunity, string, error)
 }

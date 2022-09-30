@@ -1,6 +1,9 @@
 package delivery
 
-import "capstone/happyApp/features/community"
+import (
+	"capstone/happyApp/features/community"
+	"time"
+)
 
 type Respose struct {
 	ID           uint   `json:"id"`
@@ -8,6 +11,19 @@ type Respose struct {
 	Descriptions string `json:"descriptions"`
 	Logo         string `json:"logo"`
 	Members      int64  `json:"members"`
+}
+
+type ResponseFeed struct {
+	Name     string            `json:"name"`
+	Text     string            `json:"text"`
+	Date     time.Time         `json:"date"`
+	Comments []ResponseComment `json:"comments"`
+}
+
+type ResponseComment struct {
+	Name string    `json:"name"`
+	Text string    `json:"text"`
+	Date time.Time `json:"date"`
 }
 
 func ToResponse(core community.CoreCommunity) Respose {

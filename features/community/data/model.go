@@ -12,6 +12,7 @@ type Community struct {
 	Descriptions string
 	Logo         string
 	Member       []JoinCommunity
+	Feeds        []Feed
 }
 
 type User struct {
@@ -19,11 +20,34 @@ type User struct {
 	Community []JoinCommunity
 }
 
+type Feed struct {
+	gorm.Model
+	Text        string
+	UserID      uint
+	CommunityID uint
+	Comments    []Comment
+}
+
+type Comment struct {
+	gorm.Model
+	Text   string
+	FeedID uint
+	UserID uint
+}
+
 type JoinCommunity struct {
 	gorm.Model
 	UserID      uint
 	CommunityID uint
 	Role        string
+}
+
+func ToJoin(userid, communityid int) JoinCommunity {
+	return JoinCommunity{
+		UserID:      uint(userid),
+		CommunityID: uint(communityid),
+		Role:        "member",
+	}
 }
 
 func GetLeader(userid, communityid int) JoinCommunity {
@@ -59,3 +83,17 @@ func ToCoreList(data []Community) []community.CoreCommunity {
 
 	return list
 }
+
+// func ToCoreWithFeed(data Community) community.CoreCommunity {
+// 	var feed []community.CoreFeed
+// 	for _,v := range data.Feeds{
+// 		feed = append(feed, )
+// 	}
+
+// 	return community.CoreCommunity{
+// 		ID:           data.ID,
+// 		Title:        data.Title,
+// 		Descriptions: data.Descriptions,
+// 		Logo:         data.Logo,
+// 	}
+// }

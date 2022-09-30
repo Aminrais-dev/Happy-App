@@ -8,6 +8,14 @@ type Request struct {
 	Logo         string `json:"logo" form:"logo"`
 }
 
+type FeedRequst struct {
+	Text string `json:"text" form:"text"`
+}
+
+type CommentRequst struct {
+	Text string `json:"text" form:"text"`
+}
+
 func (req *Request) ToCore() community.CoreCommunity {
 	return community.CoreCommunity{
 		Title:        req.Title,

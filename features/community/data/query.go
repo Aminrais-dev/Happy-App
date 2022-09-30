@@ -3,6 +3,8 @@ package data
 import (
 	"capstone/happyApp/features/community"
 	user "capstone/happyApp/features/user/data"
+	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -41,11 +43,12 @@ func (storage *Storage) SelectList() ([]community.CoreCommunity, string, error) 
 
 	listcore := ToCoreList(models)
 
-	for _, v := range listcore {
+	for k, v := range listcore {
 		Count := storage.query.Model(&JoinCommunity{}).Where("community_id = ?", v.ID).Count(&v.Members)
 		if Count.Error != nil {
 			return nil, "Terjadi Kesalahan Saat Menghitung Member", Count.Error
 		}
+		listcore[k].Members = v.Members
 	}
 
 	return listcore, "Sukses Mendapatkan Semua Data", nil
@@ -61,7 +64,7 @@ func (storage *Storage) SelectMembers(communityid int) ([]string, string, error)
 	var names []string
 	for _, v := range models {
 		var temp user.User
-		txx := storage.query.Find(&temp, "id = ?", v.ID)
+		txx := storage.query.Find(&temp, "id = ?", v.UserID)
 		if txx.Error != nil {
 			return nil, "Terjadi Kesalahan pada pengambilan nama", txx.Error
 		}
@@ -98,4 +101,37 @@ func (storage *Storage) UpdateCommunity(communityid int, core community.CoreComm
 
 	return "Sukses Update", nil
 
+}
+
+func (storage *Storage) CheckJoin(userid, communityid int) (string, error) {
+
+	tx := storage.query.Find(&JoinCommunity{}, "user_id = ? and community_id = ?", userid, communityid)
+	if tx.Error != nil {
+		return "Gagal Chek Join", tx.Error
+	} else if tx.RowsAffected == 1 {
+		return "Anda Sudah ada di community", errors.New("Anda telah Bergabung")
+	}
+
+	return "Bisa Join", nil
+}
+
+func (storage *Storage) InsertToJoin(userid, communityid int) (string, error) {
+	model := ToJoin(userid, communityid)
+	tx := storage.query.Create(&model)
+	if tx.Error != nil {
+		return "Gagal Bergabung ke Community", tx.Error
+	}
+
+	return "Sukses Begabung Ke Community", nil
+}
+
+func (storage *Storage) SelectCommunity(communityid int) (community.CoreCommunity, string, error) {
+	var get Community
+	tx := storage.query.Preload("Feeds").Find(&get, "id = ?", communityid)
+	if tx.Error != nil {
+		return community.CoreCommunity{}, "Gagal Ke database", tx.Error
+	}
+	fmt.Println(get)
+
+	return community.CoreCommunity{}, "Sukses mendapat Data", nil
 }
