@@ -30,7 +30,8 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 	e.POST("/join/community/:communityid", handler.JoinCommunity, middlewares.JWTMiddleware())          // selesai
 	e.POST("/community/:communityid/feed", handler.AddFeed, middlewares.JWTMiddleware())                // selesai
 	e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           // selesai
-	e.GET("/feed/:feedid", handler.GetDetailFeed, middlewares.JWTMiddleware())                          // belum di test
+	e.GET("/feed/:feedid", handler.GetDetailFeed, middlewares.JWTMiddleware())                          // selesai
+	e.POST("/feed/:feedid/comment", handler.AddComment, middlewares.JWTMiddleware())                    // selesai
 
 }
 
@@ -216,5 +217,25 @@ func (user *Delivery) GetDetailFeed(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper(msg))
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseFeedWithComment(feed)))
+	return c.JSON(200, helper.SuccessFeedResponseHelper(msg, ResponseFeedWithComment(feed)))
+}
+
+func (user *Delivery) AddComment(c echo.Context) error {
+	userid := middlewares.ExtractToken(c)
+	feedid, err := strconv.Atoi(c.Param("feedid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+	var req CommentRequst
+	errb := c.Bind(&req)
+	if errb != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+	}
+
+	msg, errs := user.From.AddComment(req.ToCore(userid, feedid))
+	if errs != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper(msg))
 }

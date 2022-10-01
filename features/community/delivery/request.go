@@ -40,3 +40,11 @@ func (feed *FeedRequst) ToCore(userid, communityid int) community.CoreFeed {
 		Text:        feed.Text,
 	}
 }
+
+func (coment *CommentRequst) ToCore(userid, feedid int) community.CoreComment {
+	return community.CoreComment{
+		UserID: uint(userid),
+		FeedID: uint(feedid),
+		Text:   coment.Text,
+	}
+}

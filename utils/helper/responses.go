@@ -21,3 +21,11 @@ func SuccessDataResponseHelper(msg, data interface{}) map[string]interface{} {
 		"data":    data,
 	}
 }
+
+func SuccessFeedResponseHelper(msg, data interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"status":  "success",
+		"message": msg,
+		"Feed":    data,
+	}
+}
