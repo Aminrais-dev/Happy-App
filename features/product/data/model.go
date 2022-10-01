@@ -14,6 +14,7 @@ type Product struct {
 	Stock       uint64
 	Price       uint64
 	CommunityID uint
+	Carts       []Cart
 }
 
 type Community struct {
@@ -37,6 +38,12 @@ type temp struct {
 	Title       string
 	Description string
 	Count       int64
+}
+
+type Cart struct {
+	gorm.Model
+	UserID    uint
+	ProductID uint
 }
 
 func (data *temp) dataComu(role string) product.Comu {

@@ -7,8 +7,8 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/nawihusen/Capstone/1.0.0
-  # - description:
-  #   url:
+  - description: Api Dari Back End
+    url: https://tugas.website
 tags:
   - name: Login
     description: Login Page
@@ -1465,12 +1465,14 @@ components:
             members: 5
             cart: [
                     {
+                      id: 1,
                       name: Kaos,
                       price: 100000,
                       descriptions: kaos yang sangat nyaman,
                       photo: kaos.jpg
                     },
                     {
+                      id: 5,
                       name: Celana,
                       price: 233000,
                       descriptions: celana yang sangat nyaman,
