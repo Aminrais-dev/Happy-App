@@ -94,6 +94,7 @@ func ToModelFeed(data community.CoreFeed) Feed {
 
 func ToCoreFeed(data Feed, name string) community.CoreFeed {
 	return community.CoreFeed{
+		ID:   data.ID,
 		Name: name,
 		Text: data.Text,
 		Date: data.CreatedAt,
@@ -121,9 +122,18 @@ func ToCoreComment(data Comment, name string) community.CoreComment {
 
 func ToCoreWithComment(data Feed, name string, comment []community.CoreComment) community.CoreFeed {
 	return community.CoreFeed{
+		ID:       data.ID,
 		Name:     name,
 		Text:     data.Text,
 		Date:     data.CreatedAt,
 		Comments: comment,
+	}
+}
+
+func ToModelComment(data community.CoreComment) Comment {
+	return Comment{
+		Text:   data.Text,
+		UserID: data.UserID,
+		FeedID: data.FeedID,
 	}
 }

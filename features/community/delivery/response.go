@@ -15,6 +15,7 @@ type Respose struct {
 }
 
 type ResponseFeed struct {
+	ID       uint              `json:"id"`
 	Name     string            `json:"name"`
 	Text     string            `json:"text"`
 	Date     string            `json:"date"`
@@ -57,6 +58,7 @@ func ToResponseList(core []community.CoreCommunity) []Respose {
 
 func ToFeedResponse(data community.CoreFeed) ResponseFeed {
 	return ResponseFeed{
+		ID:   data.ID,
 		Name: data.Name,
 		Text: data.Text,
 		Date: GetDateHour(data.Date),
@@ -109,6 +111,7 @@ func ToResponseCommentList(data []community.CoreComment) []ResponseComment {
 
 func ResponseFeedWithComment(core community.CoreFeed) ResponseFeed {
 	return ResponseFeed{
+		ID:       core.ID,
 		Name:     core.Name,
 		Text:     core.Text,
 		Date:     GetDateHour(core.Date),

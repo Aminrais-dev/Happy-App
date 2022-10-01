@@ -24,12 +24,12 @@ type CoreFeed struct {
 }
 
 type CoreComment struct {
-	ID          uint
-	Name        string
-	Text        string
-	UserID      uint
-	CommunityID uint
-	Date        time.Time
+	ID     uint
+	Name   string
+	Text   string
+	UserID uint
+	FeedID uint
+	Date   time.Time
 }
 
 type DataInterface interface {
@@ -44,6 +44,7 @@ type DataInterface interface {
 	InsertFeed(CoreFeed) (string, error)
 	SelectCommunity(communityid int) (CoreCommunity, string, error)
 	SelectFeed(feedid int) (CoreFeed, string, error)
+	InsertComment(CoreComment) (string, error)
 }
 
 type UsecaseInterface interface {
@@ -56,4 +57,5 @@ type UsecaseInterface interface {
 	PostFeed(CoreFeed) (string, error)
 	GetCommunityFeed(communityid int) (CoreCommunity, string, error)
 	GetDetailFeed(feedid int) (CoreFeed, string, error)
+	AddComment(CoreComment) (string, error)
 }

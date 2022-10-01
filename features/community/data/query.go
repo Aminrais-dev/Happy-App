@@ -165,10 +165,12 @@ func (storage *Storage) SelectCommunity(communityid int) (community.CoreCommunit
 
 func (storage *Storage) SelectFeed(feedid int) (community.CoreFeed, string, error) {
 	var feed Feed
-	tx1 := storage.query.Preload("Comments").Find(&feed)
+
+	tx1 := storage.query.Preload("Comments").Find(&feed, "id = ?", feedid)
 	if tx1.Error != nil {
 		return community.CoreFeed{}, "Gagal Mendapatkan Feed Dari Database", tx1.Error
 	}
+
 	var feedname user.User
 	tx2 := storage.query.Find(&feedname, "id = ?", feed.UserID)
 	if tx2.Error != nil {
@@ -184,8 +186,17 @@ func (storage *Storage) SelectFeed(feedid int) (community.CoreFeed, string, erro
 		}
 		corecomment = append(corecomment, ToCoreComment(v, name.Name))
 	}
-
 	corefeed := ToCoreWithComment(feed, feedname.Name, corecomment)
 
 	return corefeed, "Berhasil Memproses Semua Data", nil
+}
+
+func (storage *Storage) InsertComment(core community.CoreComment) (string, error) {
+	modelcomment := ToModelComment(core)
+	tx := storage.query.Create(&modelcomment)
+	if tx.Error != nil {
+		return "Gagal Menambahkan Comment", tx.Error
+	}
+
+	return "Sukses Menambahka comment", nil
 }

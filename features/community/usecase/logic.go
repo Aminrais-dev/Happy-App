@@ -71,3 +71,8 @@ func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, e
 	core, msg, err := service.do.SelectFeed(feedid)
 	return core, msg, err
 }
+
+func (service *Service) AddComment(core community.CoreComment) (string, error) {
+	msg, err := service.do.InsertComment(core)
+	return msg, err
+}
