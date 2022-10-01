@@ -29,3 +29,12 @@ func SuccessFeedResponseHelper(msg, data interface{}) map[string]interface{} {
 		"Feed":    data,
 	}
 }
+
+func SuccessCartResponseHelper(msg, data interface{}, data2 interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"status":  "success",
+		"message": msg,
+		"data":    data,
+		"carts":   data2,
+	}
+}

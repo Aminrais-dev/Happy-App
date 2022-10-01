@@ -1,6 +1,7 @@
 package data
 
 import (
+	cart "capstone/happyApp/features/cart/data"
 	"capstone/happyApp/features/product"
 
 	"gorm.io/gorm"
@@ -14,7 +15,7 @@ type Product struct {
 	Stock       uint64
 	Price       uint64
 	CommunityID uint
-	Carts       []Cart
+	Carts       cart.Cart
 }
 
 type Community struct {

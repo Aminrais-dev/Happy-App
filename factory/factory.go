@@ -23,6 +23,10 @@ import (
 	productData "capstone/happyApp/features/product/data"
 	productDelivery "capstone/happyApp/features/product/delivery"
 	productUsecase "capstone/happyApp/features/product/usecase"
+
+	cartData "capstone/happyApp/features/cart/data"
+	cartDelivery "capstone/happyApp/features/cart/delivery"
+	cartUsecase "capstone/happyApp/features/cart/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
@@ -46,5 +50,9 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	loginDataFactory := loginData.New(db)
 	loginUsecaseFactory := loginUsecase.New(loginDataFactory)
 	loginDelivery.New(e, loginUsecaseFactory)
+
+	cartDataFactory := cartData.New(db)
+	cartUsecaseFactory := cartUsecase.New(cartDataFactory)
+	cartDelivery.New(e, cartUsecaseFactory)
 
 }

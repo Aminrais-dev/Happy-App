@@ -494,7 +494,7 @@ paths:
       security:
         - JWTAuth: []
       parameters:
-        - $ref: "#/components/parameters/ParamProductId"
+        - $ref: "#/components/parameters/CartId"
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
