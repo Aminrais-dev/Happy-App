@@ -22,9 +22,11 @@ type DataInterface interface {
 	InsertIntoCart(userid, productid int) (string, error)
 	GetCommunity(communityid int) (CoreCommunity, string, error)
 	SelectCartList(userid, communityid int) ([]CoreCart, string, error)
+	DeleteFromCart(cartid int) (string, error)
 }
 
 type UsecaseInterface interface {
 	AddToCart(userid, productid int) (string, error)
 	GetCartList(userid, communityid int) (CoreCommunity, []CoreCart, string, error)
+	DeleteFromCart(cartid int) (string, error)
 }

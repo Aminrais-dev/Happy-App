@@ -55,7 +55,7 @@ func (storage *Storage) SelectCartList(userid, communityid int) ([]cart.CoreCart
 	for _, v := range cartall {
 		var product Product
 		txif := storage.query.Find(&product, "id = ?", v.ProductID)
-		if txif != nil {
+		if txif.Error != nil {
 			return nil, "Kesalahan pada Pengambilan product", txif.Error
 		}
 		if product.CommunityID == uint(communityid) {
@@ -67,7 +67,7 @@ func (storage *Storage) SelectCartList(userid, communityid int) ([]cart.CoreCart
 	for _, v := range communitycart {
 		var product Product
 		txif := storage.query.Find(&product, "id = ?", v.ProductID)
-		if txif != nil {
+		if txif.Error != nil {
 			return nil, "Kesalahan pada Pengambilan product", txif.Error
 		}
 
@@ -75,4 +75,12 @@ func (storage *Storage) SelectCartList(userid, communityid int) ([]cart.CoreCart
 	}
 
 	return list, "Sukses Mengambil Semua Data", nil
+}
+
+func (storage *Storage) DeleteFromCart(cartid int) (string, error) {
+	tx := storage.query.Where("id = ? ", cartid).Delete(&Cart{})
+	if tx.Error != nil {
+		return "Gagal Menghapus Cart", tx.Error
+	}
+	return "Success Menghapus Cart", nil
 }

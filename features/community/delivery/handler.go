@@ -77,6 +77,17 @@ func (user *Delivery) AddCommunity(c echo.Context) error {
 }
 
 func (user *Delivery) ListCommunity(c echo.Context) error {
+	param := c.QueryParam("title")
+	if param != "" {
+		listcore, msg, err := user.From.GetListCommunityWithParam(param)
+		if err != nil {
+			return c.JSON(400, helper.FailedResponseHelper(msg))
+		} else if len(listcore) == 0 {
+			return c.JSON(200, helper.SuccessResponseHelper("Title tidak ditemukan"))
+		}
+		return c.JSON(200, helper.SuccessDataResponseHelper(msg, ToResponseList(listcore)))
+	}
+
 	listcore, msg, err := user.From.GetListCommunity()
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper(msg))

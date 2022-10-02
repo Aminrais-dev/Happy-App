@@ -40,6 +40,7 @@ func ToModelCart(userid, productid uint) Cart {
 
 func ToCoreCommunity(data community.Community, sum int64) cart.CoreCommunity {
 	return cart.CoreCommunity{
+		ID:           data.ID,
 		Title:        data.Title,
 		Descriptions: data.Descriptions,
 		Logo:         data.Logo,

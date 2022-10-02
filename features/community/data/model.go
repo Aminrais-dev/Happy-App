@@ -18,6 +18,7 @@ type Community struct {
 type User struct {
 	gorm.Model
 	Community []JoinCommunity
+	Name      string
 }
 
 type Feed struct {
@@ -40,6 +41,16 @@ type JoinCommunity struct {
 	UserID      uint
 	CommunityID uint
 	Role        string
+}
+
+type Product struct {
+	gorm.Model
+	Name        string
+	Description string
+	Photo       string
+	Stock       uint64
+	Price       uint64
+	CommunityID uint
 }
 
 func ToJoin(userid, communityid int) JoinCommunity {

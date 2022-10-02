@@ -28,3 +28,8 @@ func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity
 	listcart, msg, err := service.do.SelectCartList(userid, communityid)
 	return corecommunity, listcart, msg, err
 }
+
+func (service *Service) DeleteFromCart(cartid int) (string, error) {
+	msg, err := service.do.DeleteFromCart(cartid)
+	return msg, err
+}
