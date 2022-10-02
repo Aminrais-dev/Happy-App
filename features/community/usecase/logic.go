@@ -3,6 +3,7 @@ package usecase
 import (
 	"capstone/happyApp/features/community"
 	"errors"
+	"fmt"
 )
 
 type Service struct {
@@ -31,7 +32,26 @@ func (service *Service) GetMembers(communityid int) ([]string, string, error) {
 }
 
 func (service *Service) Leave(userid, communityid int) (string, error) {
-	msg, err := service.do.Delete(userid, communityid)
+	role, errs := service.do.GetUserRole(userid, communityid)
+	if errs != nil {
+		return "Gagal mendapatkan role user", errs
+	}
+
+	members, msg, err := service.do.Delete(userid, communityid)
+	if members == 0 {
+		msgdc, errdc := service.do.DeleteCommunity(communityid)
+		if errdc != nil {
+			return msgdc, errdc
+		}
+		msg += " " + msgdc
+	} else if role == "admin" {
+		newadmin, msgcr, errcr := service.do.ChangeAdmin(communityid)
+		if errcr != nil {
+			return msgcr, errcr
+		}
+		msg = fmt.Sprintf("Community akan di wariskan ke %s", newadmin)
+	}
+
 	return msg, err
 }
 
@@ -75,4 +95,9 @@ func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, e
 func (service *Service) AddComment(core community.CoreComment) (string, error) {
 	msg, err := service.do.InsertComment(core)
 	return msg, err
+}
+
+func (service *Service) GetListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) {
+	list, msg, err := service.do.SelectListCommunityWithParam(param)
+	return list, msg, err
 }

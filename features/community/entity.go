@@ -36,7 +36,7 @@ type DataInterface interface {
 	Insert(userid int, core CoreCommunity) (string, error)
 	SelectList() ([]CoreCommunity, string, error)
 	SelectMembers(communityid int) ([]string, string, error)
-	Delete(userid, communityid int) (string, error)
+	Delete(userid, communityid int) (int64, string, error)
 	UpdateCommunity(communityid int, core CoreCommunity) (string, error)
 	GetUserRole(Userid, communityid int) (string, error)
 	InsertToJoin(userid, communityid int) (string, error)
@@ -45,6 +45,9 @@ type DataInterface interface {
 	SelectCommunity(communityid int) (CoreCommunity, string, error)
 	SelectFeed(feedid int) (CoreFeed, string, error)
 	InsertComment(CoreComment) (string, error)
+	DeleteCommunity(communityid int) (string, error)
+	ChangeAdmin(communityid int) (string, string, error)
+	SelectListCommunityWithParam(param string) ([]CoreCommunity, string, error)
 }
 
 type UsecaseInterface interface {
@@ -58,4 +61,5 @@ type UsecaseInterface interface {
 	GetCommunityFeed(communityid int) (CoreCommunity, string, error)
 	GetDetailFeed(feedid int) (CoreFeed, string, error)
 	AddComment(CoreComment) (string, error)
+	GetListCommunityWithParam(param string) ([]CoreCommunity, string, error)
 }

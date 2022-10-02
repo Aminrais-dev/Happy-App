@@ -2,6 +2,7 @@ package data
 
 import (
 	"capstone/happyApp/features/community"
+	event "capstone/happyApp/features/event/data"
 	user "capstone/happyApp/features/user/data"
 	"errors"
 
@@ -73,12 +74,17 @@ func (storage *Storage) SelectMembers(communityid int) ([]string, string, error)
 	return names, "Sekses Mendapatkan Semua Nama", nil
 }
 
-func (storage *Storage) Delete(userid, communityid int) (string, error) {
-	tx := storage.query.Unscoped().Delete(&JoinCommunity{}, "user_id = ? and community_id = ?", userid, communityid)
-	if tx.Error != nil || tx.RowsAffected == 0 {
-		return "Terjadi Kesalahan", tx.Error
+func (storage *Storage) Delete(userid, communityid int) (int64, string, error) {
+	tx := storage.query.Where("user_id = ? and community_id = ?", userid, communityid).Delete(&JoinCommunity{})
+	if tx.Error != nil {
+		return 0, "Terjadi Kesalahan", tx.Error
 	}
-	return "Sukses Keluar dari Community", nil
+	var sum int64
+	Count := storage.query.Model(&JoinCommunity{}).Where("community_id = ?", communityid).Count(&sum)
+	if Count.Error != nil {
+		return 0, "Gagal Menghitung Jumlah Member", Count.Error
+	}
+	return sum, "Sukses Keluar dari Community", nil
 }
 
 func (storage *Storage) GetUserRole(userid, communityid int) (string, error) {
@@ -89,6 +95,50 @@ func (storage *Storage) GetUserRole(userid, communityid int) (string, error) {
 	}
 
 	return model.Role, nil
+}
+
+func (storage *Storage) DeleteCommunity(communityid int) (string, error) {
+	tx1 := storage.query.Where("id = ?", communityid).Delete(&Community{})
+	if tx1.Error != nil || tx1.RowsAffected == 0 {
+		return "Terjadi Kesalahan Pada Penghapusan Community", tx1.Error
+	}
+	tx2 := storage.query.Where("community_id = ?", communityid).Delete(&event.Event{})
+	if tx2.Error != nil {
+		return "Terjadi Kesalahan Pada Penghapusan Community", tx2.Error
+	}
+	tx3 := storage.query.Where("community_id = ?", communityid).Delete(&Product{})
+	if tx3.Error != nil {
+		return "Terjadi Kesalahan Pada Penghapusan Community", tx3.Error
+	}
+	tx4 := storage.query.Where("community_id = ?", communityid).Delete(&Feed{})
+	if tx4.Error != nil {
+		return "Terjadi Kesalahan Pada Penghapusan Community", tx4.Error
+	}
+
+	return "Community Terhapus", nil
+}
+
+func (storage *Storage) ChangeAdmin(communityid int) (string, string, error) {
+	var member JoinCommunity
+	tx1 := storage.query.Order("created_at").First(&member)
+	if tx1.Error != nil {
+		return "", "Gagal Mendapatkan Member Lain", tx1.Error
+	}
+
+	var name User
+	tx := storage.query.Find(&name, "id = ?", member.UserID)
+	if tx.Error != nil {
+		return "", "Terjadi Kesalahan saat pengambilan nama", tx.Error
+	}
+
+	member.Role = "admin"
+	tx2 := storage.query.Model(&member).Where("community_id = ? and user_id = ?", communityid, member.UserID).Updates(member)
+	if tx2.Error != nil {
+		return "", "Gagal Mengganti Admin", tx2.Error
+	}
+
+	return name.Name, "Sukses Mewariskan", nil
+
 }
 
 func (storage *Storage) UpdateCommunity(communityid int, core community.CoreCommunity) (string, error) {
@@ -199,4 +249,25 @@ func (storage *Storage) InsertComment(core community.CoreComment) (string, error
 	}
 
 	return "Sukses Menambahka comment", nil
+}
+
+func (storage *Storage) SelectListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) {
+	var models []Community
+	param = "%" + param + "%"
+	tx := storage.query.Raw("select * from communities where title like ?", param).Scan(&models)
+	if tx.Error != nil {
+		return nil, "Terjadi Kesalahan Dalam Get Title", tx.Error
+	}
+
+	listcore := ToCoreList(models)
+
+	for k, v := range listcore {
+		Count := storage.query.Model(&JoinCommunity{}).Where("community_id = ?", v.ID).Count(&v.Members)
+		if Count.Error != nil {
+			return nil, "Terjadi Kesalahan Saat Menghitung Member", Count.Error
+		}
+		listcore[k].Members = v.Members
+	}
+
+	return listcore, "Sukses Mendapatkan Semua Data", nil
 }
