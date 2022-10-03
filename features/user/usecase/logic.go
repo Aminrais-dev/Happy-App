@@ -39,6 +39,11 @@ func (usecase *usecaseInterface) DeleteUser(id int) int {
 
 func (usecase *usecaseInterface) UpdateUser(data user.CoreUser) int {
 
+	if data.Password != "" {
+		hashPass, _ := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		data.Password = string(hashPass)
+
+	}
 	row := usecase.userData.UpdtUser(data)
 	return row
 
