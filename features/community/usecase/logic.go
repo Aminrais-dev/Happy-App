@@ -67,8 +67,8 @@ func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity
 	return msg, errs
 }
 
-func (service *Service) GetCommunityFeed(communityid int) (community.CoreCommunity, string, error) {
-	core, msg, err := service.do.SelectCommunity(communityid)
+func (service *Service) GetCommunityFeed(userid, communityid int) (community.CoreCommunity, string, error) {
+	core, msg, err := service.do.SelectCommunity(userid, communityid)
 	return core, msg, err
 }
 

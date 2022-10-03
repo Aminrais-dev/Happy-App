@@ -30,6 +30,7 @@ type ResponseComment struct {
 
 type DetailCommunity struct {
 	ID           uint   `json:"id"`
+	Role         string `json:"role"`
 	Title        string `json:"title"`
 	Descriptions string `json:"descriptions"`
 	Logo         string `json:"logo"`
@@ -78,6 +79,7 @@ func ResponseWithFeed(core community.CoreCommunity) DetailCommunity {
 	return DetailCommunity{
 		ID:           core.ID,
 		Title:        core.Title,
+		Role:         core.Role,
 		Descriptions: core.Descriptions,
 		Logo:         core.Logo,
 		Members:      core.Members,

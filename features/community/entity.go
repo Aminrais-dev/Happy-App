@@ -7,6 +7,7 @@ import (
 type CoreCommunity struct {
 	ID           uint
 	Title        string
+	Role         string
 	Descriptions string
 	Logo         string
 	Members      int64
@@ -42,7 +43,7 @@ type DataInterface interface {
 	InsertToJoin(userid, communityid int) (string, error)
 	CheckJoin(userid, communityid int) (string, error)
 	InsertFeed(CoreFeed) (string, error)
-	SelectCommunity(communityid int) (CoreCommunity, string, error)
+	SelectCommunity(userid, communityid int) (CoreCommunity, string, error)
 	SelectFeed(feedid int) (CoreFeed, string, error)
 	InsertComment(CoreComment) (string, error)
 	DeleteCommunity(communityid int) (string, error)
@@ -58,7 +59,7 @@ type UsecaseInterface interface {
 	UpdateCommunity(userid int, core CoreCommunity) (string, error)
 	JoinCommunity(userid, communityid int) (string, error)
 	PostFeed(CoreFeed) (string, error)
-	GetCommunityFeed(communityid int) (CoreCommunity, string, error)
+	GetCommunityFeed(userid, communityid int) (CoreCommunity, string, error)
 	GetDetailFeed(feedid int) (CoreFeed, string, error)
 	AddComment(CoreComment) (string, error)
 	GetListCommunityWithParam(param string) ([]CoreCommunity, string, error)

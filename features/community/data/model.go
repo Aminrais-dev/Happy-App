@@ -112,9 +112,10 @@ func ToCoreFeed(data Feed, name string) community.CoreFeed {
 	}
 }
 
-func ToCoreWithFeed(data Community, sum int64, feeds []community.CoreFeed) community.CoreCommunity {
+func ToCoreWithFeed(data Community, sum int64, feeds []community.CoreFeed, role string) community.CoreCommunity {
 	return community.CoreCommunity{
 		ID:           data.ID,
+		Role:         role,
 		Title:        data.Title,
 		Descriptions: data.Descriptions,
 		Logo:         data.Logo,

@@ -18,11 +18,17 @@ func New(db *gorm.DB) cart.DataInterface {
 }
 
 func (storage *Storage) InsertIntoCart(userid, productid int) (string, error) {
-	cart := ToModelCart(uint(userid), uint(productid))
+	txc := storage.query.Find(&Cart{}, "user_id = ? and product_id = ?", userid, productid)
+	if txc.Error != nil {
+		return "Gagal Mendapatkan data cart", txc.Error
+	} else if txc.RowsAffected == 1 {
+		return "Barang sudah ada di cart", txc.Error
+	}
 
+	cart := ToModelCart(uint(userid), uint(productid))
 	tx := storage.query.Create(&cart)
 	if tx.Error != nil {
-		return "Gagl Menambahkan Ke Cart", tx.Error
+		return "Gagal Menambahkan Ke Cart", tx.Error
 	}
 
 	return "Sukses Menambahkan Ke Cart", nil
