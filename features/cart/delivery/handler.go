@@ -18,7 +18,7 @@ func New(e *echo.Echo, data cart.UsecaseInterface) {
 		From: data,
 	}
 
-	e.POST("/cart/:productid", handler.AddToCart, middlewares.JWTMiddleware())
+	e.POST("/cart", handler.AddToCart, middlewares.JWTMiddleware())
 	e.GET("/cart", handler.GetCart, middlewares.JWTMiddleware())
 	e.DELETE("/cart/:cartid", handler.DeleteCart, middlewares.JWTMiddleware())
 
