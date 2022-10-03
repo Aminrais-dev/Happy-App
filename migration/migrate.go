@@ -22,4 +22,4 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(cartModel.Cart{})
 }
 
-//
+// do nothing
