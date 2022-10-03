@@ -23,3 +23,4 @@ func InitMigrate(db *gorm.DB) {
 }
 
 // do nothing
+// do nothing
