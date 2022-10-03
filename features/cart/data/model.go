@@ -11,6 +11,7 @@ type Cart struct {
 	gorm.Model
 	UserID    uint
 	ProductID uint
+	Quantity  int `gorm:"default:1"`
 }
 
 type Product struct {
