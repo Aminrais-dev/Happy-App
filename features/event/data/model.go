@@ -44,6 +44,33 @@ type JoinCommunity struct {
 	Role        string
 }
 
+type temp struct {
+	ID          uint
+	Logo        string
+	Title       string
+	Description string
+	Count       int64
+}
+
+type tempDetail struct {
+	ID            uint
+	Title         string
+	Description   string
+	Penyelenggara string
+	Date          time.Time
+	Price         uint64
+	Location      string
+}
+
+type tempRespon struct {
+	ID           uint
+	Logo         string
+	Title        string
+	Descriptions string
+	Date         time.Time
+	Price        int64
+}
+
 func fromCore(data event.EventCore) Event {
 	return Event{
 		Title:       data.Title,
@@ -52,5 +79,47 @@ func fromCore(data event.EventCore) Event {
 		Date:        data.Date,
 		Location:    data.Location,
 		CommunityID: data.CommunityID,
+	}
+}
+
+func toRes(data []tempRespon) []event.Response {
+
+	var dataRespon []event.Response
+	for _, v := range data {
+		dataRespon = append(dataRespon, event.Response{
+			ID:           v.ID,
+			Logo:         v.Logo,
+			Title:        v.Title,
+			Descriptions: v.Descriptions,
+			Date:         v.Date,
+			Price:        v.Price,
+		})
+	}
+
+	return dataRespon
+}
+
+func resEventComu(data []event.Response, dataComu temp, role string) event.CommunityEvent {
+	return event.CommunityEvent{
+		ID:          dataComu.ID,
+		Role:        role,
+		Logo:        dataComu.Logo,
+		Title:       dataComu.Title,
+		Description: dataComu.Description,
+		Count:       dataComu.Count,
+		Event:       data,
+	}
+}
+
+func resEventDetail(data tempDetail, role string) event.EventDetail {
+	return event.EventDetail{
+		ID:            data.ID,
+		Title:         data.Title,
+		Description:   data.Description,
+		Status:        role,
+		Penyelenggara: data.Penyelenggara,
+		Date:          data.Date,
+		Price:         data.Price,
+		Location:      data.Location,
 	}
 }

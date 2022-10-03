@@ -2,7 +2,6 @@ package data
 
 import (
 	"capstone/happyApp/features/event"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -15,25 +14,6 @@ func New(db *gorm.DB) event.DataInterface {
 	return &eventData{
 		db: db,
 	}
-}
-
-type temp struct {
-	ID          uint
-	Logo        string
-	Title       string
-	Description string
-	Count       int64
-}
-
-type tempDetail struct {
-	ID            uint
-	Title         string
-	Description   string
-	Penyelenggara string
-	Date          time.Time
-	Partisipasi   int64
-	Price         uint64
-	Location      string
 }
 
 func (repo *eventData) InsertEvent(data event.EventCore, id int) int {
@@ -60,38 +40,61 @@ func (repo *eventData) InsertEvent(data event.EventCore, id int) int {
 
 func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 
-	var dataEvent []event.Response
+	var dataEvent []tempRespon
 	if search == "" {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("right join join_events on join_events.event_id = events.id").Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
 
-		return dataEvent, nil
+		var dataRes = toRes(dataEvent)
+		for key := range dataRes {
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+		}
+
+		return dataRes, nil
 	} else {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("right join join_events on join_events.event_id = events.id").Where("events.title like ?", ("%" + search + "%")).Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("events.title like ?", ("%" + search + "%")).Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
 
-		return dataEvent, nil
+		var dataRes = toRes(dataEvent)
+		for key := range dataRes {
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+		}
+
+		return dataRes, nil
 	}
 
 }
 
 func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event.CommunityEvent, error) {
 
-	var dataEvent []event.Response
+	var dataEvent []tempRespon
+	var dataRes []event.Response
 	if search == "" {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("right join join_events on join_events.event_id = events.id").Where("events.community_id = ? ", idComu).Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("events.community_id = ? ", idComu).Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return event.CommunityEvent{}, tx.Error
 		}
+
+		dataRes = toRes(dataEvent)
+		for key := range dataRes {
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+		}
+
 	} else {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, count(join_events.id) as members, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Joins("right join join_events on join_events.event_id = events.id").Where("events.title like ? AND events.community_id = ? ", ("%" + search + "%"), idComu).Group("events.id").Scan(&dataEvent)
+		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("events.title like ? AND events.community_id = ? ", ("%" + search + "%"), idComu).Group("events.id").Scan(&dataEvent)
 		if tx.Error != nil {
 			return event.CommunityEvent{}, tx.Error
 		}
+
+		dataRes = toRes(dataEvent)
+		for key := range dataRes {
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+		}
+
 	}
 
 	var EventComu temp
@@ -102,15 +105,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 	var role JoinCommunity
 	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, idComu)
 
-	var dataReturn = event.CommunityEvent{
-		ID:          EventComu.ID,
-		Role:        role.Role,
-		Logo:        EventComu.Logo,
-		Title:       EventComu.Title,
-		Description: EventComu.Description,
-		Count:       EventComu.Count,
-		Event:       dataEvent,
-	}
+	var dataReturn = resEventComu(dataRes, EventComu, role.Role)
 
 	return dataReturn, nil
 
@@ -119,11 +114,10 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 func (repo *eventData) SelectEventDetail(idEvent, userId int) (event.EventDetail, error) {
 
 	var data tempDetail
-	tx := repo.db.Model(&Community{}).Select("events.id as id, events.title as title, events.description as description, communities.title as penyelenggara, events.date as date, count(join_events.id) as partisipasi, events.price as price, events.location as location").Joins("inner join events on events.community_id = communities.id").Joins("right join join_events on join_events.event_id = events.id").Where("events.id = ?", idEvent).Group("events.id").Scan(&data)
+	tx := repo.db.Model(&Community{}).Select("events.id as id, events.title as title, events.description as description, communities.title as penyelenggara, events.date as date, events.price as price, events.location as location").Joins("inner join events on events.community_id = communities.id").Where("events.id = ?", idEvent).Group("events.id").Scan(&data)
 	if tx.Error != nil {
 		return event.EventDetail{}, tx.Error
 	}
-
 	var role JoinEvent
 	repo.db.First(&role, "user_id = ? AND event_id = ? ", userId, idEvent)
 
@@ -132,18 +126,10 @@ func (repo *eventData) SelectEventDetail(idEvent, userId int) (event.EventDetail
 		status = "not join"
 	}
 
-	var dataReturn = event.EventDetail{
-		ID:            data.ID,
-		Title:         data.Title,
-		Status:        status,
-		Description:   data.Description,
-		Penyelenggara: data.Penyelenggara,
-		Date:          data.Date,
-		Partisipasi:   data.Partisipasi,
-		Price:         data.Price,
-		Location:      data.Location,
-	}
+	var dataRes = resEventDetail(data, status)
 
-	return dataReturn, nil
+	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes.ID).Scan(&dataRes.Partisipasi)
+
+	return dataRes, nil
 
 }
