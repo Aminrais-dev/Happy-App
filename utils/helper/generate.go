@@ -1,7 +1,12 @@
 package helper
 
-import "fmt"
+import (
+	"fmt"
 
-func GenerateOrderID(table string, someid int) string {
-	return fmt.Sprintf("%d_%s", someid, table)
+	"github.com/google/uuid"
+)
+
+func GenerateOrderID(table string, idInTable, userId int) string {
+	id := uuid.New()
+	return fmt.Sprintf("%s-%d-%d_%s", table, idInTable, userId, id.String())
 }

@@ -33,7 +33,6 @@ tags:
   - name: Payment
     description: Payment_Method
 
-
 paths:
   ############################
   # GET TOKEN
@@ -242,10 +241,10 @@ paths:
     post:
       tags:
         - "Join"
-      summary: Join To Community
+      summary: Join To Event
       security:
         - JWTAuth: []
-      requestBody: 
+      requestBody:
         $ref: "#/components/requestBodies/paymentmethod"
       description: user melakukan join ke sebuah event menggunakan id event
       parameters:
@@ -452,9 +451,9 @@ paths:
         "400":
           $ref: "#/components/responses/failedresponse"
 
-#############################
-# CART
-#############################
+  #############################
+  # CART
+  #############################
   /cart/{commuunityid}:
     get:
       tags:
@@ -484,8 +483,8 @@ paths:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
-          $ref: "#/components/responses/failedresponse" 
-  /cart/{cartid}:  
+          $ref: "#/components/responses/failedresponse"
+  /cart/{cartid}:
     delete:
       tags:
         - "Cart"
@@ -499,7 +498,7 @@ paths:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
-          $ref: "#/components/responses/failedresponse" 
+          $ref: "#/components/responses/failedresponse"
   /checkout:
     post:
       tags:
@@ -508,16 +507,13 @@ paths:
       description: Melakukan checkout pada item yang ada di cart
       security:
         - JWTAuth: []
-      requestBody: 
+      requestBody:
         $ref: "#/components/requestBodies/bodycheckout"
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
-          $ref: "#/components/responses/failedresponse" 
-
-
-  
+          $ref: "#/components/responses/failedresponse"
 
 ####################################
 # COMPONENTS
@@ -594,7 +590,7 @@ components:
         password:
           type: string
           minLength: 6
-        foto:
+        photo:
           type: string
           format: binary
     listgetcommunity:
@@ -1013,9 +1009,9 @@ components:
               value:
                 username: jackei
                 password: jackeipassword
-            just foto:
+            just photo:
               value:
-                foto: https://static.zerochan.net/Kaedehara.Kazuha.full.3490843.png
+                photo: https://static.zerochan.net/Kaedehara.Kazuha.full.3490843.png
             email:
               value:
                 email: baru@gmail.com
@@ -1085,7 +1081,7 @@ components:
             $ref: "#/components/schemas/schemaaddproduct"
     paymentmethod:
       content:
-        application/json: 
+        application/json:
           schema:
             $ref: "#/components/schemas/bayarevent"
           examples:
@@ -1096,14 +1092,14 @@ components:
               value:
                 type_payment: BCA Virtual Account
     bodycheckout:
-      content: 
+      content:
         application/json:
           schema:
             $ref: "#/components/schemas/checkout"
           examples:
             example1:
               value:
-                cartid: [1,4,5,7]
+                cartid: [1, 4, 5, 7]
                 street: jalan raya
                 city: Malang
                 province: Jawa
@@ -1115,8 +1111,6 @@ components:
                 city: amuntai
                 province: kalimantan selatan
                 type_payment: BCA Virtual Account
-
-            
 
   ###########################
   # RESPONSE
@@ -1307,7 +1301,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
-                      location: japan
+                      location: japan,
                     },
                     {
                       id: 5,
@@ -1317,7 +1311,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
-                      location: warung
+                      location: warung,
                     },
                   ]
     members:
@@ -1439,7 +1433,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
-                      location: japan
+                      location: japan,
                     },
                     {
                       id: 5,
@@ -1449,7 +1443,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
-                      location: cafe nama
+                      location: cafe nama,
                     },
                   ]
     cartuser:
@@ -1463,22 +1457,23 @@ components:
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
             members: 5
-            cart: [
-                    {
-                      id: 1,
-                      name: Kaos,
-                      price: 100000,
-                      descriptions: kaos yang sangat nyaman,
-                      photo: kaos.jpg
-                    },
-                    {
-                      id: 5,
-                      name: Celana,
-                      price: 233000,
-                      descriptions: celana yang sangat nyaman,
-                      photo: celana.jpg
-                    }
-                  ]
+            cart:
+              [
+                {
+                  id: 1,
+                  name: Kaos,
+                  price: 100000,
+                  descriptions: kaos yang sangat nyaman,
+                  photo: kaos.jpg,
+                },
+                {
+                  id: 5,
+                  name: Celana,
+                  price: 233000,
+                  descriptions: celana yang sangat nyaman,
+                  photo: celana.jpg,
+                },
+              ]
     responsehistory:
       description: berisi history pembelian barang yang dilakukan oleh user
       content:
@@ -1489,23 +1484,11 @@ components:
             logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
-            list: [
-                    {
-                      name: Kaos,
-                      buyer: Diluc,
-                      photo: kaos.jpg,
-                      price: 100000
-                    },
-                    {
-                      name: celana,
-                      buyer: Amber,
-                      photo: celana.jpg,
-                      price: 50000
-                    }
-                  ]
-
-
-                  
+            list:
+              [
+                { name: Kaos, buyer: Diluc, photo: kaos.jpg, price: 100000 },
+                { name: celana, buyer: Amber, photo: celana.jpg, price: 50000 },
+              ]
 
   ###########################
   # PARAMETER

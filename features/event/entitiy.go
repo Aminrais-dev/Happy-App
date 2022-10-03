@@ -1,6 +1,10 @@
 package event
 
-import "time"
+import (
+	"time"
+
+	"github.com/midtrans/midtrans-go/coreapi"
+)
 
 type EventCore struct {
 	ID          uint
@@ -19,35 +23,35 @@ type CommunityCore struct {
 }
 
 type Response struct {
-	ID           uint      `json:"id"`
-	Logo         string    `json:"logo"`
-	Title        string    `json:"title"`
-	Members      uint8     `json:"members"`
-	Descriptions string    `json:"descriptions"`
-	Date         time.Time `json:"date"`
-	Price        int64     `json:"price"`
+	ID           uint
+	Logo         string
+	Title        string
+	Members      uint8
+	Descriptions string
+	Date         time.Time
+	Price        int64
 }
 
 type CommunityEvent struct {
-	ID          uint       `json:"id"`
-	Role        string     `json:"role"`
-	Logo        string     `json:"logo"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Count       int64      `json:"members"`
-	Event       []Response `json:"event"`
+	ID          uint
+	Role        string
+	Logo        string
+	Title       string
+	Description string
+	Count       int64
+	Event       []Response
 }
 
 type EventDetail struct {
-	ID            uint      `json:"id"`
-	Title         string    `json:"title"`
-	Status        string    `json:"status"`
-	Description   string    `json:"descriptions"`
-	Penyelenggara string    `json:"penyelenggara"`
-	Date          time.Time `json:"date_event"`
-	Partisipasi   uint8     `json:"partisipasi"`
-	Price         uint64    `json:"price"`
-	Location      string    `json:"location"`
+	ID            uint
+	Title         string
+	Status        string
+	Description   string
+	Penyelenggara string
+	Date          time.Time
+	Partisipasi   uint8
+	Price         uint64
+	Location      string
 }
 
 type DataInterface interface {
@@ -55,6 +59,8 @@ type DataInterface interface {
 	SelectEvent(string) ([]Response, error)
 	SelectEventComu(search string, idComu, userId int) (CommunityEvent, error)
 	SelectEventDetail(idEvent, userId int) (EventDetail, error)
+	SelectAmountEvent(idEvent int) uint64
+	CreatePayment(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)
 }
 
 type UsecaseInterface interface {
@@ -62,4 +68,6 @@ type UsecaseInterface interface {
 	GetEvent(string) ([]Response, error)
 	GetEventComu(search string, idComu, userId int) (CommunityEvent, error)
 	GetEventDetail(idEvent, userId int) (EventDetail, error)
+	GetAmountEvent(idEvent int) uint64
+	CreatePaymentMidtrans(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)
 }

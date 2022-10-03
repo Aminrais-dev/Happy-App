@@ -4,6 +4,7 @@ import (
 	"capstone/happyApp/features/event"
 	"time"
 
+	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
 )
 
@@ -23,8 +24,11 @@ type JoinEvent struct {
 	UserID          uint
 	EventID         uint
 	Type_payment    string
+	Payment_method  string
 	Status_payment  string
 	Virtual_account string
+	Bill_key        string
+	GrossAmount     string
 }
 
 type User struct {
@@ -82,7 +86,7 @@ func fromCore(data event.EventCore) Event {
 	}
 }
 
-func toRes(data []tempRespon) []event.Response {
+func EventList(data []tempRespon) []event.Response {
 
 	var dataRespon []event.Response
 	for _, v := range data {
@@ -99,7 +103,7 @@ func toRes(data []tempRespon) []event.Response {
 	return dataRespon
 }
 
-func resEventComu(data []event.Response, dataComu temp, role string) event.CommunityEvent {
+func EventListComu(data []event.Response, dataComu temp, role string) event.CommunityEvent {
 	return event.CommunityEvent{
 		ID:          dataComu.ID,
 		Role:        role,
@@ -111,7 +115,7 @@ func resEventComu(data []event.Response, dataComu temp, role string) event.Commu
 	}
 }
 
-func resEventDetail(data tempDetail, role string) event.EventDetail {
+func EventDetails(data tempDetail, role string) event.EventDetail {
 	return event.EventDetail{
 		ID:            data.ID,
 		Title:         data.Title,
@@ -121,5 +125,26 @@ func resEventDetail(data tempDetail, role string) event.EventDetail {
 		Date:          data.Date,
 		Price:         data.Price,
 		Location:      data.Location,
+	}
+}
+
+func toModelJoinEvent(data *coreapi.ChargeResponse, userId, idEvent int, method string) JoinEvent {
+
+	if data.VaNumbers == nil {
+		data.VaNumbers = append(data.VaNumbers, coreapi.VANumber{
+			Bank:     "",
+			VANumber: "",
+		})
+	}
+
+	return JoinEvent{
+		UserID:          uint(userId),
+		EventID:         uint(idEvent),
+		Type_payment:    data.PaymentType,
+		Payment_method:  method,
+		Status_payment:  data.TransactionStatus,
+		Virtual_account: data.VaNumbers[0].VANumber,
+		Bill_key:        data.BillKey,
+		GrossAmount:     data.GrossAmount,
 	}
 }

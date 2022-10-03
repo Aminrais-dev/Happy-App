@@ -2,7 +2,9 @@ package data
 
 import (
 	"capstone/happyApp/features/event"
+	"errors"
 
+	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
 )
 
@@ -47,7 +49,7 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 			return nil, tx.Error
 		}
 
-		var dataRes = toRes(dataEvent)
+		var dataRes = EventList(dataEvent)
 		for key := range dataRes {
 			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
 		}
@@ -59,7 +61,7 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 			return nil, tx.Error
 		}
 
-		var dataRes = toRes(dataEvent)
+		var dataRes = EventList(dataEvent)
 		for key := range dataRes {
 			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
 		}
@@ -79,7 +81,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 			return event.CommunityEvent{}, tx.Error
 		}
 
-		dataRes = toRes(dataEvent)
+		dataRes = EventList(dataEvent)
 		for key := range dataRes {
 			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
 		}
@@ -90,7 +92,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 			return event.CommunityEvent{}, tx.Error
 		}
 
-		dataRes = toRes(dataEvent)
+		dataRes = EventList(dataEvent)
 		for key := range dataRes {
 			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
 		}
@@ -105,7 +107,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 	var role JoinCommunity
 	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, idComu)
 
-	var dataReturn = resEventComu(dataRes, EventComu, role.Role)
+	var dataReturn = EventListComu(dataRes, EventComu, role.Role)
 
 	return dataReturn, nil
 
@@ -126,10 +128,46 @@ func (repo *eventData) SelectEventDetail(idEvent, userId int) (event.EventDetail
 		status = "not join"
 	}
 
-	var dataRes = resEventDetail(data, status)
+	var dataRes = EventDetails(data, status)
 
 	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes.ID).Scan(&dataRes.Partisipasi)
 
 	return dataRes, nil
+
+}
+
+func (repo *eventData) SelectAmountEvent(idEvent int) uint64 {
+
+	var event Event
+	tx := repo.db.First(&event, "id = ? ", idEvent)
+	if tx.Error != nil {
+		return 00
+	}
+
+	return event.Price
+
+}
+
+func (repo *eventData) CreatePayment(reqMidtrans coreapi.ChargeReq, userId, idEvent int, method string) (*coreapi.ChargeResponse, error) {
+
+	var check JoinEvent
+	paid := "paid"
+	repo.db.First(&check, "user_id = ? AND event_id = ? AND status_payment = ?", userId, idEvent, paid)
+	if check.UserID == uint(userId) {
+		return nil, errors.New("sudah join dalam event")
+	}
+
+	chargeResponse, errCreate := coreapi.ChargeTransaction(&reqMidtrans)
+	if errCreate != nil {
+		return nil, errCreate
+	}
+
+	data := toModelJoinEvent(chargeResponse, userId, idEvent, method)
+	tx := repo.db.Create(&data)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return nil, tx.Error
+	}
+
+	return chargeResponse, nil
 
 }
