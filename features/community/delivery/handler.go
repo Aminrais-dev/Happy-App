@@ -184,11 +184,12 @@ func (user *Delivery) JoinCommunity(c echo.Context) error {
 }
 
 func (user *Delivery) GetDetailCommunity(c echo.Context) error {
+	userid := middlewares.ExtractToken(c)
 	communityid, err := strconv.Atoi(c.Param("communityid"))
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
-	data, msg, errs := user.From.GetCommunityFeed(communityid)
+	data, msg, errs := user.From.GetCommunityFeed(userid, communityid)
 	if errs != nil {
 		return c.JSON(400, helper.FailedResponseHelper(msg))
 

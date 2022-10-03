@@ -175,6 +175,14 @@ func (storage *Storage) InsertToJoin(userid, communityid int) (string, error) {
 }
 
 func (storage *Storage) InsertFeed(core community.CoreFeed) (string, error) {
+	var check JoinCommunity
+	txcheck := storage.query.Find(&check, "user_id = ? and community_id = ?", core.UserID, core.CommunityID)
+	if txcheck.Error != nil {
+		return "Gagal check user", txcheck.Error
+	} else if txcheck.RowsAffected == 0 {
+		return "Kamu Harus Bergabung Sebelum Menambahkan Feed", errors.New("Join Dulu")
+	}
+
 	feed := ToModelFeed(core)
 	tx := storage.query.Create(&feed)
 	if tx.Error != nil {
@@ -184,7 +192,15 @@ func (storage *Storage) InsertFeed(core community.CoreFeed) (string, error) {
 	return "Sukses Menambahkan Feed", nil
 }
 
-func (storage *Storage) SelectCommunity(communityid int) (community.CoreCommunity, string, error) {
+func (storage *Storage) SelectCommunity(userid, communityid int) (community.CoreCommunity, string, error) {
+	var join JoinCommunity
+	txtam := storage.query.Find(&join, "user_id= ? and community_id = ?", userid, communityid)
+	if txtam.Error != nil {
+		return community.CoreCommunity{}, "Gagal Check Join", txtam.Error
+	} else if txtam.RowsAffected != 1 {
+		join.Role = ""
+	}
+
 	var get Community
 	tx := storage.query.Preload("Feeds").Find(&get, "id = ?", communityid)
 	if tx.Error != nil {
@@ -208,7 +224,7 @@ func (storage *Storage) SelectCommunity(communityid int) (community.CoreCommunit
 		corefeed = append(corefeed, ToCoreFeed(v, name.Name))
 	}
 
-	last := ToCoreWithFeed(get, sum, corefeed)
+	last := ToCoreWithFeed(get, sum, corefeed, join.Role)
 
 	return last, "Sukses mendapat Data", nil
 }
