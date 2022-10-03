@@ -71,10 +71,6 @@ type tempRespon struct {
 	Price        int64
 }
 
-type member struct {
-	Member uint8
-}
-
 func fromCore(data event.EventCore) Event {
 	return Event{
 		Title:       data.Title,
@@ -115,7 +111,7 @@ func resEventComu(data []event.Response, dataComu temp, role string) event.Commu
 	}
 }
 
-func resEventDetail(data tempDetail, member member, role string) event.EventDetail {
+func resEventDetail(data tempDetail, role string) event.EventDetail {
 	return event.EventDetail{
 		ID:            data.ID,
 		Title:         data.Title,
@@ -123,7 +119,6 @@ func resEventDetail(data tempDetail, member member, role string) event.EventDeta
 		Status:        role,
 		Penyelenggara: data.Penyelenggara,
 		Date:          data.Date,
-		Partisipasi:   member.Member,
 		Price:         data.Price,
 		Location:      data.Location,
 	}

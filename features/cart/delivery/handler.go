@@ -18,18 +18,20 @@ func New(e *echo.Echo, data cart.UsecaseInterface) {
 		From: data,
 	}
 
-	e.POST("/cart/:productid", handler.AddToCart, middlewares.JWTMiddleware()) //belum di test
-	e.GET("/cart/:communityid", handler.GetCart, middlewares.JWTMiddleware())  //belum di test
-	e.DELETE("/cart/:cartid", handler.DeleteCart, middlewares.JWTMiddleware()) //belum di test
+	e.POST("/cart", handler.AddToCart, middlewares.JWTMiddleware())
+	e.GET("/cart", handler.GetCart, middlewares.JWTMiddleware())
+	e.DELETE("/cart/:cartid", handler.DeleteCart, middlewares.JWTMiddleware())
 
 }
 
 func (user *Delivery) AddToCart(c echo.Context) error {
 	userid := middlewares.ExtractToken(c)
-	productid, err := strconv.Atoi(c.Param("productid"))
-	if err != nil {
-		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	var req Request
+	errbind := c.Bind(&req)
+	if errbind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
 	}
+	productid := req.Productid
 
 	msg, ers := user.From.AddToCart(userid, productid)
 	if ers != nil {
@@ -41,7 +43,7 @@ func (user *Delivery) AddToCart(c echo.Context) error {
 
 func (user *Delivery) GetCart(c echo.Context) error {
 	userid := middlewares.ExtractToken(c)
-	communityid, err := strconv.Atoi(c.Param("communityid"))
+	communityid, err := strconv.Atoi(c.QueryParam("communityid"))
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
