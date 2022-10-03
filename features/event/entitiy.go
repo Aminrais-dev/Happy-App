@@ -22,7 +22,7 @@ type Response struct {
 	ID           uint      `json:"id"`
 	Logo         string    `json:"logo"`
 	Title        string    `json:"title"`
-	Members      int64     `json:"members"`
+	Members      uint8     `json:"members"`
 	Descriptions string    `json:"descriptions"`
 	Date         time.Time `json:"date"`
 	Price        int64     `json:"price"`
@@ -45,7 +45,7 @@ type EventDetail struct {
 	Description   string    `json:"descriptions"`
 	Penyelenggara string    `json:"penyelenggara"`
 	Date          time.Time `json:"date_event"`
-	Partisipasi   int64     `json:"partisipasi"`
+	Partisipasi   uint8     `json:"partisipasi"`
 	Price         uint64    `json:"price"`
 	Location      string    `json:"location"`
 }
