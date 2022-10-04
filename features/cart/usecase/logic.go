@@ -80,14 +80,14 @@ func (service *Service) GetCharge(transid, gross int, payment, table string) (co
 	case payment == "GOPAY":
 		charge = coreapi.ChargeReq{
 			TransactionDetails: midtrans.TransactionDetails{
-				OrderID:  helper.GenerateOrderID(table, transid) + "_GOPAY_" + fmt.Sprintf("%v", time),
+				OrderID:  helper.GenerateTransactionID(table, transid) + "-GOPAY-" + fmt.Sprintf("%v", time),
 				GrossAmt: int64(gross),
 			},
 		}
 	case payment == "BCA_VIRTUAL_ACCOUNT":
 		charge = coreapi.ChargeReq{
 			TransactionDetails: midtrans.TransactionDetails{
-				OrderID:  helper.GenerateOrderID(table, transid) + "_BCA_" + fmt.Sprintf("%v", time),
+				OrderID:  helper.GenerateTransactionID(table, transid) + "-BCA-" + fmt.Sprintf("%v", time),
 				GrossAmt: int64(gross),
 			},
 			BankTransfer: &coreapi.BankTransferDetails{
@@ -97,7 +97,7 @@ func (service *Service) GetCharge(transid, gross int, payment, table string) (co
 	case payment == "MANDIRI_VIRTUAL_ACCOUNT":
 		charge = coreapi.ChargeReq{
 			TransactionDetails: midtrans.TransactionDetails{
-				OrderID:  helper.GenerateOrderID(table, transid) + "_MANDIRI_" + fmt.Sprintf("%v", time),
+				OrderID:  helper.GenerateTransactionID(table, transid) + "-MANDIRI-" + fmt.Sprintf("%v", time),
 				GrossAmt: int64(gross),
 			},
 			EChannel: &coreapi.EChannelDetail{

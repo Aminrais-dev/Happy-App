@@ -40,7 +40,8 @@ type Transaction struct {
 	Province         string
 	Type_Payment     string
 	Status_Payment   string `gorm:"default:unpaid"`
-	Midtrans_Virtual string
+	Midtrans_Virtual string // atau VitualID
+	OrderID          string
 	Carts            []TransactionCart
 }
 
