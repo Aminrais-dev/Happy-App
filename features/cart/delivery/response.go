@@ -24,51 +24,51 @@ type ResponseCart struct {
 }
 
 type VAnumbers struct {
-	BankTransfer string
-	VAnumber     string
+	BankTransfer string `json:"bank"`
+	VAnumber     string `json:"va_number"`
 }
 
 type Actions struct {
-	Name   string
-	Method string
-	Url    string
+	Name   string `json:"name"`
+	Method string `json:"method"`
+	Url    string `json:"url"`
 }
 
 type ResponseChargeMandiri struct {
-	TransactionTime   string
-	TransactionStatus string
-	PaymentType       string
-	OrderID           string
-	GroosAmt          string
-	BillKey           string
-	BillerCode        string
+	TransactionTime   string `json:"transaction_time"`
+	TransactionStatus string `json:"transaction_status"`
+	PaymentType       string `json:"payment_type"`
+	OrderID           string `json:"order_id"`
+	GroosAmt          string `json:"gross_amount"`
+	BillKey           string `json:"bill_key"`
+	BillerCode        string `json:"biller_code"`
 }
 
 type ResponseChargeBCA struct {
-	TransactionTime   string
-	TransactionStatus string
-	PaymentType       string
-	OrderID           string
-	GroosAmt          string
-	VAnumbers         VAnumbers
+	TransactionTime   string    `json:"transaction_time"`
+	TransactionStatus string    `json:"transaction_status"`
+	PaymentType       string    `json:"payment_type"`
+	OrderID           string    `json:"order_id"`
+	GroosAmt          string    `json:"gross_amount"`
+	VAnumbers         VAnumbers `json:"va_numbers"`
 }
 
 type ResponseChargeGopay struct {
-	TransactionTime   string
-	TransactionStatus string
-	PaymentType       string
-	OrderID           string
-	GroosAmt          string
-	Actions           []Actions
+	TransactionTime   string    `json:"transaction_time"`
+	TransactionStatus string    `json:"transaction_status"`
+	PaymentType       string    `json:"payment_type"`
+	OrderID           string    `json:"order_id"`
+	GroosAmt          string    `json:"gross_amount"`
+	Actions           []Actions `json:"actions"`
 }
 
 type ChargeResponse struct {
-	TransactionTime   string
-	TransactionStatus string
-	PaymentType       string
-	VAnumbers         VAnumbers
-	OrderID           string
-	GroosAmt          string
+	TransactionTime   string    `json:"transaction_time"`
+	TransactionStatus string    `json:"transaction_status"`
+	PaymentType       string    `json:"payment_type"`
+	VAnumbers         VAnumbers `json:"va_numbers"`
+	OrderID           string    `json:"order_id"`
+	GroosAmt          string    `json:"gross_amount"`
 }
 
 func CoreToResCommunity(data cart.CoreCommunity) ResposeCommunity {
