@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"capstone/happyApp/features/event"
-	"time"
 
 	"github.com/midtrans/midtrans-go/coreapi"
 )
@@ -28,13 +27,13 @@ type gopayResponse struct {
 }
 
 type ResponseListEvent struct {
-	ID           uint      `json:"id"`
-	Logo         string    `json:"logo"`
-	Title        string    `json:"title"`
-	Members      uint8     `json:"members"`
-	Descriptions string    `json:"descriptions"`
-	Date         time.Time `json:"date"`
-	Price        int64     `json:"price"`
+	ID           uint   `json:"id"`
+	Logo         string `json:"logo"`
+	Title        string `json:"title"`
+	Members      uint8  `json:"members"`
+	Descriptions string `json:"descriptions"`
+	Date         string `json:"date"`
+	Price        int64  `json:"price"`
 }
 
 type ResponseCommunityEvent struct {
@@ -48,18 +47,18 @@ type ResponseCommunityEvent struct {
 }
 
 type ResponseEventDetail struct {
-	ID            uint      `json:"id"`
-	Title         string    `json:"title"`
-	Status        string    `json:"status"`
-	Description   string    `json:"descriptions"`
-	Penyelenggara string    `json:"penyelenggara"`
-	Date          time.Time `json:"date_event"`
-	Partisipasi   uint8     `json:"partisipasi"`
-	Price         uint64    `json:"price"`
-	Location      string    `json:"location"`
+	ID            uint   `json:"id"`
+	Title         string `json:"title"`
+	Status        string `json:"status"`
+	Description   string `json:"descriptions"`
+	Penyelenggara string `json:"penyelenggara"`
+	Date          string `json:"date_event"`
+	Partisipasi   uint8  `json:"partisipasi"`
+	Price         uint64 `json:"price"`
+	Location      string `json:"location"`
 }
 
-var layout = "2023-01-01 00:00:01"
+var layout = "2006-01-02 15:04:05"
 
 func FromMidtransToPayment(resMidtrans *coreapi.ChargeResponse, payment_type string) Payment {
 
@@ -105,7 +104,7 @@ func ResponEventList(data []event.Response) []ResponseListEvent {
 			Logo:         v.Logo,
 			Title:        v.Title,
 			Descriptions: v.Descriptions,
-			Date:         v.Date,
+			Date:         v.Date.Format(layout),
 			Price:        v.Price,
 			Members:      v.Members,
 		})
@@ -133,7 +132,7 @@ func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 		Description:   data.Description,
 		Status:        data.Status,
 		Penyelenggara: data.Penyelenggara,
-		Date:          data.Date,
+		Date:          data.Date.Format(layout),
 		Price:         data.Price,
 		Location:      data.Location,
 	}

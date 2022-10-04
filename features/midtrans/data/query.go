@@ -6,8 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	// event "capstone/happyApp/features/event/data"
+	event "capstone/happyApp/features/event/data"
 	"capstone/happyApp/features/midtrans"
+	user "capstone/happyApp/features/user/data"
 
 	"gorm.io/gorm"
 )
@@ -22,7 +23,7 @@ func New(db *gorm.DB) midtrans.DataInterface {
 	}
 }
 
-func (storage *Storage) WeebHookUpdate(orderid, status string) (string, error) {
+func (storage *Storage) WeebHookUpdateTransaction(orderid, status string) (string, error) {
 	var trans cart.Transaction
 	trans.Status_Payment = status
 	trans.OrderID = orderid
@@ -70,4 +71,45 @@ func (storage *Storage) WeebHookUpdate(orderid, status string) (string, error) {
 	}
 
 	return fmt.Sprintf("Pembelian atas id %s Sukses", orderid), nil
+}
+
+func (storage *Storage) WeebHookUpdateJoinEvent(orderID, status string) (midtrans.DropData, error) {
+
+	var returnDefault midtrans.DropData
+	if status == "settlement" || status == "capture" {
+		status = "paid"
+	}
+	tx := storage.query.Model(&event.JoinEvent{}).Where("order_id = ? ", orderID).Update("status_payment", status)
+	if tx.Error != nil {
+		return returnDefault, tx.Error
+	}
+
+	var split = strings.Split(orderID, "-")
+	idUser, err := strconv.Atoi(split[2])
+	if err != nil {
+		return returnDefault, err
+	}
+	idEvent, errId := strconv.Atoi(split[1])
+	if err != nil {
+		return returnDefault, errId
+	}
+
+	var dataEvent event.Event
+	var dataUser user.User
+	txDropEvent := storage.query.First(&dataEvent, "id = ? ", idEvent)
+	if txDropEvent.Error != nil {
+		return returnDefault, txDropEvent.Error
+	}
+	txDropUser := storage.query.First(&dataUser, "id = ? ", idUser)
+	if txDropUser.Error != nil {
+		return returnDefault, txDropUser.Error
+	}
+
+	return midtrans.DropData{
+		Date:       dataEvent.Date,
+		Name:       dataUser.Name,
+		TitleEvent: dataEvent.Title,
+		Email:      dataUser.Email,
+	}, nil
+
 }
