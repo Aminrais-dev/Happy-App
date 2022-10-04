@@ -20,6 +20,10 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(communityModel.Comment{})
 	db.AutoMigrate(productModel.Product{})
 	db.AutoMigrate(cartModel.Cart{})
+	db.AutoMigrate(cartModel.Transaction{})
+	db.AutoMigrate(cartModel.TransactionCart{})
+	db.AutoMigrate(cartModel.Payment{})
+
 }
 
 // do nothing

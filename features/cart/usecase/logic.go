@@ -1,7 +1,16 @@
 package usecase
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/cart"
+	"capstone/happyApp/features/cart/delivery"
+	"capstone/happyApp/utils/helper"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/midtrans/midtrans-go"
+	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type Service struct {
@@ -31,5 +40,96 @@ func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity
 
 func (service *Service) DeleteFromCart(cartid int) (string, error) {
 	msg, err := service.do.DeleteFromCart(cartid)
+	return msg, err
+}
+
+func (service *Service) InsertIntoTransaction(core cart.CoreHistory) (int, int, string, error) {
+	// check stock
+	listProduct, msgp, errp := service.do.CheckStock(core.Carts)
+	if errp != nil {
+		return 0, 0, msgp, errp
+	}
+	// update stock
+	msgu, erru := service.do.UpdateStock(listProduct)
+	if erru != nil {
+		return 0, 0, msgu, erru
+	}
+	// insert to Transaction
+	transid, msg, err := service.do.InsertIntoTransaction(core)
+	if err != nil {
+		return 0, 0, msg, err
+	}
+
+	// Get Gross
+	gross, msg2, err2 := service.do.GetTotalTransaction(transid)
+	if err2 != nil {
+		return 0, 0, msg2, err2
+	}
+
+	// delete cart
+	msg3, err3 := service.do.DeleteCart(core)
+
+	return transid, gross, msg3, err3
+}
+
+func (service *Service) GetCharge(transid, gross int, payment, table string) (coreapi.ChargeReq, string, error) {
+	var charge coreapi.ChargeReq
+	time := time.Now().Unix()
+
+	switch {
+	case payment == "GOPAY":
+		charge = coreapi.ChargeReq{
+			TransactionDetails: midtrans.TransactionDetails{
+				OrderID:  helper.GenerateOrderID(table, transid) + "_GOPAY_" + fmt.Sprintf("%v", time),
+				GrossAmt: int64(gross),
+			},
+		}
+	case payment == "BCA_VIRTUAL_ACCOUNT":
+		charge = coreapi.ChargeReq{
+			TransactionDetails: midtrans.TransactionDetails{
+				OrderID:  helper.GenerateOrderID(table, transid) + "_BCA_" + fmt.Sprintf("%v", time),
+				GrossAmt: int64(gross),
+			},
+			BankTransfer: &coreapi.BankTransferDetails{
+				Bank: midtrans.BankBca,
+			},
+		}
+	case payment == "MANDIRI_VIRTUAL_ACCOUNT":
+		charge = coreapi.ChargeReq{
+			TransactionDetails: midtrans.TransactionDetails{
+				OrderID:  helper.GenerateOrderID(table, transid) + "_MANDIRI_" + fmt.Sprintf("%v", time),
+				GrossAmt: int64(gross),
+			},
+			EChannel: &coreapi.EChannelDetail{
+				BillInfo1: "Buy at Alterra",
+				BillInfo2: "Terima Kasih",
+			},
+		}
+	default:
+		return coreapi.ChargeReq{}, "case tidak terpenuhi", errors.New("Failed")
+	}
+
+	return charge, charge.TransactionDetails.OrderID, nil
+}
+
+func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (coreapi.ChargeReq, string, error) {
+	var corecharge coreapi.ChargeReq
+	switch {
+	case payment == config.BCA_VIRTUAL_ACCOUNT:
+		corecharge = delivery.ToCoreBCA(core)
+	case payment == config.MANDIRI_VIRTUAL_ACCOUNT:
+		corecharge = delivery.ToCoreMandiri(core)
+	case payment == config.GOPAY:
+		corecharge = delivery.ToCoreGopay(core)
+	default:
+		corecharge = delivery.ToCoreMidtransBank(core)
+		return corecharge, "Gagal Format Charge ke Core", errors.New("Failed")
+	}
+
+	return corecharge, "Success To Core", nil
+}
+
+func (service *Service) InsertIntoPayment(payment cart.CorePayment) (string, error) {
+	msg, err := service.do.InsertIntoPayment(payment)
 	return msg, err
 }

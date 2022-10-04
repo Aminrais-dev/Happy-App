@@ -9,9 +9,10 @@ import (
 
 type Cart struct {
 	gorm.Model
-	UserID    uint
-	ProductID uint
-	Quantity  int `gorm:"default:1"`
+	UserID       uint
+	ProductID    uint
+	Quantity     int `gorm:"default:1"`
+	Transactions []TransactionCart
 }
 
 type Product struct {
@@ -30,6 +31,31 @@ type JoinCommunity struct {
 	UserID      uint
 	CommunityID uint
 	Role        string
+}
+
+type Transaction struct {
+	gorm.Model
+	Street           string
+	City             string
+	Province         string
+	Type_Payment     string
+	Status_Payment   string `gorm:"default:unpaid"`
+	Midtrans_Virtual string
+	Carts            []TransactionCart
+}
+
+type TransactionCart struct {
+	gorm.Model
+	TransactionID uint
+	CartID        uint
+	Price         uint
+}
+
+type Payment struct {
+	gorm.Model
+	UserID  uint
+	OrderID string
+	Groos   int
 }
 
 func ToModelCart(userid, productid uint) Cart {
@@ -57,5 +83,21 @@ func ProductToCart(data Product, cartId uint) cart.CoreCart {
 		Descriptions: data.Description,
 		Photo:        data.Photo,
 		Price:        int(data.Price),
+	}
+}
+
+func ToModelTransaction(data cart.CoreHistory) Transaction {
+	return Transaction{
+		Street:       data.Street,
+		City:         data.City,
+		Province:     data.Province,
+		Type_Payment: data.Type_Payment,
+	}
+}
+
+func ToModelTransactionCart(transid, cartid int) TransactionCart {
+	return TransactionCart{
+		TransactionID: uint(transid),
+		CartID:        uint(cartid),
 	}
 }
