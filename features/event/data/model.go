@@ -21,14 +21,13 @@ type Event struct {
 
 type JoinEvent struct {
 	gorm.Model
-	UserID          uint
-	EventID         uint
-	Type_payment    string
-	Payment_method  string
-	Status_payment  string
-	Virtual_account string
-	Bill_key        string
-	GrossAmount     string
+	UserID           uint
+	EventID          uint
+	Type_payment     string
+	Payment_method   string
+	Status_payment   string
+	Midtrans_virtual string
+	GrossAmount      string
 }
 
 type User struct {
@@ -130,21 +129,22 @@ func EventDetails(data tempDetail, role string) event.EventDetail {
 
 func toModelJoinEvent(data *coreapi.ChargeResponse, userId, idEvent int, method string) JoinEvent {
 
-	if data.VaNumbers == nil {
-		data.VaNumbers = append(data.VaNumbers, coreapi.VANumber{
-			Bank:     "",
-			VANumber: "",
-		})
+	var midtransVirtual string
+	if data.VaNumbers != nil {
+		midtransVirtual = data.VaNumbers[0].VANumber
+	} else if data.BillKey != "" {
+		midtransVirtual = data.BillKey
+	} else if data.Actions != nil {
+		midtransVirtual = data.Actions[0].URL
 	}
 
 	return JoinEvent{
-		UserID:          uint(userId),
-		EventID:         uint(idEvent),
-		Type_payment:    data.PaymentType,
-		Payment_method:  method,
-		Status_payment:  data.TransactionStatus,
-		Virtual_account: data.VaNumbers[0].VANumber,
-		Bill_key:        data.BillKey,
-		GrossAmount:     data.GrossAmount,
+		UserID:           uint(userId),
+		EventID:          uint(idEvent),
+		Type_payment:     data.PaymentType,
+		Payment_method:   method,
+		Status_payment:   data.TransactionStatus,
+		Midtrans_virtual: midtransVirtual,
+		GrossAmount:      data.GrossAmount,
 	}
 }
