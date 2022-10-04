@@ -38,3 +38,12 @@ func SuccessCartResponseHelper(msg, data interface{}, data2 interface{}) map[str
 		"listcarts": data2,
 	}
 }
+
+func SuccessHistoryResponseHelper(msg, data interface{}, data2 interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"status":    "success",
+		"message":   msg,
+		"community": data,
+		"history":   data2,
+	}
+}

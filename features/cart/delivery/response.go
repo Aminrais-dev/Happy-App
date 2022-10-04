@@ -159,3 +159,44 @@ func ToChargeMidtrans(data coreapi.ChargeResponse) ChargeResponse {
 		GroosAmt: data.GrossAmount,
 	}
 }
+
+type ResponCommunity struct {
+	Logo         string `json:"logo"`
+	Title        string `json:"title"`
+	Descriptions string `json:"descriptions"`
+}
+
+type ResponseHistory struct {
+	ID    uint   `json:"productid"`
+	Name  string `json:"name"`
+	Photo string `json:"photo"`
+	Price int    `json:"price"`
+	Buyer string `json:"buyer"`
+}
+
+func ToResponseHistory(data cart.CoreProductResponse) ResponseHistory {
+	return ResponseHistory{
+		ID:    data.ID,
+		Name:  data.Name,
+		Photo: data.Photo,
+		Price: data.Price,
+		Buyer: data.Buyer,
+	}
+}
+
+func ToResponseHistoryList(data []cart.CoreProductResponse) []ResponseHistory {
+	var list []ResponseHistory
+	for _, v := range data {
+		list = append(list, ToResponseHistory(v))
+	}
+	return list
+}
+
+func ToResponseCommunity(data cart.CoreCommunity) ResponCommunity {
+	return ResponCommunity{
+		Logo:         data.Logo,
+		Title:        data.Title,
+		Descriptions: data.Descriptions,
+	}
+
+}

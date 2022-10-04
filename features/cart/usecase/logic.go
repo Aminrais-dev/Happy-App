@@ -133,3 +133,21 @@ func (service *Service) InsertIntoPayment(payment cart.CorePayment) (string, err
 	msg, err := service.do.InsertIntoPayment(payment)
 	return msg, err
 }
+
+func (service *Service) GetCommunityHistory(userid, communityid int) (cart.CoreCommunity, []cart.CoreProductResponse, string, error) {
+	role, errr := service.do.GetUserRole(userid, communityid)
+	if errr != nil {
+		return cart.CoreCommunity{}, nil, "Error Mendapatkan role", errr
+	} else if role != "admin" {
+		return cart.CoreCommunity{}, nil, "Hanya Admin Yang Bisa Melihat History", errors.New("Access Illegal")
+	}
+
+	cart, msg1, err1 := service.do.SelectCommunity(communityid)
+	if err1 != nil {
+		return cart, nil, msg1, err1
+	}
+
+	listhistory, msg2, err2 := service.do.ListHistoryProduct(communityid)
+	return cart, listhistory, msg2, err2
+
+}

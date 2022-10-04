@@ -28,7 +28,7 @@ func New(e *echo.Echo, data cart.UsecaseInterface) {
 	e.GET("/cart", handler.GetCart, middlewares.JWTMiddleware())
 	e.DELETE("/cart/:cartid", handler.DeleteCart, middlewares.JWTMiddleware())
 	e.POST("/checkout", handler.BuyInCart, middlewares.JWTMiddleware())
-
+	e.GET("community/:communityid/history", handler.CheckHistory, middlewares.JWTMiddleware())
 }
 
 func (user *Delivery) AddToCart(c echo.Context) error {
@@ -99,17 +99,18 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 		if err != nil {
 			return c.JSON(400, helper.FailedResponseHelper(msg))
 		}
-
+		// create payment(charge object and make create order id)
 		chargeresponse, OrderID, errtransfer := user.From.GetCharge(transid, gross, buy.Type_Payment, config.TRANSACTION)
 		if errtransfer != nil {
 			return c.JSON(400, helper.FailedResponseHelper(OrderID))
 		}
-
+		// membuat request menjadi core
 		chargecore, msgch, errformatcharge := user.From.ChargeRequest(chargeresponse, buy.Type_Payment)
 		if errformatcharge != nil {
 			return c.JSON(400, helper.FailedResponseHelper(msgch))
 		}
 
+		// menggunakan method milik midtrans
 		midtransresp, errcharge := coreapi.ChargeTransaction(&chargecore)
 		if errcharge != nil {
 			return c.JSON(400, helper.FailedResponseHelper(errcharge.GetMessage()))
@@ -138,4 +139,19 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 	} else {
 		return c.JSON(400, helper.FailedResponseHelper(fmt.Sprintf("Kami Hanya Menyediakan %s,%s,%s Saja", config.BCA_VIRTUAL_ACCOUNT, config.MANDIRI_VIRTUAL_ACCOUNT, config.GOPAY)))
 	}
+}
+
+func (user *Delivery) CheckHistory(c echo.Context) error {
+	userid := middlewares.ExtractToken(c)
+	communityid, err := strconv.Atoi(c.Param("communityid"))
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+	}
+
+	community, sold, msg, errs := user.From.GetCommunityHistory(userid, communityid)
+	if errs != nil {
+		return c.JSON(400, helper.FailedResponseHelper(msg))
+	}
+
+	return c.JSON(200, helper.SuccessHistoryResponseHelper(msg, ToResponseCommunity(community), ToResponseHistoryList(sold)))
 }
