@@ -59,6 +59,14 @@ type Payment struct {
 	Groos   int
 }
 
+type History struct {
+	ProductID uint
+	UserID    uint
+	Name      string
+	Photo     string
+	Price     uint
+}
+
 func ToModelCart(userid, productid uint) Cart {
 	return Cart{
 		UserID:    userid,
@@ -100,5 +108,15 @@ func ToModelTransactionCart(transid, cartid int) TransactionCart {
 	return TransactionCart{
 		TransactionID: uint(transid),
 		CartID:        uint(cartid),
+	}
+}
+
+func ToCoreProductResponse(data History, name string) cart.CoreProductResponse {
+	return cart.CoreProductResponse{
+		ID:    data.ProductID,
+		Name:  data.Name,
+		Photo: data.Photo,
+		Price: int(data.Price),
+		Buyer: name,
 	}
 }

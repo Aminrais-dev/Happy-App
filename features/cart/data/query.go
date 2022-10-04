@@ -3,6 +3,7 @@ package data
 import (
 	"capstone/happyApp/features/cart"
 	community "capstone/happyApp/features/community/data"
+	user "capstone/happyApp/features/user/data"
 	"errors"
 	"fmt"
 
@@ -196,4 +197,45 @@ func (storage *Storage) InsertIntoPayment(payment cart.CorePayment) (string, err
 	}
 
 	return "Success Insert Payment", nil
+}
+
+func (storage *Storage) GetUserRole(userid, communityid int) (string, error) {
+	var model JoinCommunity
+	tx := storage.query.Find(&model, "user_id = ? and community_id = ?", userid, communityid)
+	if tx.Error != nil {
+		return "Gagal mendapatkan role User", tx.Error
+	}
+
+	return model.Role, nil
+}
+
+func (storage *Storage) SelectCommunity(communityid int) (cart.CoreCommunity, string, error) {
+	var commu community.Community
+	tx := storage.query.Find(&commu, "id = ?", communityid)
+	if tx.Error != nil {
+		return cart.CoreCommunity{}, "Error Mengambil Data Community", tx.Error
+	}
+
+	return ToCoreCommunity(commu, 0), "Sukcess Mendaptkan Data Community", nil
+}
+
+func (storage *Storage) ListHistoryProduct(communityid int) ([]cart.CoreProductResponse, string, error) {
+	var hist []History
+	tx := storage.query.Raw("select p.id as product_id, c.user_id as user_id, p.name as name, p.photo as photo, p.price as price from products p inner join carts c on p.id = c.product_id inner join transaction_carts tc on c.id = tc.cart_id inner join transactions t on tc.transaction_id = t.id where p.community_id = ? and (t.status_payment = 'settlement' or t.status_payment = 'capture')", communityid).Scan(&hist)
+	if tx.Error != nil {
+		return nil, "Gagal Mendapatkan List History", tx.Error
+	}
+
+	var listhist []cart.CoreProductResponse
+
+	for _, v := range hist {
+		var user user.User
+		tx2 := storage.query.Find(&user, "id = ?", v.UserID)
+		if tx2.Error != nil {
+			return nil, "Gagal Mengambil Nama Pembeli", tx2.Error
+		}
+		listhist = append(listhist, ToCoreProductResponse(v, user.Username))
+	}
+
+	return listhist, "Success Menjalankan semua Fungsi", nil
 }
