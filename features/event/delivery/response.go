@@ -8,13 +8,14 @@ import (
 )
 
 type Payment struct {
-	OrderID           string          `json:"orderID"`
-	TransactionID     string          `json:"transactionID"`
-	PaymentMethod     string          `json:"paymentMethod"`
-	BillNumber        string          `json:"billNumber,omitempty"`
+	OrderID           string          `json:"order_id"`
+	TransactionID     string          `json:"transaction_id"`
+	PaymentMethod     string          `json:"payment_method"`
+	BillNumber        string          `json:"bill_number,omitempty"`
 	Bank              string          `json:"bank,omitempty"`
-	GrossAmount       string          `json:"grossAmount"`
-	TransactionStatus string          `json:"transactionStatus"`
+	GrossAmount       string          `json:"gross_amount"`
+	TransactionTime   string          `json:"transaction_time"`
+	TransactionStatus string          `json:"transaction_status"`
 	Actions           []gopayResponse `json:"actions,omitempty"`
 	Bill_key          string          `json:"bill_key,omitempty"`
 	Biller_code       string          `json:"biller_code,omitempty"`
@@ -58,6 +59,8 @@ type ResponseEventDetail struct {
 	Location      string    `json:"location"`
 }
 
+var layout = "2023-01-01 00:00:01"
+
 func FromMidtransToPayment(resMidtrans *coreapi.ChargeResponse, payment_type string) Payment {
 
 	var returnGopay []gopayResponse
@@ -85,6 +88,7 @@ func FromMidtransToPayment(resMidtrans *coreapi.ChargeResponse, payment_type str
 		BillNumber:        resMidtrans.VaNumbers[0].VANumber,
 		Bank:              resMidtrans.VaNumbers[0].Bank,
 		GrossAmount:       resMidtrans.GrossAmount,
+		TransactionTime:   resMidtrans.TransactionTime,
 		TransactionStatus: resMidtrans.TransactionStatus,
 		Actions:           returnGopay,
 		Bill_key:          resMidtrans.BillKey,

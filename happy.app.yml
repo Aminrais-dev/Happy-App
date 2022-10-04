@@ -251,7 +251,7 @@ paths:
         - $ref: "#/components/parameters/ParamId"
       responses:
         "200":
-          $ref: "#/components/responses/successOperationNonData"
+          $ref: "#/components/responses/paymentEvent"
         "400":
           $ref: "#/components/responses/failedresponse"
 
@@ -930,7 +930,38 @@ components:
           type: string
         type_payment:
           type: string
-
+    payment:
+      type: object
+      properties:
+        order_id:
+          type: string
+        transaction_id:
+          type: string
+        payment_method:
+          type: string
+        bill_number:
+          type: string
+        bank:
+          type: string
+        gross_amount:
+          type: string
+        transaction_time:
+          type: string
+        transaction_status:
+          type: string
+        bill_key:
+          type: string
+        biller_code:
+          type: string
+        actions:
+          type: object
+          properties:
+            name:
+              type: string
+            method:
+              type: string
+            url:
+              type: string
   ###########################
   # REQUEST BODY
   ###########################
@@ -1091,6 +1122,9 @@ components:
             example2:
               value:
                 type_payment: BCA Virtual Account
+            example3:
+              value:
+                type_payment: Mandiri Virtual Account
     bodycheckout:
       content:
         application/json:
@@ -1489,6 +1523,59 @@ components:
                 { name: Kaos, buyer: Diluc, photo: kaos.jpg, price: 100000 },
                 { name: celana, buyer: Amber, photo: celana.jpg, price: 50000 },
               ]
+    paymentEvent:
+      description: user melakukan generate pembayaran untuk join event
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/payment"
+          examples:
+            example1:
+              value:
+                order_id: event-1-2_56123871-238912
+                transaction_id: abb2d93f-dae3-4183-936d-4145423ad72f
+                payment_method: gopay
+                gross_amount: "250000"
+                transaction_time: "2023-01-01 00:00:01"
+                transaction_status: pending
+                actions:
+                  [
+                    {
+                      name: generate-gr-code,
+                      method: get,
+                      url: https://api.sandbox.veritrans.co.id/v2/gopay/231c79c5-e39e-4993-86da-cadcaee56c1d/qr-code,
+                    },
+                    {
+                      name: deeplink-redirect,
+                      method: get,
+                      url: https://simulator.sandbox.midtrans.com/gopay/ui/checkout?referenceid=Y0xwjoQ9uy&callback_url=someapps%3A%2F%2Fcallback%3Forder_id%3Dorder-101h-1570513296,
+                    },
+                    {
+                      name: cancel,
+                      method: post,
+                      url: https://api.sandbox.veritrans.co.id/v2/231c79c5-e39e-4993-86da-cadcaee56c1d/cancel,
+                    },
+                  ]
+            example2:
+              value:
+                order_id: event-1-2_56123871-238912
+                transaction_id: abb2d93f-dae3-4183-936d-4145423ad72f
+                bill_number: "21312314"
+                bank: bca
+                payment_method: bank_transfer
+                gross_amount: "250000"
+                transaction_time: "2023-01-01 00:00:01"
+                transaction_status: pending
+            example3:
+              value:
+                order_id: event-1-2_56123871-238912
+                transaction_id: abb2d93f-dae3-4183-936d-4145423ad72f
+                payment_method: bank_transfer
+                gross_amount: "250000"
+                transaction_time: "2023-01-01 00:00:01"
+                transaction_status: pending
+                bill_key: "1254231"
+                biller_code: "89126"
 
   ###########################
   # PARAMETER
