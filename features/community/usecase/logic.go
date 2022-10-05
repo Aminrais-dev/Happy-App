@@ -32,6 +32,11 @@ func (service *Service) GetMembers(communityid int) ([]string, string, error) {
 }
 
 func (service *Service) Leave(userid, communityid int) (string, error) {
+	_, err1 := service.do.CheckJoin(userid, communityid)
+	if err1 == nil {
+		return "Hanya Member Yang Bisa Leave", errors.New("Anda Belum Masuk Community")
+	}
+
 	role, errs := service.do.GetUserRole(userid, communityid)
 	if errs != nil {
 		return "Gagal mendapatkan role user", errs
@@ -83,6 +88,11 @@ func (service *Service) JoinCommunity(userid, communityid int) (string, error) {
 }
 
 func (service *Service) PostFeed(core community.CoreFeed) (string, error) {
+	_, err1 := service.do.CheckJoin(int(core.UserID), int(core.CommunityID))
+	if err1 == nil {
+		return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+	}
+
 	msg, err := service.do.InsertFeed(core)
 	return msg, err
 }
@@ -93,6 +103,15 @@ func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, e
 }
 
 func (service *Service) AddComment(core community.CoreComment) (string, error) {
+	communityid, errf := service.do.SelectCommunityIdWithFeed(int(core.FeedID))
+	if errf != nil {
+		return "Gagal Mendapatkan Comunity Id", errf
+	}
+	_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
+	if err1 == nil {
+		return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+	}
+
 	msg, err := service.do.InsertComment(core)
 	return msg, err
 }
