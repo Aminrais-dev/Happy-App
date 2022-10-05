@@ -31,7 +31,7 @@ func (storage *Storage) Insert(userid int, core community.CoreCommunity) (string
 		return "Masalah saat bergabung ke community", tx.Error
 	}
 
-	return "Suksus Bergabung ke Community", nil
+	return "Suksus Membuat ke Community", nil
 }
 
 func (storage *Storage) SelectList() ([]community.CoreCommunity, string, error) {
@@ -161,7 +161,7 @@ func (storage *Storage) CheckJoin(userid, communityid int) (string, error) {
 		return "Anda Sudah ada di community", errors.New("Anda telah Bergabung")
 	}
 
-	return "Bisa Join", nil
+	return "Lanjutkan", nil
 }
 
 func (storage *Storage) InsertToJoin(userid, communityid int) (string, error) {
@@ -286,4 +286,14 @@ func (storage *Storage) SelectListCommunityWithParam(param string) ([]community.
 	}
 
 	return listcore, "Sukses Mendapatkan Semua Data", nil
+}
+
+func (storage *Storage) SelectCommunityIdWithFeed(feedid int) (int, error) {
+	var community Feed
+	tx := storage.query.Find(&community, "id = ?", feedid)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return int(community.CommunityID), nil
 }

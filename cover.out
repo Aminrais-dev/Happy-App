@@ -1,0 +1,13 @@
+mode: set
+capstone/happyApp/features/product/usecase/logic.go:11.63,15.2 1 1
+capstone/happyApp/features/product/usecase/logic.go:17.86,19.66 1 1
+capstone/happyApp/features/product/usecase/logic.go:23.2,24.12 2 1
+capstone/happyApp/features/product/usecase/logic.go:19.66,21.3 1 1
+capstone/happyApp/features/product/usecase/logic.go:28.73,33.2 2 1
+capstone/happyApp/features/product/usecase/logic.go:35.88,40.2 2 1
+capstone/happyApp/features/product/usecase/logic.go:42.109,45.16 2 1
+capstone/happyApp/features/product/usecase/logic.go:49.2,49.35 1 1
+capstone/happyApp/features/product/usecase/logic.go:45.16,47.3 1 1
+capstone/happyApp/features/product/usecase/logic.go:53.112,56.16 2 1
+capstone/happyApp/features/product/usecase/logic.go:60.2,60.35 1 1
+capstone/happyApp/features/product/usecase/logic.go:56.16,58.3 1 1

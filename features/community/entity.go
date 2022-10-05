@@ -42,6 +42,7 @@ type DataInterface interface {
 	GetUserRole(Userid, communityid int) (string, error)
 	InsertToJoin(userid, communityid int) (string, error)
 	CheckJoin(userid, communityid int) (string, error)
+	SelectCommunityIdWithFeed(feedid int) (int, error)
 	InsertFeed(CoreFeed) (string, error)
 	SelectCommunity(userid, communityid int) (CoreCommunity, string, error)
 	SelectFeed(feedid int) (CoreFeed, string, error)
