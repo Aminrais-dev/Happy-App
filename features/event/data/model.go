@@ -23,6 +23,7 @@ type JoinEvent struct {
 	gorm.Model
 	UserID           uint
 	EventID          uint
+	OrderID          string
 	Type_payment     string
 	Payment_method   string
 	Status_payment   string
@@ -143,6 +144,7 @@ func toModelJoinEvent(data *coreapi.ChargeResponse, userId, idEvent int, method 
 		EventID:          uint(idEvent),
 		Type_payment:     data.PaymentType,
 		Payment_method:   method,
+		OrderID:          data.OrderID,
 		Status_payment:   data.TransactionStatus,
 		Midtrans_virtual: midtransVirtual,
 		GrossAmount:      data.GrossAmount,
