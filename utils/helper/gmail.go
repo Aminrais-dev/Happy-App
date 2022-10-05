@@ -32,7 +32,7 @@ func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 	return buf.String(), nil
 }
 
-func SendEmail(to, subject, name, title, date string) error {
+func SendEmail(to, subject string, data interface{}) error {
 
 	// if err := godotenv.Load(".env"); err != nil {
 	// 	log.Fatal(err)
@@ -42,11 +42,7 @@ func SendEmail(to, subject, name, title, date string) error {
 	var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD")
 
 	template := "./utils/helper/template/notif.html"
-	result, _ := ParseTemplate(template, BodyEmail{
-		Name:  name,
-		Event: title,
-		Date:  date,
-	})
+	result, _ := ParseTemplate(template, data)
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", CONFIG_AUTH_EMAIL)

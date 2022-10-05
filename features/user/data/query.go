@@ -61,7 +61,7 @@ func (repo *userData) SelectUser(id int) (user.CoreUser, []user.CommunityProfile
 	}
 
 	var comu []myCommunity
-	txComu := repo.db.Model(&Community{}).Select("communities.id as id, communities.title as title, communities.logo as logo, join_communities.role as role").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("join_communities.user_id = ? ", id).Scan(&comu)
+	txComu := repo.db.Model(&Community{}).Select("communities.id as id, communities.title as title, communities.logo as logo, join_communities.role as role").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("join_communities.user_id = ? AND join_communities.deleted_at IS NULL", id).Scan(&comu)
 	if txComu.Error != nil {
 		return user.CoreUser{}, nil, txComu.Error
 	}

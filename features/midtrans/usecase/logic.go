@@ -31,8 +31,14 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 
 	if transactionstatus == "settlement" || transactionstatus == "capture" {
 
+		dataEmail := helper.BodyEmail{
+			Name:  data.Name,
+			Event: data.TitleEvent,
+			Date:  data.Date.Format(time.RFC822),
+		}
+
 		subject := fmt.Sprintf("Sukses bergabung dalam event %s", data.TitleEvent)
-		errNotif := helper.SendEmail(data.Email, subject, data.Name, data.TitleEvent, data.Date.Format(time.RFC822))
+		errNotif := helper.SendEmail(data.Email, subject, dataEmail)
 		if errNotif != nil {
 			return "", nil
 		}
