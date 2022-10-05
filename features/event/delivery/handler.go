@@ -143,7 +143,7 @@ func (delivery *eventDelivery) CreatePaymentJoinEvent(c echo.Context) error {
 
 	paymentReq.Payment_type = typePayment(paymentReq.Payment_type)
 	paymentReq.GrossAmount = amount
-	paymentReq.OrderID = helper.GenerateOrderID("event", idEvent, userId)
+	paymentReq.OrderID = helper.GenerateOrderID(config.EVENT, idEvent, userId)
 
 	reqToMidrans, errMethod := toMidtrans(paymentReq)
 	if errMethod != nil {
