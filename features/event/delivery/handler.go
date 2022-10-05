@@ -155,6 +155,6 @@ func (delivery *eventDelivery) CreatePaymentJoinEvent(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("failed to create transaction"))
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper("success create transaction", FromMidtransToPayment(chargeResponse, paymentReq.Payment_type)))
+	return c.JSON(200, helper.SuccessDataResponseHelper("success create transactions", FromMidtransToPayment(chargeResponse, paymentReq.Payment_type)))
 
 }
