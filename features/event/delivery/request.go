@@ -28,7 +28,8 @@ type RequestPayment struct {
 func (data *Request) resToCore() event.EventCore {
 
 	var layout = "2006-01-02 15:04:05 MST"
-	date, _ := time.Parse(layout, data.Date)
+	wib := data.Date + " +0700"
+	date, _ := time.Parse(layout, wib)
 
 	return event.EventCore{
 		Title:       data.Title,
