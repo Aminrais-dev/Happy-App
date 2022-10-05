@@ -34,7 +34,7 @@ func (service *Service) GetMembers(communityid int) ([]string, string, error) {
 func (service *Service) Leave(userid, communityid int) (string, error) {
 	_, err1 := service.do.CheckJoin(userid, communityid)
 	if err1 == nil {
-		return "Hanya Member Yang Bisa Leave", errors.New("Anda Belum Masuk Community")
+		return "Hanya Member Dari Community Yang Bisa Leave", errors.New("Anda Belum Masuk Community")
 	}
 
 	role, errs := service.do.GetUserRole(userid, communityid)
