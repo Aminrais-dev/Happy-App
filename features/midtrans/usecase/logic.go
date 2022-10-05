@@ -26,7 +26,7 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 
 	data, err := service.do.WeebHookUpdateJoinEvent(orderid, transactionstatus)
 	if err != nil {
-		return "failed update  data", err
+		return "failed update data", err
 	}
 
 	if transactionstatus == "settlement" || transactionstatus == "capture" {
