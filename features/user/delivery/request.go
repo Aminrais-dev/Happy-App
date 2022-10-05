@@ -8,16 +8,15 @@ type Request struct {
 	Gender   string `json:"gender" form:"gender"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
-	Photo    string `json:"photo" form:"photo"`
 }
 
-func (req *Request) reqToCore() user.CoreUser {
+func (req *Request) reqToCore(poto string) user.CoreUser {
 	return user.CoreUser{
 		Name:     req.Name,
 		Username: req.Username,
 		Gender:   req.Gender,
 		Email:    req.Email,
 		Password: req.Password,
-		Photo:    req.Photo,
+		Photo:    poto,
 	}
 }

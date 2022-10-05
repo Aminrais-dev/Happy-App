@@ -37,8 +37,7 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error Bind"))
 	}
 
-	reqData.Photo = config.DEFAULT_PROFILE
-	row := delivery.userUsecase.PostUser(reqData.reqToCore())
+	row := delivery.userUsecase.PostUser(reqData.reqToCore(config.DEFAULT_PROFILE))
 	if row == -2 {
 		return c.JSON(400, helper.FailedResponseHelper("please input all request"))
 	} else if row != 1 {
@@ -71,6 +70,7 @@ func (delivery *userDelivery) UpdateAccount(c echo.Context) error {
 	}
 
 	idToken := middlewares.ExtractToken(c)
+	var photo string
 
 	fileData, fileInfo, fileErr := c.Request().FormFile("photo")
 	if fileErr != http.ErrMissingFile || fileErr == nil {
@@ -92,7 +92,7 @@ func (delivery *userDelivery) UpdateAccount(c echo.Context) error {
 			if errupload != nil {
 				return c.JSON(400, helper.FailedResponseHelper("failed to upload file"))
 			}
-			updateData.Photo = imageaddress
+			photo = imageaddress
 		}
 	}
 
@@ -112,8 +112,8 @@ func (delivery *userDelivery) UpdateAccount(c echo.Context) error {
 	if updateData.Password != "" {
 		Update.Password = updateData.Password
 	}
-	if updateData.Photo != "" {
-		Update.Photo = updateData.Photo
+	if photo != "" {
+		Update.Photo = photo
 	}
 
 	Update.ID = uint(idToken)

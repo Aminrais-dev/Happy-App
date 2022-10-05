@@ -48,7 +48,6 @@ func SendEmail(to, subject, name, title, date string) error {
 		Date:  date,
 	})
 
-	fmt.Println(result)
 	m := gomail.NewMessage()
 	m.SetHeader("From", CONFIG_AUTH_EMAIL)
 	m.SetHeader("To", to)
