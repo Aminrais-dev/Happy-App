@@ -22,7 +22,7 @@ func New(e *echo.Echo, data community.UsecaseInterface) {
 	handler := &Delivery{
 		From: data,
 	}
-	e.GET("/community", handler.ListCommunity, middlewares.JWTMiddleware())                             // selesai
+	e.GET("/community", handler.ListCommunity)                                                          // selesai
 	e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())                             // selesai
 	e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware()) // selesai
 	e.PUT("/community/:communityid", handler.UpdateCommunity, middlewares.JWTMiddleware())              // selesai
