@@ -80,19 +80,21 @@ func (storage *Storage) WeebHookUpdateJoinEvent(orderID, status string) (midtran
 	if status == "settlement" || status == "capture" {
 		status = config.SUCCESS
 	}
+
+	var split = strings.Split(orderID, "-")
+	idEvent, errId := strconv.Atoi(split[1])
+	if errId != nil {
+		return returnDefault, errId
+	}
+
 	tx := storage.query.Model(&event.JoinEvent{}).Where("order_id = ? ", orderID).Update("status_payment", status)
 	if tx.Error != nil {
 		return returnDefault, tx.Error
 	}
 
-	var split = strings.Split(orderID, "-")
 	idUser, err := strconv.Atoi(split[2])
 	if err != nil {
 		return returnDefault, err
-	}
-	idEvent, errId := strconv.Atoi(split[1])
-	if err != nil {
-		return returnDefault, errId
 	}
 
 	var dataEvent event.Event
