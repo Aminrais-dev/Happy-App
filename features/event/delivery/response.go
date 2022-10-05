@@ -42,7 +42,7 @@ type ResponseCommunityEvent struct {
 	Role        string              `json:"role"`
 	Logo        string              `json:"logo"`
 	Title       string              `json:"title"`
-	Description string              `json:"description"`
+	Description string              `json:"descriptions"`
 	Count       int64               `json:"members"`
 	Event       []ResponseListEvent `json:"event"`
 }
