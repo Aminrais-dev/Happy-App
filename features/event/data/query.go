@@ -131,7 +131,7 @@ func (repo *eventData) SelectEventDetail(idEvent, userId int) (event.EventDetail
 
 	var dataRes = EventDetails(data, status)
 
-	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as partisipasi").Where("event_id = ? AND status_payment = ? ", idEvent, config.SUCCESS).Scan(&dataRes.Partisipasi)
+	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", idEvent, config.SUCCESS).Scan(&dataRes.Partisipasi)
 
 	return dataRes, nil
 
