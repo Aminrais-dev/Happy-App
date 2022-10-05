@@ -1,6 +1,7 @@
 package data
 
 import (
+	"capstone/happyApp/config"
 	cart "capstone/happyApp/features/cart/data"
 	"fmt"
 	"strconv"
@@ -77,7 +78,7 @@ func (storage *Storage) WeebHookUpdateJoinEvent(orderID, status string) (midtran
 
 	var returnDefault midtrans.DropData
 	if status == "settlement" || status == "capture" {
-		status = "paid"
+		status = config.SUCCESS
 	}
 	tx := storage.query.Model(&event.JoinEvent{}).Where("order_id = ? ", orderID).Update("status_payment", status)
 	if tx.Error != nil {

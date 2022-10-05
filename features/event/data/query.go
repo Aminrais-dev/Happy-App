@@ -1,6 +1,7 @@
 package data
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/event"
 	"errors"
 
@@ -51,7 +52,7 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 
 		var dataRes = EventList(dataEvent)
 		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
 		}
 
 		return dataRes, nil
@@ -63,7 +64,7 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 
 		var dataRes = EventList(dataEvent)
 		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
 		}
 
 		return dataRes, nil
@@ -83,7 +84,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 
 		dataRes = EventList(dataEvent)
 		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
 		}
 
 	} else {
@@ -94,7 +95,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 
 		dataRes = EventList(dataEvent)
 		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes[key].ID).Scan(&dataRes[key].Members)
+			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
 		}
 
 	}
@@ -130,7 +131,7 @@ func (repo *eventData) SelectEventDetail(idEvent, userId int) (event.EventDetail
 
 	var dataRes = EventDetails(data, status)
 
-	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? ", dataRes.ID).Scan(&dataRes.Partisipasi)
+	repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes.ID, config.SUCCESS).Scan(&dataRes.Partisipasi)
 
 	return dataRes, nil
 

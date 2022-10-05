@@ -15,3 +15,5 @@ const TRANSACTION = "TRANSACTION"
 const SMTP_HOST = "smtp.gmail.com"
 const SMTP_PORT = 587
 const SENDER_NAME = "Happy App <muhammadamin.rais13@gmail.com>"
+
+const SUCCESS = "paid"
