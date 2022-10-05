@@ -132,6 +132,7 @@ func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 		Description:   data.Description,
 		Status:        data.Status,
 		Penyelenggara: data.Penyelenggara,
+		Partisipasi:   data.Partisipasi,
 		Date:          data.Date.Format(layout),
 		Price:         data.Price,
 		Location:      data.Location,
