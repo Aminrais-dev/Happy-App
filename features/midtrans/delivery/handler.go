@@ -42,7 +42,7 @@ func (user *Delivery) UpdateAData(c echo.Context) error {
 			c.JSON(400, helper.FailedResponseHelper(msg))
 		}
 
-		return c.JSON(200, helper.FailedResponseHelper(msg))
+		return c.JSON(200, helper.SuccessResponseHelper(msg))
 
 	} else {
 		return c.JSON(400, helper.FailedResponseHelper("Order Id Has A Different Format"))
