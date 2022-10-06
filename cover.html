@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">capstone/happyApp/features/community/usecase/logic.go (41.1%)</option>
+				<option value="file0">capstone/happyApp/features/community/usecase/logic.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -116,13 +116,13 @@ func (service *Service) Leave(userid, communityid int) (string, error) <span cla
         <span class="cov8" title="1">members, msg, err := service.do.Delete(userid, communityid)
         if members == 0 </span><span class="cov8" title="1">{
                 msgdc, errdc := service.do.DeleteCommunity(communityid)
-                if errdc != nil </span><span class="cov0" title="0">{
+                if errdc != nil </span><span class="cov8" title="1">{
                         return msgdc, errdc
                 }</span>
                 <span class="cov8" title="1">msg += " " + msgdc</span>
         } else<span class="cov8" title="1"> if role == "admin" </span><span class="cov8" title="1">{
                 newadmin, msgcr, errcr := service.do.ChangeAdmin(communityid)
-                if errcr != nil </span><span class="cov0" title="0">{
+                if errcr != nil </span><span class="cov8" title="1">{
                         return msgcr, errcr
                 }</span>
                 <span class="cov8" title="1">msg = fmt.Sprintf("Community akan di wariskan ke %s", newadmin)</span>
@@ -131,63 +131,63 @@ func (service *Service) Leave(userid, communityid int) (string, error) <span cla
         <span class="cov8" title="1">return msg, err</span>
 }
 
-func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov0" title="0">{
+func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov8" title="1">{
         role, err := service.do.GetUserRole(userid, int(core.ID))
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return "Gagal mendapatkan role user", err
-        }</span> else<span class="cov0" title="0"> if role != "admin" </span><span class="cov0" title="0">{
+        }</span> else<span class="cov8" title="1"> if role != "admin" </span><span class="cov8" title="1">{
                 return "Hanya admin yang bisa mengupdate Community", errors.New("Dont have access")
         }</span>
 
-        <span class="cov0" title="0">msg, errs := service.do.UpdateCommunity(int(core.ID), core)
+        <span class="cov8" title="1">msg, errs := service.do.UpdateCommunity(int(core.ID), core)
         return msg, errs</span>
 }
 
-func (service *Service) GetCommunityFeed(userid, communityid int) (community.CoreCommunity, string, error) <span class="cov0" title="0">{
+func (service *Service) GetCommunityFeed(userid, communityid int) (community.CoreCommunity, string, error) <span class="cov8" title="1">{
         core, msg, err := service.do.SelectCommunity(userid, communityid)
         return core, msg, err
 }</span>
 
-func (service *Service) JoinCommunity(userid, communityid int) (string, error) <span class="cov0" title="0">{
+func (service *Service) JoinCommunity(userid, communityid int) (string, error) <span class="cov8" title="1">{
         msg1, err1 := service.do.CheckJoin(userid, communityid)
-        if err1 != nil </span><span class="cov0" title="0">{
+        if err1 != nil </span><span class="cov8" title="1">{
                 return msg1, err1
         }</span>
 
-        <span class="cov0" title="0">msg2, err2 := service.do.InsertToJoin(userid, communityid)
+        <span class="cov8" title="1">msg2, err2 := service.do.InsertToJoin(userid, communityid)
         return msg2, err2</span>
 }
 
-func (service *Service) PostFeed(core community.CoreFeed) (string, error) <span class="cov0" title="0">{
+func (service *Service) PostFeed(core community.CoreFeed) (string, error) <span class="cov8" title="1">{
         _, err1 := service.do.CheckJoin(int(core.UserID), int(core.CommunityID))
-        if err1 == nil </span><span class="cov0" title="0">{
-                return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+        if err1 == nil </span><span class="cov8" title="1">{
+                return "Hanya Anggota dari Community Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
         }</span>
 
-        <span class="cov0" title="0">msg, err := service.do.InsertFeed(core)
+        <span class="cov8" title="1">msg, err := service.do.InsertFeed(core)
         return msg, err</span>
 }
 
-func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, error) <span class="cov0" title="0">{
+func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, error) <span class="cov8" title="1">{
         core, msg, err := service.do.SelectFeed(feedid)
         return core, msg, err
 }</span>
 
-func (service *Service) AddComment(core community.CoreComment) (string, error) <span class="cov0" title="0">{
+func (service *Service) AddComment(core community.CoreComment) (string, error) <span class="cov8" title="1">{
         communityid, errf := service.do.SelectCommunityIdWithFeed(int(core.FeedID))
-        if errf != nil </span><span class="cov0" title="0">{
+        if errf != nil </span><span class="cov8" title="1">{
                 return "Gagal Mendapatkan Comunity Id", errf
         }</span>
-        <span class="cov0" title="0">_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
-        if err1 == nil </span><span class="cov0" title="0">{
-                return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+        <span class="cov8" title="1">_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
+        if err1 == nil </span><span class="cov8" title="1">{
+                return "Hanya Anggota dari Community yang bisa melakukan Comment", errors.New("Anda Belum Masuk Community")
         }</span>
 
-        <span class="cov0" title="0">msg, err := service.do.InsertComment(core)
+        <span class="cov8" title="1">msg, err := service.do.InsertComment(core)
         return msg, err</span>
 }
 
-func (service *Service) GetListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) <span class="cov0" title="0">{
+func (service *Service) GetListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) <span class="cov8" title="1">{
         list, msg, err := service.do.SelectListCommunityWithParam(param)
         return list, msg, err
 }</span>

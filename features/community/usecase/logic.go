@@ -90,7 +90,7 @@ func (service *Service) JoinCommunity(userid, communityid int) (string, error) {
 func (service *Service) PostFeed(core community.CoreFeed) (string, error) {
 	_, err1 := service.do.CheckJoin(int(core.UserID), int(core.CommunityID))
 	if err1 == nil {
-		return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+		return "Hanya Anggota dari Community Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
 	}
 
 	msg, err := service.do.InsertFeed(core)
@@ -109,7 +109,7 @@ func (service *Service) AddComment(core community.CoreComment) (string, error) {
 	}
 	_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
 	if err1 == nil {
-		return "Hanya Anggota dari Member Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+		return "Hanya Anggota dari Community yang bisa melakukan Comment", errors.New("Anda Belum Masuk Community")
 	}
 
 	msg, err := service.do.InsertComment(core)
