@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/midtrans/midtrans-go"
+	"github.com/midtrans/midtrans-go/coreapi"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -192,54 +194,54 @@ func TestGetAmount(t *testing.T) {
 
 }
 
-// func TestCreatePayment(t *testing.T) {
+func TestCreatePayment(t *testing.T) {
 
-// 	eventMock := new(mocks.DataEvent)
-// 	userId := 1
-// 	eventId := 1
-// 	method := "GOPAY"
-// 	orderId := "event-131231"
-// 	req := coreapi.ChargeReq{
-// 		PaymentType: "gopay",
-// 		TransactionDetails: midtrans.TransactionDetails{
-// 			OrderID:  orderId,
-// 			GrossAmt: 800000,
-// 		},
-// 	}
+	eventMock := new(mocks.DataEvent)
+	userId := 1
+	eventId := 1
+	method := "GOPAY"
+	orderId := "event-131231"
+	req := coreapi.ChargeReq{
+		PaymentType: "gopay",
+		TransactionDetails: midtrans.TransactionDetails{
+			OrderID:  orderId,
+			GrossAmt: 800000,
+		},
+	}
 
-// 	dataGopayAction := coreapi.Action{Name: "gr-code", URL: "https//"}
-// 	var dataGopay []coreapi.Action
-// 	dataGopay = append(dataGopay, dataGopayAction)
+	dataGopayAction := coreapi.Action{Name: "gr-code", URL: "https//"}
+	var dataGopay []coreapi.Action
+	dataGopay = append(dataGopay, dataGopayAction)
 
-// 	returnData := coreapi.ChargeResponse{
-// 		TransactionStatus: "pending",
-// 		OrderID:           orderId,
-// 		Actions:           dataGopay,
-// 	}
+	returnData := &coreapi.ChargeResponse{
+		TransactionStatus: "pending",
+		OrderID:           orderId,
+		Actions:           dataGopay,
+	}
 
-// 	t.Run("Create payment succes", func(t *testing.T) {
+	t.Run("Create payment succes", func(t *testing.T) {
 
-// 		eventMock.On("CreatePayment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
+		eventMock.On("CreatePayment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
 
-// 		useCase := New(eventMock)
-// 		res, err := useCase.CreatePaymentMidtrans(req, userId, eventId, method)
-// 		assert.Equal(t, returnData, res)
-// 		assert.Nil(t, err)
-// 		eventMock.AssertExpectations(t)
+		useCase := New(eventMock)
+		res, err := useCase.CreatePaymentMidtrans(req, userId, eventId, method)
+		assert.Equal(t, returnData, res)
+		assert.Nil(t, err)
+		eventMock.AssertExpectations(t)
 
-// 	})
+	})
 
-// 	t.Run("Create payment failed", func(t *testing.T) {
+	t.Run("Create payment failed", func(t *testing.T) {
 
-// 		eventMock.On("CreatePayment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(00).Once()
+		eventMock.On("CreatePayment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&coreapi.ChargeResponse{}, errors.New("errors")).Once()
 
-// 		useCase := New(eventMock)
-// 		res, err := useCase.CreatePaymentMidtrans(req, userId, eventId, method)
-// 		assert.Error(t, err)
-// 		assert.Equal(t, res[0].ID, returnData[0].ID)
-// 		assert.Nil(t, err)
-// 		eventMock.AssertExpectations(t)
+		useCase := New(eventMock)
+		res, err := useCase.CreatePaymentMidtrans(req, userId, eventId, method)
+		assert.Error(t, err)
+		assert.NotEqual(t, res, returnData)
+		assert.NotNil(t, err)
+		eventMock.AssertExpectations(t)
 
-// 	})
+	})
 
-// }
+}

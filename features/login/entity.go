@@ -7,7 +7,7 @@ type Core struct {
 }
 
 type UsecaseInterface interface {
-	LoginAuthorized(email, password string) string
+	LoginAuthorized(email, password string) (string, error)
 }
 
 type DataInterface interface {
