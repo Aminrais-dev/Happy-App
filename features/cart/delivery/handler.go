@@ -64,13 +64,13 @@ func (user *Delivery) GetCart(c echo.Context) error {
 }
 
 func (user *Delivery) DeleteCart(c echo.Context) error {
-	// userid := middlewares.ExtractToken(c)
+	userid := middlewares.ExtractToken(c)
 	cartid, err := strconv.Atoi(c.Param("cartid"))
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
 	}
 
-	msg, ers := user.From.DeleteFromCart(cartid)
+	msg, ers := user.From.DeleteFromCart(userid, cartid)
 	if ers != nil {
 		return c.JSON(400, helper.FailedResponseHelper(msg))
 	}
