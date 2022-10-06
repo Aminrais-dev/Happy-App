@@ -18,24 +18,24 @@ func TestLogin(t *testing.T) {
 		repo.On("LoginUser", mock.Anything, mock.Anything).Return(dataInput, nil).Once()
 
 		usecase := New(repo)
-		result := usecase.LoginAuthorized("amin@mail.id", "12345")
+		result, err := usecase.LoginAuthorized("amin@mail.id", "12345")
 		assert.NotEqual(t, "please input email and password", result)
 		assert.NotEqual(t, "email not found", result)
 		assert.NotEqual(t, "wrong password", result)
-		assert.NotEqual(t, "error to created token", result)
+		assert.Nil(t, err)
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("success login", func(t *testing.T) {
+	t.Run("empty passwor", func(t *testing.T) {
 		usecase := New(repo)
-		result := usecase.LoginAuthorized("amin@mail.id", "")
+		result, _ := usecase.LoginAuthorized("amin@mail.id", "")
 		assert.Equal(t, "please input email and password", result)
 		repo.AssertExpectations(t)
 	})
 
 	t.Run("Empty email.", func(t *testing.T) {
 		usecase := New(repo)
-		result := usecase.LoginAuthorized("", "amin123")
+		result, _ := usecase.LoginAuthorized("", "amin123")
 		assert.Equal(t, "please input email and password", result)
 		repo.AssertExpectations(t)
 	})
@@ -44,7 +44,7 @@ func TestLogin(t *testing.T) {
 		repo.On("LoginUser", mock.Anything).Return(login.Core{}, errors.New("error")).Once()
 
 		usecase := New(repo)
-		result := usecase.LoginAuthorized("ridho@mail.uk", "888ridho")
+		result, _ := usecase.LoginAuthorized("ridho@mail.uk", "888ridho")
 		assert.Equal(t, "email not found", result)
 		repo.AssertExpectations(t)
 	})
@@ -53,8 +53,9 @@ func TestLogin(t *testing.T) {
 		repo.On("LoginUser", mock.Anything).Return(login.Core{}, nil).Once()
 
 		usecase := New(repo)
-		result := usecase.LoginAuthorized("amin@mail.id", "amin123")
+		result, _ := usecase.LoginAuthorized("amin@mail.id", "amin123")
 		assert.Equal(t, "wrong password", result)
 		repo.AssertExpectations(t)
 	})
+
 }

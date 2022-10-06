@@ -56,7 +56,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("update succes", func(t *testing.T) {
 
-		userMock.On("UpdtUser", input).Return(1, nil).Once()
+		userMock.On("UpdtUser", input).Return(1).Once()
 
 		useCase := New(userMock)
 		res := useCase.UpdateUser(input)
@@ -67,7 +67,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("update failed", func(t *testing.T) {
 
-		userMock.On("UpdtUser", input).Return(-1, errors.New("error")).Once()
+		userMock.On("UpdtUser", input).Return(-1).Once()
 
 		useCase := New(userMock)
 		res := useCase.UpdateUser(input)
@@ -76,6 +76,17 @@ func TestUpdateUser(t *testing.T) {
 
 	})
 
+	t.Run("update success", func(t *testing.T) {
+
+		userMock.On("UpdtUser", mock.Anything).Return(1).Once()
+
+		input.Password = "123"
+		useCase := New(userMock)
+		res := useCase.UpdateUser(input)
+		assert.Equal(t, 1, res)
+		userMock.AssertExpectations(t)
+
+	})
 }
 
 func TestPostData(t *testing.T) {
