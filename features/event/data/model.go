@@ -17,6 +17,7 @@ type Event struct {
 	Location    string
 	CommunityID uint
 	Community   Community
+	Event       []JoinEvent
 }
 
 type JoinEvent struct {

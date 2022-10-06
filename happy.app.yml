@@ -33,7 +33,6 @@ tags:
   - name: Payment
     description: Payment_Method
 
-
 paths:
   ############################
   # GET TOKEN
@@ -452,9 +451,9 @@ paths:
         "400":
           $ref: "#/components/responses/failedresponse"
 
-#############################
-# CART
-#############################
+  #############################
+  # CART
+  #############################
   /cart:
     get:
       tags:
@@ -464,11 +463,11 @@ paths:
       security:
         - JWTAuth: []
       parameters:
-      - in: query
-        name: communityid
-        schema:
-          type: integer
-          example: 1
+        - in: query
+          name: communityid
+          schema:
+            type: integer
+            example: 1
       responses:
         "200":
           $ref: "#/components/responses/cartuser"
@@ -492,15 +491,13 @@ paths:
                   type: integer
             examples:
               example1:
-                value: {
-                  productid: 1
-                }
+                value: { productid: 1 }
       responses:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
-          $ref: "#/components/responses/failedresponse" 
-  /cart/{cartid}:  
+          $ref: "#/components/responses/failedresponse"
+  /cart/{cartid}:
     delete:
       tags:
         - "Cart"
@@ -514,7 +511,7 @@ paths:
         "200":
           $ref: "#/components/responses/successresponse"
         "400":
-          $ref: "#/components/responses/failedresponse" 
+          $ref: "#/components/responses/failedresponse"
   /checkout:
     post:
       tags:
@@ -523,16 +520,13 @@ paths:
       description: Melakukan checkout pada item yang ada di cart
       security:
         - JWTAuth: []
-      requestBody: 
+      requestBody:
         $ref: "#/components/requestBodies/bodycheckout"
       responses:
         "200":
           $ref: "#/components/responses/paymentEvent"
         "400":
-          $ref: "#/components/responses/failedresponse" 
-
-
-  
+          $ref: "#/components/responses/failedresponse"
 
 ####################################
 # COMPONENTS
@@ -1133,25 +1127,25 @@ components:
             $ref: "#/components/schemas/schemaaddproduct"
     paymentmethod:
       content:
-        application/json: 
+        application/json:
           schema:
             $ref: "#/components/schemas/bayarevent"
           examples:
             example1:
               value:
-                type_payment: GOPAY
+                payment_type: GOPAY
             example2:
               value:
-                type_payment: BCA Virtual Account
+                payment_type: BCA Virtual Account
     bodycheckout:
-      content: 
+      content:
         application/json:
           schema:
             $ref: "#/components/schemas/checkout"
           examples:
             example1:
               value:
-                cartid: [1,4,5,7]
+                cartid: [1, 4, 5, 7]
                 street: jalan raya
                 city: Malang
                 province: Jawa
@@ -1163,9 +1157,6 @@ components:
                 city: amuntai
                 province: kalimantan selatan
                 type_payment: BCA Virtual Account
-                
-
-            
 
   ###########################
   # RESPONSE
@@ -1356,7 +1347,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
-                      location: japan
+                      location: japan,
                     },
                     {
                       id: 5,
@@ -1366,7 +1357,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
-                      location: warung
+                      location: warung,
                     },
                   ]
     members:
@@ -1488,7 +1479,7 @@ components:
                       descriptions: Anniversary kedua Geshin Impact,
                       date: "2022-12-01 15:04:05",
                       price: 250000,
-                      location: japan
+                      location: japan,
                     },
                     {
                       id: 5,
@@ -1498,7 +1489,7 @@ components:
                       descriptions: Penyelenggaraan sebuah acara yang ...,
                       date: "2023-01-01 00:00:01",
                       price: 1000000,
-                      location: cafe nama
+                      location: cafe nama,
                     },
                   ]
     cartuser:
@@ -1512,22 +1503,23 @@ components:
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
             members: 5
-            cart: [
-                    {
-                      id: 1,
-                      name: Kaos,
-                      price: 100000,
-                      descriptions: kaos yang sangat nyaman,
-                      photo: kaos.jpg
-                    },
-                    {
-                      id: 5,
-                      name: Celana,
-                      price: 233000,
-                      descriptions: celana yang sangat nyaman,
-                      photo: celana.jpg
-                    }
-                  ]
+            cart:
+              [
+                {
+                  id: 1,
+                  name: Kaos,
+                  price: 100000,
+                  descriptions: kaos yang sangat nyaman,
+                  photo: kaos.jpg,
+                },
+                {
+                  id: 5,
+                  name: Celana,
+                  price: 233000,
+                  descriptions: celana yang sangat nyaman,
+                  photo: celana.jpg,
+                },
+              ]
     responsehistory:
       description: berisi history pembelian barang yang dilakukan oleh user
       content:
@@ -1538,22 +1530,23 @@ components:
             logo: https://www.gensh.in/fileadmin/Content/Game/Elements/pyro_200.png,
             title: Pengendali Api
             descriptions: Kumpulan para pengendali api
-            list: [
-                    {
-                      productid: 1,
-                      name: Kaos,
-                      buyer: Diluc,
-                      photo: kaos.jpg,
-                      price: 100000
-                    },
-                    {
-                      productid: 2,
-                      name: celana,
-                      buyer: Amber,
-                      photo: celana.jpg,
-                      price: 50000
-                    }
-                  ]
+            list:
+              [
+                {
+                  productid: 1,
+                  name: Kaos,
+                  buyer: Diluc,
+                  photo: kaos.jpg,
+                  price: 100000,
+                },
+                {
+                  productid: 2,
+                  name: celana,
+                  buyer: Amber,
+                  photo: celana.jpg,
+                  price: 50000,
+                },
+              ]
     paymentEvent:
       description: user melakukan generate pembayaran untuk join event
       content:
@@ -1607,9 +1600,6 @@ components:
                 transaction_status: pending
                 bill_key: "1254231"
                 biller_code: "89126"
-
-
-                  
 
   ###########################
   # PARAMETER
