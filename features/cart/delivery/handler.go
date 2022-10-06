@@ -60,7 +60,7 @@ func (user *Delivery) GetCart(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper(msg))
 	}
 
-	return c.JSON(200, helper.SuccessCartResponseHelper(msg, CoreToResCommunity(corecommonity), CoreToResponseCartList(listcart)))
+	return c.JSON(200, helper.SuccessCartResponseHelper(msg, CoreToResCommunity(corecommonity), CoreToResponseCartList(listcart), len(listcart), Total(CoreToResponseCartList(listcart))))
 }
 
 func (user *Delivery) DeleteCart(c echo.Context) error {

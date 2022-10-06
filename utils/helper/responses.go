@@ -30,12 +30,14 @@ func SuccessFeedResponseHelper(msg, data interface{}) map[string]interface{} {
 	}
 }
 
-func SuccessCartResponseHelper(msg, data interface{}, data2 interface{}) map[string]interface{} {
+func SuccessCartResponseHelper(msg, data interface{}, data2 interface{}, data3 interface{}, data4 interface{}) map[string]interface{} {
 	return map[string]interface{}{
 		"status":    "success",
 		"message":   msg,
 		"community": data,
 		"listcarts": data2,
+		"jumlah":    data3,
+		"total":     data4,
 	}
 }
 
