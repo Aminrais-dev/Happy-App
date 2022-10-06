@@ -200,3 +200,12 @@ func ToResponseCommunity(data cart.CoreCommunity) ResponCommunity {
 	}
 
 }
+
+func Total(res []ResponseCart) int {
+	var total int
+	for _, v := range res {
+		total += v.Price
+	}
+
+	return total
+}
