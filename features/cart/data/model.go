@@ -42,6 +42,7 @@ type Transaction struct {
 	Status_Payment   string `gorm:"default:unpaid"`
 	Midtrans_Virtual string
 	OrderID          string
+	Gross            string
 	Carts            []TransactionCart
 }
 
