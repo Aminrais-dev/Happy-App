@@ -22,6 +22,13 @@ type ResponseFeed struct {
 	Comments []ResponseComment `json:"comments"`
 }
 
+type ResponseFeedNoComment struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Text string `json:"text"`
+	Date string `json:"date"`
+}
+
 type ResponseComment struct {
 	Name string `json:"name"`
 	Text string `json:"text"`
@@ -36,6 +43,15 @@ type DetailCommunity struct {
 	Logo         string `json:"logo"`
 	Members      int64  `json:"members"`
 	Feeds        []ResponseFeed
+}
+type DetailCommunityNoComment struct {
+	ID           uint   `json:"id"`
+	Role         string `json:"role"`
+	Title        string `json:"title"`
+	Descriptions string `json:"descriptions"`
+	Logo         string `json:"logo"`
+	Members      int64  `json:"members"`
+	Feeds        []ResponseFeedNoComment
 }
 
 func ToResponse(core community.CoreCommunity) Respose {
@@ -118,5 +134,35 @@ func ResponseFeedWithComment(core community.CoreFeed) ResponseFeed {
 		Text:     core.Text,
 		Date:     GetDateHour(core.Date),
 		Comments: ToResponseCommentList(core.Comments),
+	}
+}
+
+func ToFeedResponseNoComment(data community.CoreFeed) ResponseFeedNoComment {
+	return ResponseFeedNoComment{
+		ID:   data.ID,
+		Name: data.Name,
+		Text: data.Text,
+		Date: GetDateHour(data.Date),
+	}
+}
+
+func ToFeedResponseListNoComment(data []community.CoreFeed) []ResponseFeedNoComment {
+	var list []ResponseFeedNoComment
+	for _, v := range data {
+		list = append(list, ToFeedResponseNoComment(v))
+	}
+
+	return list
+}
+
+func ResponseWithFeedNoComment(core community.CoreCommunity) DetailCommunityNoComment {
+	return DetailCommunityNoComment{
+		ID:           core.ID,
+		Title:        core.Title,
+		Role:         core.Role,
+		Descriptions: core.Descriptions,
+		Logo:         core.Logo,
+		Members:      core.Members,
+		Feeds:        ToFeedResponseListNoComment(core.Feeds),
 	}
 }
