@@ -101,6 +101,8 @@ func (storage *Storage) CheckStock(id []int) ([]int, string, error) {
 		ty := storage.query.Find(&cart, "id = ?", v1)
 		if ty.Error != nil {
 			return nil, "Gagal MenCheck Cart", ty.Error
+		} else if cart.ProductID == 0 {
+			return nil, "Salah Satu Cart Id Tidak Ditemukan", errors.New("Error")
 		}
 		var product Product
 		ty2 := storage.query.Find(&product, "id = ?", cart.ProductID)
@@ -238,4 +240,24 @@ func (storage *Storage) ListHistoryProduct(communityid int) ([]cart.CoreProductR
 	}
 
 	return listhist, "Success Menjalankan semua Fungsi", nil
+}
+
+func (storage *Storage) CheckCommunity(productid int) (int, string, error) {
+	var prod Product
+	tx := storage.query.Find(&prod, "id = ?", productid)
+	if tx.Error != nil {
+		return 0, "Gagal Check Keanggotaan", tx.Error
+	}
+
+	return int(prod.CommunityID), "Dapat id community", nil
+}
+
+func (storage *Storage) CheckMember(userid, communtyid int) (int, string, error) {
+	var check JoinCommunity
+	tx := storage.query.Find(&check, "user_id = ? and community_id = ?", userid, communtyid)
+	if tx.Error != nil {
+		return 0, "Gagal Mengechek Keanggotaan", tx.Error
+	}
+
+	return int(tx.RowsAffected), "Success", nil
 }

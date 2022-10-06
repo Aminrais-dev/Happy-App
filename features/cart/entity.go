@@ -72,6 +72,8 @@ type DataInterface interface {
 	GetUserRole(Userid, communityid int) (string, error)
 	SelectCommunity(communityid int) (CoreCommunity, string, error)
 	ListHistoryProduct(communityid int) ([]CoreProductResponse, string, error)
+	CheckCommunity(prodid int) (int, string, error)
+	CheckMember(userid, communityid int) (int, string, error)
 }
 
 type UsecaseInterface interface {

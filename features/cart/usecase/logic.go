@@ -24,7 +24,19 @@ func New(data cart.DataInterface) cart.UsecaseInterface {
 }
 
 func (service *Service) AddToCart(userid, productid int) (string, error) {
-	msg, err := service.do.InsertIntoCart(userid, productid)
+	id, msgc, erc := service.do.CheckCommunity(productid)
+	if erc != nil {
+		return msgc, erc
+	}
+
+	absent, msgm, erm := service.do.CheckMember(userid, id)
+	if erm != nil {
+		return msgm, erm
+	} else if absent == 0 {
+		return "Anda Bukan Anggota Community Dari Pemilik Product", errors.New("Denied")
+	}
+
+	msg, err := service.do.InsertIntoCart(userid, productid) //tambah pengecekan bergabung belum
 	return msg, err
 }
 
