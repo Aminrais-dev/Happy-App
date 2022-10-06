@@ -17,6 +17,7 @@ type User struct {
 	Community []JoinCommunity
 	Feeds     []Feed
 	Comments  []Comment
+	Event     []JoinEvent
 }
 
 type Community struct {
@@ -32,6 +33,11 @@ type JoinCommunity struct {
 	UserID      uint
 	CommunityID uint
 	Role        string
+}
+
+type JoinEvent struct {
+	gorm.Model
+	UserID uint
 }
 
 type myCommunity struct {
