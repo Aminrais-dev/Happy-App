@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">capstone/happyApp/features/community/usecase/logic.go (100.0%)</option>
+				<option value="file0">capstone/happyApp/features/cart/usecase/logic.go (53.3%)</option>
 				
 				</select>
 			</div>
@@ -72,125 +72,170 @@
 		<pre class="file" id="file0" style="display: none">package usecase
 
 import (
-        "capstone/happyApp/features/community"
+        "capstone/happyApp/config"
+        "capstone/happyApp/features/cart"
+        "capstone/happyApp/features/cart/delivery"
+        "capstone/happyApp/utils/helper"
         "errors"
         "fmt"
+        "time"
+
+        "github.com/midtrans/midtrans-go"
+        "github.com/midtrans/midtrans-go/coreapi"
 )
 
 type Service struct {
-        do community.DataInterface
+        do cart.DataInterface
 }
 
-func New(data community.DataInterface) community.UsecaseInterface <span class="cov8" title="1">{
+func New(data cart.DataInterface) cart.UsecaseInterface <span class="cov8" title="1">{
         return &amp;Service{
                 do: data,
         }
 }</span>
 
-func (service *Service) AddNewCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov8" title="1">{
-        msg, err := service.do.Insert(userid, core)
+func (service *Service) AddToCart(userid, productid int) (string, error) <span class="cov8" title="1">{
+        id, msgc, erc := service.do.CheckCommunity(productid)
+        if erc != nil </span><span class="cov8" title="1">{
+                return msgc, erc
+        }</span>
+
+        <span class="cov8" title="1">absent, msgm, erm := service.do.CheckMember(userid, id)
+        if erm != nil </span><span class="cov8" title="1">{
+                return msgm, erm
+        }</span> else<span class="cov8" title="1"> if absent == 0 </span><span class="cov8" title="1">{
+                return "Anda Bukan Anggota Community Dari Pemilik Product", errors.New("Denied")
+        }</span>
+
+        <span class="cov8" title="1">msg, err := service.do.InsertIntoCart(userid, productid) //tambah pengecekan bergabung belum
+        return msg, err</span>
+}
+
+func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity, []cart.CoreCart, string, error) <span class="cov8" title="1">{
+        corecommunity, msg1, ers := service.do.GetCommunity(communityid)
+        if ers != nil </span><span class="cov8" title="1">{
+                return cart.CoreCommunity{}, nil, msg1, ers
+        }</span>
+
+        <span class="cov8" title="1">listcart, msg, err := service.do.SelectCartList(userid, communityid)
+        return corecommunity, listcart, msg, err</span>
+}
+
+func (service *Service) DeleteFromCart(userid, cartid int) (string, error) <span class="cov8" title="1">{
+        msg, err := service.do.DeleteFromCart(userid, cartid)
         return msg, err
 }</span>
 
-func (service *Service) GetListCommunity() ([]community.CoreCommunity, string, error) <span class="cov8" title="1">{
-        listcore, msg, err := service.do.SelectList()
-        return listcore, msg, err
-}</span>
-
-func (service *Service) GetMembers(communityid int) ([]string, string, error) <span class="cov8" title="1">{
-        members, msg, err := service.do.SelectMembers(communityid)
-        return members, msg, err
-}</span>
-
-func (service *Service) Leave(userid, communityid int) (string, error) <span class="cov8" title="1">{
-        _, err1 := service.do.CheckJoin(userid, communityid)
-        if err1 == nil </span><span class="cov8" title="1">{
-                return "Hanya Member Dari Community Yang Bisa Leave", errors.New("Anda Belum Masuk Community")
+func (service *Service) InsertIntoTransaction(core cart.CoreHistory) (int, int, string, error) <span class="cov8" title="1">{
+        // check stock
+        listProduct, msgp, errp := service.do.CheckStock(core.Carts)
+        if errp != nil </span><span class="cov8" title="1">{
+                return 0, 0, msgp, errp
+        }</span>
+        // update stock
+        <span class="cov8" title="1">msgu, erru := service.do.UpdateStock(listProduct)
+        if erru != nil </span><span class="cov8" title="1">{
+                return 0, 0, msgu, erru
+        }</span>
+        // insert to Transaction
+        <span class="cov8" title="1">transid, msg, err := service.do.InsertIntoTransaction(core)
+        if err != nil </span><span class="cov8" title="1">{
+                return 0, 0, msg, err
         }</span>
 
-        <span class="cov8" title="1">role, errs := service.do.GetUserRole(userid, communityid)
-        if errs != nil </span><span class="cov8" title="1">{
-                return "Gagal mendapatkan role user", errs
+        // Get Gross
+        <span class="cov8" title="1">gross, msg2, err2 := service.do.GetTotalTransaction(transid)
+        if err2 != nil </span><span class="cov8" title="1">{
+                return 0, 0, msg2, err2
         }</span>
 
-        <span class="cov8" title="1">members, msg, err := service.do.Delete(userid, communityid)
-        if members == 0 </span><span class="cov8" title="1">{
-                msgdc, errdc := service.do.DeleteCommunity(communityid)
-                if errdc != nil </span><span class="cov8" title="1">{
-                        return msgdc, errdc
+        // delete cart
+        <span class="cov8" title="1">msg3, err3 := service.do.DeleteCart(core)
+
+        return transid, gross, msg3, err3</span>
+}
+
+func (service *Service) GetCharge(transid, gross int, payment, table string) (coreapi.ChargeReq, string, error) <span class="cov0" title="0">{
+        var charge coreapi.ChargeReq
+        time := time.Now().Unix()
+
+        switch </span>{
+        case payment == "GOPAY":<span class="cov0" title="0">
+                charge = coreapi.ChargeReq{
+                        TransactionDetails: midtrans.TransactionDetails{
+                                OrderID:  helper.GenerateTransactionID(table, transid) + "-GOPAY-" + fmt.Sprintf("%v", time),
+                                GrossAmt: int64(gross),
+                        },
                 }</span>
-                <span class="cov8" title="1">msg += " " + msgdc</span>
-        } else<span class="cov8" title="1"> if role == "admin" </span><span class="cov8" title="1">{
-                newadmin, msgcr, errcr := service.do.ChangeAdmin(communityid)
-                if errcr != nil </span><span class="cov8" title="1">{
-                        return msgcr, errcr
+        case payment == "BCA_VIRTUAL_ACCOUNT":<span class="cov0" title="0">
+                charge = coreapi.ChargeReq{
+                        TransactionDetails: midtrans.TransactionDetails{
+                                OrderID:  helper.GenerateTransactionID(table, transid) + "-BCA-" + fmt.Sprintf("%v", time),
+                                GrossAmt: int64(gross),
+                        },
+                        BankTransfer: &amp;coreapi.BankTransferDetails{
+                                Bank: midtrans.BankBca,
+                        },
                 }</span>
-                <span class="cov8" title="1">msg = fmt.Sprintf("Community akan di wariskan ke %s", newadmin)</span>
+        case payment == "MANDIRI_VIRTUAL_ACCOUNT":<span class="cov0" title="0">
+                charge = coreapi.ChargeReq{
+                        TransactionDetails: midtrans.TransactionDetails{
+                                OrderID:  helper.GenerateTransactionID(table, transid) + "-MANDIRI-" + fmt.Sprintf("%v", time),
+                                GrossAmt: int64(gross),
+                        },
+                        EChannel: &amp;coreapi.EChannelDetail{
+                                BillInfo1: "Buy at Alterra",
+                                BillInfo2: "Terima Kasih",
+                        },
+                }</span>
+        default:<span class="cov0" title="0">
+                return coreapi.ChargeReq{}, "case tidak terpenuhi", errors.New("Failed")</span>
         }
 
-        <span class="cov8" title="1">return msg, err</span>
+        <span class="cov0" title="0">return charge, charge.TransactionDetails.OrderID, nil</span>
 }
 
-func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov8" title="1">{
-        role, err := service.do.GetUserRole(userid, int(core.ID))
-        if err != nil </span><span class="cov8" title="1">{
-                return "Gagal mendapatkan role user", err
-        }</span> else<span class="cov8" title="1"> if role != "admin" </span><span class="cov8" title="1">{
-                return "Hanya admin yang bisa mengupdate Community", errors.New("Dont have access")
-        }</span>
+func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (coreapi.ChargeReq, string, error) <span class="cov0" title="0">{
+        var corecharge coreapi.ChargeReq
+        switch </span>{
+        case payment == config.BCA_VIRTUAL_ACCOUNT:<span class="cov0" title="0">
+                corecharge = delivery.ToCoreBCA(core)</span>
+        case payment == config.MANDIRI_VIRTUAL_ACCOUNT:<span class="cov0" title="0">
+                corecharge = delivery.ToCoreMandiri(core)</span>
+        case payment == config.GOPAY:<span class="cov0" title="0">
+                corecharge = delivery.ToCoreGopay(core)</span>
+        default:<span class="cov0" title="0">
+                corecharge = delivery.ToCoreMidtransBank(core)
+                return corecharge, "Gagal Format Charge ke Core", errors.New("Failed")</span>
+        }
 
-        <span class="cov8" title="1">msg, errs := service.do.UpdateCommunity(int(core.ID), core)
-        return msg, errs</span>
+        <span class="cov0" title="0">return corecharge, "Success To Core", nil</span>
 }
 
-func (service *Service) GetCommunityFeed(userid, communityid int) (community.CoreCommunity, string, error) <span class="cov8" title="1">{
-        core, msg, err := service.do.SelectCommunity(userid, communityid)
-        return core, msg, err
+func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) <span class="cov0" title="0">{
+        msg, err := service.do.UpdateHistory(core)
+        return msg, err
 }</span>
 
-func (service *Service) JoinCommunity(userid, communityid int) (string, error) <span class="cov8" title="1">{
-        msg1, err1 := service.do.CheckJoin(userid, communityid)
-        if err1 != nil </span><span class="cov8" title="1">{
-                return msg1, err1
+func (service *Service) GetCommunityHistory(userid, communityid int) (cart.CoreCommunity, []cart.CoreProductResponse, string, error) <span class="cov0" title="0">{
+        role, errr := service.do.GetUserRole(userid, communityid)
+        if errr != nil </span><span class="cov0" title="0">{
+                return cart.CoreCommunity{}, nil, "Error Mendapatkan role", errr
+        }</span> else<span class="cov0" title="0"> if role != "admin" </span><span class="cov0" title="0">{
+                return cart.CoreCommunity{}, nil, "Hanya Admin Yang Bisa Melihat History", errors.New("Access Illegal")
         }</span>
 
-        <span class="cov8" title="1">msg2, err2 := service.do.InsertToJoin(userid, communityid)
-        return msg2, err2</span>
+        <span class="cov0" title="0">cart, msg1, err1 := service.do.SelectCommunity(communityid)
+        if err1 != nil </span><span class="cov0" title="0">{
+                return cart, nil, msg1, err1
+        }</span>
+
+        <span class="cov0" title="0">listhistory, msg2, err2 := service.do.ListHistoryProduct(communityid)
+        return cart, listhistory, msg2, err2</span>
+
 }
 
-func (service *Service) PostFeed(core community.CoreFeed) (string, error) <span class="cov8" title="1">{
-        _, err1 := service.do.CheckJoin(int(core.UserID), int(core.CommunityID))
-        if err1 == nil </span><span class="cov8" title="1">{
-                return "Hanya Anggota dari Community Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
-        }</span>
-
-        <span class="cov8" title="1">msg, err := service.do.InsertFeed(core)
-        return msg, err</span>
-}
-
-func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, error) <span class="cov8" title="1">{
-        core, msg, err := service.do.SelectFeed(feedid)
-        return core, msg, err
-}</span>
-
-func (service *Service) AddComment(core community.CoreComment) (string, error) <span class="cov8" title="1">{
-        communityid, errf := service.do.SelectCommunityIdWithFeed(int(core.FeedID))
-        if errf != nil </span><span class="cov8" title="1">{
-                return "Gagal Mendapatkan Comunity Id", errf
-        }</span>
-        <span class="cov8" title="1">_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
-        if err1 == nil </span><span class="cov8" title="1">{
-                return "Hanya Anggota dari Community yang bisa melakukan Comment", errors.New("Anda Belum Masuk Community")
-        }</span>
-
-        <span class="cov8" title="1">msg, err := service.do.InsertComment(core)
-        return msg, err</span>
-}
-
-func (service *Service) GetListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) <span class="cov8" title="1">{
-        list, msg, err := service.do.SelectListCommunityWithParam(param)
-        return list, msg, err
-}</span>
+//
 </pre>
 		
 		</div>
