@@ -30,11 +30,13 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 	}
 
 	if transactionstatus == "settlement" || transactionstatus == "capture" {
+		dataZone, _ := time.LoadLocation("Asia/Jakarta")
+		date := data.Date.UTC().In(dataZone)
 
 		dataEmail := helper.BodyEmail{
 			Name:  data.Name,
 			Event: data.TitleEvent,
-			Date:  data.Date.Format(time.RFC850),
+			Date:  date.Format(time.RFC850),
 		}
 
 		subject := fmt.Sprintf("Sukses bergabung dalam event %s", data.TitleEvent)
