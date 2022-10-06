@@ -127,6 +127,10 @@ func ResponseEventListComu(dataComu event.CommunityEvent) ResponseCommunityEvent
 }
 
 func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
+
+	dataZone, _ := time.LoadLocation("Asia/Jakarta")
+	date := data.Date.UTC().In(dataZone)
+
 	return ResponseEventDetail{
 		ID:            data.ID,
 		Title:         data.Title,
@@ -134,8 +138,9 @@ func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 		Status:        data.Status,
 		Penyelenggara: data.Penyelenggara,
 		Partisipasi:   data.Partisipasi,
-		Date:          data.Date.Format(time.RFC850),
+		Date:          date.Format(time.RFC850),
 		Price:         data.Price,
 		Location:      data.Location,
 	}
+
 }
