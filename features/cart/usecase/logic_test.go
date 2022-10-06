@@ -4,9 +4,14 @@ import (
 	"capstone/happyApp/config"
 	"capstone/happyApp/features/cart"
 	"capstone/happyApp/mocks"
+	"capstone/happyApp/utils/helper"
 	"errors"
+	"fmt"
 	"testing"
+	"time"
 
+	"github.com/midtrans/midtrans-go"
+	"github.com/midtrans/midtrans-go/coreapi"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -155,7 +160,98 @@ func TestInsertIntoTransaction(t *testing.T) {
 	})
 }
 
-// func TestGetCharge(t *testing.T) {
-// 	DataMock := new(mocks.CartData)
+func TestGetCharge(t *testing.T) {
+	DataMock := new(mocks.CartData)
 
-// }
+	t.Run("Success 1", func(t *testing.T) {
+		logic := New(DataMock)
+		_, _, err := logic.GetCharge(1, 100000, "GOPAY", config.GOPAY)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Success 2", func(t *testing.T) {
+		logic := New(DataMock)
+		_, _, err := logic.GetCharge(1, 100000, config.MANDIRI_VIRTUAL_ACCOUNT, config.MANDIRI_VIRTUAL_ACCOUNT)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Success 3", func(t *testing.T) {
+		logic := New(DataMock)
+		_, _, err := logic.GetCharge(1, 100000, config.BCA_VIRTUAL_ACCOUNT, config.BCA_VIRTUAL_ACCOUNT)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Failed", func(t *testing.T) {
+		logic := New(DataMock)
+		_, _, err := logic.GetCharge(1, 100000, "BNI", config.GOPAY)
+		assert.Error(t, err)
+		DataMock.AssertExpectations(t)
+	})
+}
+
+func TestChargeRequest(t *testing.T) {
+	DataMock := new(mocks.CartData)
+	time := time.Now().Unix()
+	bca := coreapi.ChargeReq{
+		TransactionDetails: midtrans.TransactionDetails{
+			OrderID:  helper.GenerateTransactionID(config.TRANSACTION, 1) + "-BCA-" + fmt.Sprintf("%v", time),
+			GrossAmt: int64(100000),
+		},
+		BankTransfer: &coreapi.BankTransferDetails{
+			Bank: midtrans.BankBca,
+		}}
+	mandiri := coreapi.ChargeReq{
+		TransactionDetails: midtrans.TransactionDetails{
+			OrderID:  helper.GenerateTransactionID(config.TRANSACTION, 1) + "-MANDIRI-" + fmt.Sprintf("%v", time),
+			GrossAmt: int64(100000),
+		},
+		EChannel: &coreapi.EChannelDetail{
+			BillInfo1: "Makasih",
+			BillInfo2: "Buy At Alterra",
+		},
+	}
+
+	t.Run("Success 1", func(t *testing.T) {
+		logic := New(DataMock)
+		_, _, err := logic.ChargeRequest(coreapi.ChargeReq{}, config.GOPAY)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+
+	t.Run("Success 2", func(t *testing.T) {
+		logic := New(DataMock)
+		_, msg, err := logic.ChargeRequest(bca, config.BCA_VIRTUAL_ACCOUNT)
+		assert.Equal(t, "Success To Core", msg)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+
+	t.Run("Success 3", func(t *testing.T) {
+		logic := New(DataMock)
+		_, msg, err := logic.ChargeRequest(mandiri, config.MANDIRI_VIRTUAL_ACCOUNT)
+		assert.Equal(t, "Success To Core", msg)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+
+	t.Run("Failed", func(t *testing.T) {
+		logic := New(DataMock)
+		_, msg, err := logic.ChargeRequest(bca, "Payment Type Yang Tidak Terdaftar")
+		assert.Equal(t, "Gagal Format Charge ke Core", msg)
+		assert.Error(t, err)
+		DataMock.AssertExpectations(t)
+	})
+}
+
+func TestUpdateHistory(t *testing.T) {
+	DataMock := new(mocks.CartData)
+
+	t.Run("Success", func(t *testing.T) {
+		DataMock.On("UpdateHistory", mock.Anything).Return("Pesan", nil).Once()
+		logic := New(DataMock)
+		msg, err := logic.UpdateHistory(cart.CoreHistory{})
+		assert.Equal(t, "Pesan", msg)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+}

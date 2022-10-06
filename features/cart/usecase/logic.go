@@ -113,8 +113,8 @@ func (service *Service) GetCharge(transid, gross int, payment, table string) (co
 				GrossAmt: int64(gross),
 			},
 			EChannel: &coreapi.EChannelDetail{
-				BillInfo1: "Buy at Alterra",
-				BillInfo2: "Terima Kasih",
+				BillInfo1: "Makasih",
+				BillInfo2: "Buy At Alterra",
 			},
 		}
 	default:
