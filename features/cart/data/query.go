@@ -86,8 +86,8 @@ func (storage *Storage) SelectCartList(userid, communityid int) ([]cart.CoreCart
 	return list, "Sukses Mengambil Semua Data", nil
 }
 
-func (storage *Storage) DeleteFromCart(cartid int) (string, error) {
-	tx := storage.query.Where("id = ? ", cartid).Delete(&Cart{})
+func (storage *Storage) DeleteFromCart(userid, cartid int) (string, error) {
+	tx := storage.query.Where("id = ? and user_id = ?", cartid, userid).Delete(&Cart{})
 	if tx.Error != nil {
 		return "Gagal Menghapus Cart", tx.Error
 	}

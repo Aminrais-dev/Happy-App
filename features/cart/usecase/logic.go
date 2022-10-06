@@ -38,8 +38,8 @@ func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity
 	return corecommunity, listcart, msg, err
 }
 
-func (service *Service) DeleteFromCart(cartid int) (string, error) {
-	msg, err := service.do.DeleteFromCart(cartid)
+func (service *Service) DeleteFromCart(userid, cartid int) (string, error) {
+	msg, err := service.do.DeleteFromCart(userid, cartid)
 	return msg, err
 }
 
@@ -151,3 +151,5 @@ func (service *Service) GetCommunityHistory(userid, communityid int) (cart.CoreC
 	return cart, listhistory, msg2, err2
 
 }
+
+//

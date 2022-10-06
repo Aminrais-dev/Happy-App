@@ -33,7 +33,7 @@ type CoreHistory struct {
 	Type_Payment    string
 	Status_Payment  string
 	Virtual_Account string
-	PaymentID       string
+	OrderID         string
 	Created_at      time.Time
 }
 
@@ -62,7 +62,7 @@ type DataInterface interface {
 	InsertIntoCart(userid, productid int) (string, error)
 	GetCommunity(communityid int) (CoreCommunity, string, error)
 	SelectCartList(userid, communityid int) ([]CoreCart, string, error)
-	DeleteFromCart(cartid int) (string, error)
+	DeleteFromCart(userid, cartid int) (string, error)
 	InsertIntoTransaction(core CoreHistory) (int, string, error)
 	GetTotalTransaction(trasacid int) (int, string, error)
 	DeleteCart(core CoreHistory) (string, error)
@@ -77,7 +77,7 @@ type DataInterface interface {
 type UsecaseInterface interface {
 	AddToCart(userid, productid int) (string, error)
 	GetCartList(userid, communityid int) (CoreCommunity, []CoreCart, string, error)
-	DeleteFromCart(cartid int) (string, error)
+	DeleteFromCart(userid, cartid int) (string, error)
 	InsertIntoTransaction(core CoreHistory) (int, int, string, error)
 	GetCharge(orderid int, gross int, payment, table string) (coreapi.ChargeReq, string, error)
 	ChargeRequest(transfer coreapi.ChargeReq, typename string) (coreapi.ChargeReq, string, error)
