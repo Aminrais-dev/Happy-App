@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">capstone/happyApp/features/cart/usecase/logic.go (53.3%)</option>
+				<option value="file0">capstone/happyApp/features/cart/usecase/logic.go (83.3%)</option>
 				
 				</select>
 			</div>
@@ -155,19 +155,19 @@ func (service *Service) InsertIntoTransaction(core cart.CoreHistory) (int, int, 
         return transid, gross, msg3, err3</span>
 }
 
-func (service *Service) GetCharge(transid, gross int, payment, table string) (coreapi.ChargeReq, string, error) <span class="cov0" title="0">{
+func (service *Service) GetCharge(transid, gross int, payment, table string) (coreapi.ChargeReq, string, error) <span class="cov8" title="1">{
         var charge coreapi.ChargeReq
         time := time.Now().Unix()
 
         switch </span>{
-        case payment == "GOPAY":<span class="cov0" title="0">
+        case payment == "GOPAY":<span class="cov8" title="1">
                 charge = coreapi.ChargeReq{
                         TransactionDetails: midtrans.TransactionDetails{
                                 OrderID:  helper.GenerateTransactionID(table, transid) + "-GOPAY-" + fmt.Sprintf("%v", time),
                                 GrossAmt: int64(gross),
                         },
                 }</span>
-        case payment == "BCA_VIRTUAL_ACCOUNT":<span class="cov0" title="0">
+        case payment == "BCA_VIRTUAL_ACCOUNT":<span class="cov8" title="1">
                 charge = coreapi.ChargeReq{
                         TransactionDetails: midtrans.TransactionDetails{
                                 OrderID:  helper.GenerateTransactionID(table, transid) + "-BCA-" + fmt.Sprintf("%v", time),
@@ -177,42 +177,42 @@ func (service *Service) GetCharge(transid, gross int, payment, table string) (co
                                 Bank: midtrans.BankBca,
                         },
                 }</span>
-        case payment == "MANDIRI_VIRTUAL_ACCOUNT":<span class="cov0" title="0">
+        case payment == "MANDIRI_VIRTUAL_ACCOUNT":<span class="cov8" title="1">
                 charge = coreapi.ChargeReq{
                         TransactionDetails: midtrans.TransactionDetails{
                                 OrderID:  helper.GenerateTransactionID(table, transid) + "-MANDIRI-" + fmt.Sprintf("%v", time),
                                 GrossAmt: int64(gross),
                         },
                         EChannel: &amp;coreapi.EChannelDetail{
-                                BillInfo1: "Buy at Alterra",
-                                BillInfo2: "Terima Kasih",
+                                BillInfo1: "Makasih",
+                                BillInfo2: "Buy At Alterra",
                         },
                 }</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 return coreapi.ChargeReq{}, "case tidak terpenuhi", errors.New("Failed")</span>
         }
 
-        <span class="cov0" title="0">return charge, charge.TransactionDetails.OrderID, nil</span>
+        <span class="cov8" title="1">return charge, charge.TransactionDetails.OrderID, nil</span>
 }
 
-func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (coreapi.ChargeReq, string, error) <span class="cov0" title="0">{
+func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (coreapi.ChargeReq, string, error) <span class="cov8" title="1">{
         var corecharge coreapi.ChargeReq
         switch </span>{
-        case payment == config.BCA_VIRTUAL_ACCOUNT:<span class="cov0" title="0">
+        case payment == config.BCA_VIRTUAL_ACCOUNT:<span class="cov8" title="1">
                 corecharge = delivery.ToCoreBCA(core)</span>
-        case payment == config.MANDIRI_VIRTUAL_ACCOUNT:<span class="cov0" title="0">
+        case payment == config.MANDIRI_VIRTUAL_ACCOUNT:<span class="cov8" title="1">
                 corecharge = delivery.ToCoreMandiri(core)</span>
-        case payment == config.GOPAY:<span class="cov0" title="0">
+        case payment == config.GOPAY:<span class="cov8" title="1">
                 corecharge = delivery.ToCoreGopay(core)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 corecharge = delivery.ToCoreMidtransBank(core)
                 return corecharge, "Gagal Format Charge ke Core", errors.New("Failed")</span>
         }
 
-        <span class="cov0" title="0">return corecharge, "Success To Core", nil</span>
+        <span class="cov8" title="1">return corecharge, "Success To Core", nil</span>
 }
 
-func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) <span class="cov0" title="0">{
+func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) <span class="cov8" title="1">{
         msg, err := service.do.UpdateHistory(core)
         return msg, err
 }</span>
