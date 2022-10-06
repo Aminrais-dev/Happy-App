@@ -58,9 +58,9 @@ func (usecase *usecaseEvent) GetEventDetail(idEvent, userId int) (event.EventDet
 
 }
 
-func (usecase *usecaseEvent) GetAmountEvent(idToken int) uint64 {
+func (usecase *usecaseEvent) GetAmountEvent(idEvent int) uint64 {
 
-	data := usecase.eventData.SelectAmountEvent(idToken)
+	data := usecase.eventData.SelectAmountEvent(idEvent)
 	return data
 
 }
