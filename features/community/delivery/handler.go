@@ -195,7 +195,7 @@ func (user *Delivery) GetDetailCommunity(c echo.Context) error {
 
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseWithFeed(data)))
+	return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseWithFeedNoComment(data)))
 }
 
 func (user *Delivery) AddFeed(c echo.Context) error {

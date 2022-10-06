@@ -1,49 +1,225 @@
-mode: set
-capstone/happyApp/features/product/usecase/logic.go:11.63,15.2 1 1
-capstone/happyApp/features/product/usecase/logic.go:17.86,19.66 1 1
-capstone/happyApp/features/product/usecase/logic.go:23.2,24.12 2 1
-capstone/happyApp/features/product/usecase/logic.go:19.66,21.3 1 1
-capstone/happyApp/features/product/usecase/logic.go:28.73,33.2 2 1
-capstone/happyApp/features/product/usecase/logic.go:35.88,40.2 2 1
-capstone/happyApp/features/product/usecase/logic.go:42.109,45.16 2 1
-capstone/happyApp/features/product/usecase/logic.go:49.2,49.35 1 1
-capstone/happyApp/features/product/usecase/logic.go:45.16,47.3 1 1
-capstone/happyApp/features/product/usecase/logic.go:53.112,56.16 2 1
-capstone/happyApp/features/product/usecase/logic.go:60.2,60.35 1 1
-capstone/happyApp/features/product/usecase/logic.go:56.16,58.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:13.67,17.2 1 1
-capstone/happyApp/features/community/usecase/logic.go:19.99,22.2 2 1
-capstone/happyApp/features/community/usecase/logic.go:24.87,27.2 2 1
-capstone/happyApp/features/community/usecase/logic.go:29.79,32.2 2 1
-capstone/happyApp/features/community/usecase/logic.go:34.72,36.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:40.2,41.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:45.2,46.18 2 1
-capstone/happyApp/features/community/usecase/logic.go:60.2,60.17 1 1
-capstone/happyApp/features/community/usecase/logic.go:36.17,38.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:41.17,43.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:46.18,48.19 2 1
-capstone/happyApp/features/community/usecase/logic.go:51.3,51.21 1 1
-capstone/happyApp/features/community/usecase/logic.go:48.19,50.4 1 1
-capstone/happyApp/features/community/usecase/logic.go:52.8,52.28 1 1
-capstone/happyApp/features/community/usecase/logic.go:52.28,54.19 2 1
-capstone/happyApp/features/community/usecase/logic.go:57.3,57.66 1 1
-capstone/happyApp/features/community/usecase/logic.go:54.19,56.4 1 1
-capstone/happyApp/features/community/usecase/logic.go:63.99,65.16 2 1
-capstone/happyApp/features/community/usecase/logic.go:71.2,72.18 2 1
-capstone/happyApp/features/community/usecase/logic.go:65.16,67.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:67.8,67.28 1 1
-capstone/happyApp/features/community/usecase/logic.go:67.28,69.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:75.108,78.2 2 1
-capstone/happyApp/features/community/usecase/logic.go:80.80,82.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:86.2,87.19 2 1
-capstone/happyApp/features/community/usecase/logic.go:82.17,84.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:90.75,92.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:96.2,97.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:92.17,94.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:100.87,103.2 2 1
-capstone/happyApp/features/community/usecase/logic.go:105.80,107.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:110.2,111.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:115.2,116.17 2 1
-capstone/happyApp/features/community/usecase/logic.go:107.17,109.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:111.17,113.3 1 1
-capstone/happyApp/features/community/usecase/logic.go:119.108,122.2 2 1
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>usecase: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">capstone/happyApp/features/community/usecase/logic.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package usecase
+
+import (
+        "capstone/happyApp/features/community"
+        "errors"
+        "fmt"
+)
+
+type Service struct {
+        do community.DataInterface
+}
+
+func New(data community.DataInterface) community.UsecaseInterface <span class="cov8" title="1">{
+        return &amp;Service{
+                do: data,
+        }
+}</span>
+
+func (service *Service) AddNewCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov8" title="1">{
+        msg, err := service.do.Insert(userid, core)
+        return msg, err
+}</span>
+
+func (service *Service) GetListCommunity() ([]community.CoreCommunity, string, error) <span class="cov8" title="1">{
+        listcore, msg, err := service.do.SelectList()
+        return listcore, msg, err
+}</span>
+
+func (service *Service) GetMembers(communityid int) ([]string, string, error) <span class="cov8" title="1">{
+        members, msg, err := service.do.SelectMembers(communityid)
+        return members, msg, err
+}</span>
+
+func (service *Service) Leave(userid, communityid int) (string, error) <span class="cov8" title="1">{
+        _, err1 := service.do.CheckJoin(userid, communityid)
+        if err1 == nil </span><span class="cov8" title="1">{
+                return "Hanya Member Dari Community Yang Bisa Leave", errors.New("Anda Belum Masuk Community")
+        }</span>
+
+        <span class="cov8" title="1">role, errs := service.do.GetUserRole(userid, communityid)
+        if errs != nil </span><span class="cov8" title="1">{
+                return "Gagal mendapatkan role user", errs
+        }</span>
+
+        <span class="cov8" title="1">members, msg, err := service.do.Delete(userid, communityid)
+        if members == 0 </span><span class="cov8" title="1">{
+                msgdc, errdc := service.do.DeleteCommunity(communityid)
+                if errdc != nil </span><span class="cov8" title="1">{
+                        return msgdc, errdc
+                }</span>
+                <span class="cov8" title="1">msg += " " + msgdc</span>
+        } else<span class="cov8" title="1"> if role == "admin" </span><span class="cov8" title="1">{
+                newadmin, msgcr, errcr := service.do.ChangeAdmin(communityid)
+                if errcr != nil </span><span class="cov8" title="1">{
+                        return msgcr, errcr
+                }</span>
+                <span class="cov8" title="1">msg = fmt.Sprintf("Community akan di wariskan ke %s", newadmin)</span>
+        }
+
+        <span class="cov8" title="1">return msg, err</span>
+}
+
+func (service *Service) UpdateCommunity(userid int, core community.CoreCommunity) (string, error) <span class="cov8" title="1">{
+        role, err := service.do.GetUserRole(userid, int(core.ID))
+        if err != nil </span><span class="cov8" title="1">{
+                return "Gagal mendapatkan role user", err
+        }</span> else<span class="cov8" title="1"> if role != "admin" </span><span class="cov8" title="1">{
+                return "Hanya admin yang bisa mengupdate Community", errors.New("Dont have access")
+        }</span>
+
+        <span class="cov8" title="1">msg, errs := service.do.UpdateCommunity(int(core.ID), core)
+        return msg, errs</span>
+}
+
+func (service *Service) GetCommunityFeed(userid, communityid int) (community.CoreCommunity, string, error) <span class="cov8" title="1">{
+        core, msg, err := service.do.SelectCommunity(userid, communityid)
+        return core, msg, err
+}</span>
+
+func (service *Service) JoinCommunity(userid, communityid int) (string, error) <span class="cov8" title="1">{
+        msg1, err1 := service.do.CheckJoin(userid, communityid)
+        if err1 != nil </span><span class="cov8" title="1">{
+                return msg1, err1
+        }</span>
+
+        <span class="cov8" title="1">msg2, err2 := service.do.InsertToJoin(userid, communityid)
+        return msg2, err2</span>
+}
+
+func (service *Service) PostFeed(core community.CoreFeed) (string, error) <span class="cov8" title="1">{
+        _, err1 := service.do.CheckJoin(int(core.UserID), int(core.CommunityID))
+        if err1 == nil </span><span class="cov8" title="1">{
+                return "Hanya Anggota dari Community Yang bisa Post Feed", errors.New("Anda Belum Masuk Community")
+        }</span>
+
+        <span class="cov8" title="1">msg, err := service.do.InsertFeed(core)
+        return msg, err</span>
+}
+
+func (service *Service) GetDetailFeed(feedid int) (community.CoreFeed, string, error) <span class="cov8" title="1">{
+        core, msg, err := service.do.SelectFeed(feedid)
+        return core, msg, err
+}</span>
+
+func (service *Service) AddComment(core community.CoreComment) (string, error) <span class="cov8" title="1">{
+        communityid, errf := service.do.SelectCommunityIdWithFeed(int(core.FeedID))
+        if errf != nil </span><span class="cov8" title="1">{
+                return "Gagal Mendapatkan Comunity Id", errf
+        }</span>
+        <span class="cov8" title="1">_, err1 := service.do.CheckJoin(int(core.UserID), int(communityid))
+        if err1 == nil </span><span class="cov8" title="1">{
+                return "Hanya Anggota dari Community yang bisa melakukan Comment", errors.New("Anda Belum Masuk Community")
+        }</span>
+
+        <span class="cov8" title="1">msg, err := service.do.InsertComment(core)
+        return msg, err</span>
+}
+
+func (service *Service) GetListCommunityWithParam(param string) ([]community.CoreCommunity, string, error) <span class="cov8" title="1">{
+        list, msg, err := service.do.SelectListCommunityWithParam(param)
+        return list, msg, err
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
