@@ -255,3 +255,50 @@ func TestUpdateHistory(t *testing.T) {
 		DataMock.AssertExpectations(t)
 	})
 }
+
+func TestCommunityHistory(t *testing.T) {
+	DataMock := new(mocks.CartData)
+	commun := cart.CoreCommunity{Title: "Genshin", Descriptions: "Genshin Player", Logo: config.DEFAULT_COMMUNITY}
+	cart := []cart.CoreProductResponse{{ID: 1, Name: "Pedang", Photo: config.DEFAULT_PRODUCT, Price: 10000, Buyer: "Husen"}}
+
+	t.Run("Success", func(t *testing.T) {
+		DataMock.On("GetUserRole", mock.Anything, mock.Anything).Return("admin", nil).Once()
+		DataMock.On("SelectCommunity", mock.Anything).Return(commun, "Pesan", nil).Once()
+		DataMock.On("ListHistoryProduct", mock.Anything).Return(cart, "Pesan", nil).Once()
+		logic := New(DataMock)
+		commun, list, msg, err := logic.GetCommunityHistory(1, 1)
+		assert.Equal(t, "Pesan", msg)
+		assert.Equal(t, "Genshin", commun.Title)
+		assert.Equal(t, "Pedang", list[0].Name)
+		assert.NoError(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Failed 1", func(t *testing.T) {
+		DataMock.On("GetUserRole", mock.Anything, mock.Anything).Return("member", nil).Once()
+		logic := New(DataMock)
+		_, list, msg, err := logic.GetCommunityHistory(1, 1)
+		assert.Equal(t, "Hanya Admin Yang Bisa Melihat History", msg)
+		assert.Nil(t, list)
+		assert.Error(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Failed 2", func(t *testing.T) {
+		DataMock.On("GetUserRole", mock.Anything, mock.Anything).Return("", errors.New("Error")).Once()
+		logic := New(DataMock)
+		_, list, msg, err := logic.GetCommunityHistory(1, 1)
+		assert.Equal(t, "Error Mendapatkan role", msg)
+		assert.Nil(t, list)
+		assert.Error(t, err)
+		DataMock.AssertExpectations(t)
+	})
+	t.Run("Failed 3", func(t *testing.T) {
+		DataMock.On("GetUserRole", mock.Anything, mock.Anything).Return("admin", nil).Once()
+		DataMock.On("SelectCommunity", mock.Anything).Return(commun, "Pesan", errors.New("Error")).Once()
+		logic := New(DataMock)
+		_, list, msg, err := logic.GetCommunityHistory(1, 1)
+		assert.Equal(t, "Pesan", msg)
+		assert.Nil(t, list)
+		assert.Error(t, err)
+		DataMock.AssertExpectations(t)
+	})
+}
