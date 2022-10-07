@@ -120,6 +120,7 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 		upda.ID = uint(transid)
 		upda.Gross = midtransresp.GrossAmount
 		upda.OrderID = midtransresp.OrderID
+		upda.Virtual_Account = midtransresp.PaymentCode
 
 		msgpayi, errpayid := user.From.UpdateHistory(upda)
 		if errpayid != nil {

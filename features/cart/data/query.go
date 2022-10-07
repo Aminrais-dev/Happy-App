@@ -195,6 +195,7 @@ func (storage *Storage) UpdateHistory(core cart.CoreHistory) (string, error) {
 	var upda Transaction
 	upda.Gross = core.Gross
 	upda.OrderID = core.OrderID
+	upda.Midtrans_Virtual = core.Virtual_Account
 	tx := storage.query.Model(&Transaction{}).Where("id = ?", core.ID).Updates(upda)
 	if tx.Error != nil {
 		return "Gagal Mengupdate Transaction", tx.Error
