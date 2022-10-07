@@ -4,6 +4,7 @@ import (
 	"capstone/happyApp/config"
 	"capstone/happyApp/features/event"
 	"errors"
+	"fmt"
 
 	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
@@ -66,17 +67,24 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 
 }
 
-func (repo *eventData) SelectEventComu(data []event.Response, idComu, userId int) (event.CommunityEvent, error) {
+func (repo *eventData) SelectEventComu(idComu, userId int) (event.CommunityEvent, error) {
+
+	var dataEvent []event.Response
+	txGet := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("communities.id = ? ", idComu).Group("events.id").Scan(&dataEvent)
+	if txGet.Error != nil {
+		return event.CommunityEvent{}, txGet.Error
+	}
 
 	var EventComu temp
 	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.user_id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("communities.id = ? AND join_communities.deleted_at IS NULL ", idComu).Group("communities.id").Scan(&EventComu)
 	if tx.Error != nil {
 		return event.CommunityEvent{}, tx.Error
 	}
+	fmt.Println(EventComu)
 	var role JoinCommunity
 	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, idComu)
 
-	var dataReturn = EventListComu(data, EventComu, role.Role)
+	var dataReturn = EventListComu(dataEvent, EventComu, role.Role)
 
 	return dataReturn, nil
 
