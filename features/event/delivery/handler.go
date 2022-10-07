@@ -88,10 +88,9 @@ func (delivery *eventDelivery) GetEventListCommunity(c echo.Context) error {
 	data, errGet := delivery.eventUsecase.GetEventComu(idComu, userId)
 	if errGet != nil {
 		return c.JSON(400, helper.FailedResponseHelper("failed to get list event in community"))
+	} else if data.ID != uint(idComu) {
+		return c.JSON(404, helper.FailedResponseHelper("community not found"))
 	}
-	// else if data.ID != uint(idComu) {
-	// 	return c.JSON(404, helper.FailedResponseHelper("community not found"))
-	// }
 
 	return c.JSON(200, ResponseEventListComu(data))
 }
