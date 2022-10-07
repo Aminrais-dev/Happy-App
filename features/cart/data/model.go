@@ -7,6 +7,16 @@ import (
 	"gorm.io/gorm"
 )
 
+type Community struct {
+	gorm.Model
+	Title        string
+	Descriptions string
+	Logo         string
+	Member       []JoinCommunity
+	Feeds        []Feed
+	Products     []Product
+}
+
 type Cart struct {
 	gorm.Model
 	UserID       uint
@@ -58,6 +68,19 @@ type Payment struct {
 	UserID  uint
 	OrderID string
 	Groos   int
+}
+type Feed struct {
+	gorm.Model
+	Text        string
+	UserID      uint
+	CommunityID uint
+	Comments    []Comment
+}
+type Comment struct {
+	gorm.Model
+	Text   string
+	FeedID uint
+	UserID uint
 }
 
 type History struct {

@@ -13,7 +13,7 @@ import (
 
 func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(communityModel.User{})
-	db.AutoMigrate(communityModel.Community{})
+	db.AutoMigrate(cartModel.Community{})
 	db.AutoMigrate(communityModel.JoinCommunity{})
 	db.AutoMigrate(eventModel.Event{})
 	db.AutoMigrate(eventModel.JoinEvent{})
