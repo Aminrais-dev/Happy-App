@@ -57,7 +57,7 @@ type EventDetail struct {
 type DataInterface interface {
 	InsertEvent(EventCore, int) int
 	SelectEvent(string) ([]Response, error)
-	SelectEventComu(data []Response, idComu, userId int) (CommunityEvent, error)
+	SelectEventComu(idComu, userId int) (CommunityEvent, error)
 	SelectEventDetail(idEvent, userId int) (EventDetail, error)
 	SelectAmountEvent(idEvent int) uint64
 	CreatePayment(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)
@@ -67,7 +67,7 @@ type DataInterface interface {
 type UsecaseInterface interface {
 	PostEvent(EventCore, int) int
 	GetEvent(string) ([]Response, error)
-	GetEventComu(search string, idComu, userId int) (CommunityEvent, error)
+	GetEventComu(idComu, userId int) (CommunityEvent, error)
 	GetEventDetail(idEvent, userId int) (EventDetail, error)
 	GetAmountEvent(idEvent int) uint64
 	CreatePaymentMidtrans(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)

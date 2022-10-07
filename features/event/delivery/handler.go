@@ -83,10 +83,9 @@ func (delivery *eventDelivery) GetEventListCommunity(c echo.Context) error {
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
 	}
-	search := c.QueryParam("title")
 	userId := middlewares.ExtractToken(c)
 
-	data, errGet := delivery.eventUsecase.GetEventComu(search, idComu, userId)
+	data, errGet := delivery.eventUsecase.GetEventComu(idComu, userId)
 	if errGet != nil {
 		return c.JSON(400, helper.FailedResponseHelper("failed to get list event in community"))
 	} else if data.ID != uint(idComu) {

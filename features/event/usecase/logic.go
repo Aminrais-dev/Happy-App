@@ -39,16 +39,15 @@ func (usecase *usecaseEvent) GetEvent(search string) ([]event.Response, error) {
 	return dataRes, nil
 }
 
-func (usecase *usecaseEvent) GetEventComu(search string, idComu, userId int) (event.CommunityEvent, error) {
+func (usecase *usecaseEvent) GetEventComu(idComu, userId int) (event.CommunityEvent, error) {
 
-	data, _ := usecase.eventData.SelectEvent(search)
-
-	dataRes := usecase.eventData.GetMembers(data)
-
-	dataReturn, err := usecase.eventData.SelectEventComu(dataRes, idComu, userId)
+	dataReturn, err := usecase.eventData.SelectEventComu(idComu, userId)
 	if err != nil {
 		return dataReturn, err
 	}
+
+	dataRes := usecase.eventData.GetMembers(dataReturn.Event)
+	dataReturn.Event = dataRes
 
 	return dataReturn, nil
 }

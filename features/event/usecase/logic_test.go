@@ -24,13 +24,11 @@ func TestGetEventComu(t *testing.T) {
 	userId := 1
 
 	t.Run("Get event community success", func(t *testing.T) {
-		eventMock.On("SelectEvent", mock.Anything).Return(temp, nil).Once()
-		temp[0].Members = 2
-		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
 		eventMock.On("SelectEventComu", mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
+		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
 
 		useCase := New(eventMock)
-		res, err := useCase.GetEventComu("", int(comuId), userId)
+		res, err := useCase.GetEventComu(int(comuId), userId)
 		assert.Equal(t, res.ID, comuId)
 		assert.Nil(t, err)
 		eventMock.AssertExpectations(t)
@@ -39,13 +37,12 @@ func TestGetEventComu(t *testing.T) {
 
 	t.Run("Get event community failed", func(t *testing.T) {
 
-		eventMock.On("SelectEvent", mock.Anything).Return(temp, nil).Once()
-		temp[0].Members = 2
-		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
 		eventMock.On("SelectEventComu", mock.Anything, mock.Anything, mock.Anything).Return(event.CommunityEvent{}, errors.New("error")).Once()
+		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
+		eventMock.GetMembers(nil)
 
 		useCase := New(eventMock)
-		res, err := useCase.GetEventComu("", int(comuId), userId)
+		res, err := useCase.GetEventComu(int(comuId), userId)
 		assert.Error(t, err)
 		assert.NotEqual(t, res.ID, comuId)
 		assert.NotNil(t, err)

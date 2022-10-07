@@ -105,20 +105,20 @@ func (_m *DataEvent) SelectEvent(_a0 string) ([]event.Response, error) {
 	return r0, r1
 }
 
-// SelectEventComu provides a mock function with given fields: data, idComu, userId
-func (_m *DataEvent) SelectEventComu(data []event.Response, idComu int, userId int) (event.CommunityEvent, error) {
-	ret := _m.Called(data, idComu, userId)
+// SelectEventComu provides a mock function with given fields: idComu, userId
+func (_m *DataEvent) SelectEventComu(idComu int, userId int) (event.CommunityEvent, error) {
+	ret := _m.Called(idComu, userId)
 
 	var r0 event.CommunityEvent
-	if rf, ok := ret.Get(0).(func([]event.Response, int, int) event.CommunityEvent); ok {
-		r0 = rf(data, idComu, userId)
+	if rf, ok := ret.Get(0).(func(int, int) event.CommunityEvent); ok {
+		r0 = rf(idComu, userId)
 	} else {
 		r0 = ret.Get(0).(event.CommunityEvent)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func([]event.Response, int, int) error); ok {
-		r1 = rf(data, idComu, userId)
+	if rf, ok := ret.Get(1).(func(int, int) error); ok {
+		r1 = rf(idComu, userId)
 	} else {
 		r1 = ret.Error(1)
 	}
