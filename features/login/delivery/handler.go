@@ -13,15 +13,15 @@ type loginDelivery struct {
 
 func New(e *echo.Echo, usecase login.UsecaseInterface) {
 
-	handler := loginDelivery{
+	handler := &loginDelivery{
 		loginUsecase: usecase,
 	}
 
-	e.POST("/login", handler.loginUser)
+	e.POST("/login", handler.LoginUser)
 
 }
 
-func (delivery *loginDelivery) loginUser(c echo.Context) error {
+func (delivery *loginDelivery) LoginUser(c echo.Context) error {
 
 	var req Request
 	errBind := c.Bind(&req)
