@@ -17,13 +17,16 @@ func TestGetEventComu(t *testing.T) {
 
 	eventMock := new(mocks.DataEvent)
 	var temp []event.Response
-	temp = append(temp, event.Response{ID: 1, Title: "event keren", Members: 20, Logo: "https://logo", Descriptions: "event untuk jadi keren", Date: time.Now(), Price: 200000})
+	temp = append(temp, event.Response{ID: 1, Title: "event keren", Members: 0, Logo: "https://logo", Descriptions: "event untuk jadi keren", Date: time.Now(), Price: 200000})
 	var returnData = event.CommunityEvent{ID: 1, Title: "comunity keren", Role: "member", Logo: "https://logo", Description: "community untuk jadi keren", Count: 12, Event: temp}
 
 	comuId := uint(1)
 	userId := 1
 
 	t.Run("Get event community success", func(t *testing.T) {
+		eventMock.On("SelectEvent", mock.Anything).Return(temp, nil).Once()
+		temp[0].Members = 2
+		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
 		eventMock.On("SelectEventComu", mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
 
 		useCase := New(eventMock)
@@ -36,6 +39,9 @@ func TestGetEventComu(t *testing.T) {
 
 	t.Run("Get event community failed", func(t *testing.T) {
 
+		eventMock.On("SelectEvent", mock.Anything).Return(temp, nil).Once()
+		temp[0].Members = 2
+		eventMock.On("GetMembers", mock.Anything).Return(temp).Once()
 		eventMock.On("SelectEventComu", mock.Anything, mock.Anything, mock.Anything).Return(event.CommunityEvent{}, errors.New("error")).Once()
 
 		useCase := New(eventMock)
@@ -86,10 +92,13 @@ func TestGetEvent(t *testing.T) {
 
 	eventMock := new(mocks.DataEvent)
 	var returnData []event.Response
-	returnData = append(returnData, event.Response{ID: 1, Title: "event keren", Members: 20, Logo: "https://logo", Descriptions: "event untuk jadi keren", Date: time.Now(), Price: 200000})
+
+	returnData = append(returnData, event.Response{ID: 1, Title: "event keren", Members: 0, Logo: "https://logo", Descriptions: "event untuk jadi keren", Date: time.Now(), Price: 200000})
 
 	t.Run("Get event list success", func(t *testing.T) {
 		eventMock.On("SelectEvent", mock.Anything).Return(returnData, nil).Once()
+		returnData[0].Members = 2
+		eventMock.On("GetMembers", mock.Anything).Return(returnData).Once()
 
 		useCase := New(eventMock)
 		res, err := useCase.GetEvent("")
@@ -102,12 +111,13 @@ func TestGetEvent(t *testing.T) {
 	t.Run("Get event list failed", func(t *testing.T) {
 
 		eventMock.On("SelectEvent", mock.Anything).Return(nil, errors.New("error")).Once()
+		eventMock.On("GetMembers", mock.Anything).Return(nil).Once()
+		eventMock.GetMembers(nil)
 
 		useCase := New(eventMock)
 		res, err := useCase.GetEvent("")
 		assert.Error(t, err)
 		assert.Nil(t, res)
-		assert.NotNil(t, err)
 		eventMock.AssertExpectations(t)
 
 	})

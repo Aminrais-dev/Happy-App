@@ -51,9 +51,6 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 		}
 
 		var dataRes = EventList(dataEvent)
-		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
-		}
 
 		return dataRes, nil
 	} else {
@@ -63,42 +60,13 @@ func (repo *eventData) SelectEvent(search string) ([]event.Response, error) {
 		}
 
 		var dataRes = EventList(dataEvent)
-		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
-		}
 
 		return dataRes, nil
 	}
 
 }
 
-func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event.CommunityEvent, error) {
-
-	var dataEvent []tempRespon
-	var dataRes []event.Response
-	if search == "" {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("events.community_id = ? ", idComu).Group("events.id").Scan(&dataEvent)
-		if tx.Error != nil {
-			return event.CommunityEvent{}, tx.Error
-		}
-
-		dataRes = EventList(dataEvent)
-		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
-		}
-
-	} else {
-		tx := repo.db.Model(&Community{}).Select("events.id as id, communities.logo as logo, events.title as title, events.description as descriptions, events.date as date, events.price as price").Joins("inner join events on events.community_id = communities.id").Where("events.title like ? AND events.community_id = ? ", ("%" + search + "%"), idComu).Group("events.id").Scan(&dataEvent)
-		if tx.Error != nil {
-			return event.CommunityEvent{}, tx.Error
-		}
-
-		dataRes = EventList(dataEvent)
-		for key := range dataRes {
-			repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", dataRes[key].ID, config.SUCCESS).Scan(&dataRes[key].Members)
-		}
-
-	}
+func (repo *eventData) SelectEventComu(data []event.Response, idComu, userId int) (event.CommunityEvent, error) {
 
 	var EventComu temp
 	tx := repo.db.Model(&Community{}).Select("communities.id as id, communities.logo as logo, communities.title as title, communities.descriptions as description, count(join_communities.user_id) as count").Joins("inner join join_communities on join_communities.community_id = communities.id").Where("communities.id = ? AND join_communities.deleted_at IS NULL ", idComu).Group("communities.id").Scan(&EventComu)
@@ -108,7 +76,7 @@ func (repo *eventData) SelectEventComu(search string, idComu, userId int) (event
 	var role JoinCommunity
 	repo.db.First(&role, "user_id = ? AND community_id = ? ", userId, idComu)
 
-	var dataReturn = EventListComu(dataRes, EventComu, role.Role)
+	var dataReturn = EventListComu(data, EventComu, role.Role)
 
 	return dataReturn, nil
 
@@ -170,5 +138,15 @@ func (repo *eventData) CreatePayment(reqMidtrans coreapi.ChargeReq, userId, idEv
 	}
 
 	return chargeResponse, nil
+
+}
+
+func (repo *eventData) GetMembers(data []event.Response) []event.Response {
+
+	for key := range data {
+		repo.db.Model(&JoinEvent{}).Select("count(join_events.id) as member").Where("event_id = ? AND status_payment = ? ", data[key].ID, config.SUCCESS).Scan(&data[key].Members)
+	}
+
+	return data
 
 }

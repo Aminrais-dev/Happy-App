@@ -38,6 +38,22 @@ func (_m *DataEvent) CreatePayment(reqMidtrans coreapi.ChargeReq, userId int, Ev
 	return r0, r1
 }
 
+// GetMembers provides a mock function with given fields: _a0
+func (_m *DataEvent) GetMembers(_a0 []event.Response) []event.Response {
+	ret := _m.Called(_a0)
+
+	var r0 []event.Response
+	if rf, ok := ret.Get(0).(func([]event.Response) []event.Response); ok {
+		r0 = rf(_a0)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]event.Response)
+		}
+	}
+
+	return r0
+}
+
 // InsertEvent provides a mock function with given fields: _a0, _a1
 func (_m *DataEvent) InsertEvent(_a0 event.EventCore, _a1 int) int {
 	ret := _m.Called(_a0, _a1)
@@ -89,20 +105,20 @@ func (_m *DataEvent) SelectEvent(_a0 string) ([]event.Response, error) {
 	return r0, r1
 }
 
-// SelectEventComu provides a mock function with given fields: search, idComu, userId
-func (_m *DataEvent) SelectEventComu(search string, idComu int, userId int) (event.CommunityEvent, error) {
-	ret := _m.Called(search, idComu, userId)
+// SelectEventComu provides a mock function with given fields: data, idComu, userId
+func (_m *DataEvent) SelectEventComu(data []event.Response, idComu int, userId int) (event.CommunityEvent, error) {
+	ret := _m.Called(data, idComu, userId)
 
 	var r0 event.CommunityEvent
-	if rf, ok := ret.Get(0).(func(string, int, int) event.CommunityEvent); ok {
-		r0 = rf(search, idComu, userId)
+	if rf, ok := ret.Get(0).(func([]event.Response, int, int) event.CommunityEvent); ok {
+		r0 = rf(data, idComu, userId)
 	} else {
 		r0 = ret.Get(0).(event.CommunityEvent)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, int, int) error); ok {
-		r1 = rf(search, idComu, userId)
+	if rf, ok := ret.Get(1).(func([]event.Response, int, int) error); ok {
+		r1 = rf(data, idComu, userId)
 	} else {
 		r1 = ret.Error(1)
 	}
