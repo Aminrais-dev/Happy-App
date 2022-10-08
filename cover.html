@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>usecase: Go Coverage Report</title>
+		<title>delivery: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,7 +55,11 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">capstone/happyApp/features/cart/usecase/logic.go (100.0%)</option>
+				<option value="file0">capstone/happyApp/features/community/delivery/handler.go (7.3%)</option>
+				
+				<option value="file1">capstone/happyApp/features/community/delivery/request.go (0.0%)</option>
+				
+				<option value="file2">capstone/happyApp/features/community/delivery/response.go (18.5%)</option>
 				
 				</select>
 			</div>
@@ -69,173 +73,481 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package usecase
+		<pre class="file" id="file0" style="display: none">package delivery
 
 import (
         "capstone/happyApp/config"
-        "capstone/happyApp/features/cart"
-        "capstone/happyApp/features/cart/delivery"
+        "capstone/happyApp/features/community"
+        "capstone/happyApp/middlewares"
         "capstone/happyApp/utils/helper"
-        "errors"
+
         "fmt"
+        "net/http"
+        "strconv"
         "time"
 
-        "github.com/midtrans/midtrans-go"
-        "github.com/midtrans/midtrans-go/coreapi"
+        "github.com/labstack/echo/v4"
 )
 
-type Service struct {
-        do cart.DataInterface
+type Delivery struct {
+        From community.UsecaseInterface
 }
 
-func New(data cart.DataInterface) cart.UsecaseInterface <span class="cov8" title="1">{
-        return &amp;Service{
-                do: data,
+func New(e *echo.Echo, data community.UsecaseInterface) <span class="cov0" title="0">{
+        handler := &amp;Delivery{
+                From: data,
+        }
+        e.GET("/community", handler.ListCommunity)                                                          // selesai
+        e.POST("/community", handler.AddCommunity, middlewares.JWTMiddleware())                             // selesai
+        e.GET("/community/members/:communityid", handler.ListMembersCommunity, middlewares.JWTMiddleware()) // selesai
+        e.PUT("/community/:communityid", handler.UpdateCommunity, middlewares.JWTMiddleware())              // selesai
+        e.DELETE("/community/:communityid", handler.OutFromCommunity, middlewares.JWTMiddleware())          // selesai
+        e.POST("/join/community/:communityid", handler.JoinCommunity, middlewares.JWTMiddleware())          // selesai
+        e.POST("/community/:communityid/feed", handler.AddFeed, middlewares.JWTMiddleware())                // selesai
+        e.GET("/community/:communityid", handler.GetDetailCommunity, middlewares.JWTMiddleware())           // selesai
+        e.GET("/feed/:feedid", handler.GetDetailFeed, middlewares.JWTMiddleware())                          // selesai
+        e.POST("/feed/:feedid/comment", handler.AddComment, middlewares.JWTMiddleware())                    // selesai
+
+}</span>
+
+func (user *Delivery) AddCommunity(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        var reqcom Request
+        errb := c.Bind(&amp;reqcom)
+        if errb != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+        }</span>
+
+        <span class="cov0" title="0">fileData, fileInfo, fileErr := c.Request().FormFile("logo")
+        if fileErr != http.ErrMissingFile || fileErr == nil </span><span class="cov0" title="0">{
+                ext, errs := helper.CheckFileType(fileInfo.Filename)
+                if errs != nil </span><span class="cov0" title="0">{
+                        return c.JSON(400, helper.FailedResponseHelper("gagal membaca file exetension"))
+                }</span>
+
+                <span class="cov0" title="0">if ext == "jpg" || ext == "png" || ext == "jpeg" </span><span class="cov0" title="0">{
+                        err_size := helper.CheckFileSize(fileInfo.Size, config.FileImageType)
+                        if err_size != nil </span><span class="cov0" title="0">{
+                                return c.JSON(400, helper.FailedResponseHelper("image size error"))
+                        }</span>
+
+                        <span class="cov0" title="0">waktu := fmt.Sprintf("%v", time.Now())
+                        imageName := strconv.Itoa(userid) + "_" + reqcom.Title + waktu + "." + ext
+
+                        imageaddress, errupload := helper.UploadFileToS3(config.DirImage, imageName, config.FileImageType, fileData)
+                        if errupload != nil </span><span class="cov0" title="0">{
+                                return c.JSON(400, helper.FailedResponseHelper("failed to upload file"))
+                        }</span>
+                        <span class="cov0" title="0">reqcom.Logo = imageaddress</span>
+                }
+        } else<span class="cov0" title="0"> {
+                reqcom.Logo = config.DEFAULT_COMMUNITY
+        }</span>
+        <span class="cov0" title="0">msg, err := user.From.AddNewCommunity(userid, reqcom.ToCore())
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+
+func (user *Delivery) ListCommunity(c echo.Context) error <span class="cov8" title="1">{
+        param := c.QueryParam("title")
+        if param != "" </span><span class="cov8" title="1">{
+                listcore, msg, err := user.From.GetListCommunityWithParam(param)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(400, helper.FailedResponseHelper(msg))
+                }</span> else<span class="cov8" title="1"> if len(listcore) == 0 </span><span class="cov0" title="0">{
+                        return c.JSON(200, helper.SuccessResponseHelper("Title tidak ditemukan"))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(200, helper.SuccessDataResponseHelper(msg, ToResponseList(listcore)))</span>
+        }
+
+        <span class="cov8" title="1">listcore, msg, err := user.From.GetListCommunity()
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov8" title="1">return c.JSON(200, helper.SuccessDataResponseHelper(msg, ToResponseList(listcore)))</span>
+}
+
+func (user *Delivery) ListMembersCommunity(c echo.Context) error <span class="cov0" title="0">{
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+        <span class="cov0" title="0">members, msg, errs := user.From.GetMembers(communityid)
+        if errs != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessDataResponseHelper(msg, members))</span>
+}
+
+func (user *Delivery) OutFromCommunity(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+
+        <span class="cov0" title="0">msg, errs := user.From.Leave(userid, communityid)
+        if errs != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+
+func (user *Delivery) UpdateCommunity(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+
+        <span class="cov0" title="0">var reqcom Request
+        errb := c.Bind(&amp;reqcom)
+        if errb != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+        }</span>
+
+        <span class="cov0" title="0">fileData, fileInfo, fileErr := c.Request().FormFile("logo")
+        if fileErr != http.ErrMissingFile || fileErr == nil </span><span class="cov0" title="0">{
+                ext, errs := helper.CheckFileType(fileInfo.Filename)
+                if errs != nil </span><span class="cov0" title="0">{
+                        return c.JSON(400, helper.FailedResponseHelper("gagal membaca file exetension"))
+                }</span>
+
+                <span class="cov0" title="0">if ext == "jpg" || ext == "png" || ext == "jpeg" </span><span class="cov0" title="0">{
+                        err_size := helper.CheckFileSize(fileInfo.Size, config.FileImageType)
+                        if err_size != nil </span><span class="cov0" title="0">{
+                                return c.JSON(400, helper.FailedResponseHelper("image size error"))
+                        }</span>
+
+                        <span class="cov0" title="0">waktu := fmt.Sprintf("%v", time.Now())
+                        imageName := strconv.Itoa(userid) + "_" + reqcom.Title + waktu + "." + ext
+
+                        imageaddress, errupload := helper.UploadFileToS3(config.DirImage, imageName, config.FileImageType, fileData)
+                        if errupload != nil </span><span class="cov0" title="0">{
+                                return c.JSON(400, helper.FailedResponseHelper("failed to upload file"))
+                        }</span>
+                        <span class="cov0" title="0">reqcom.Logo = imageaddress</span>
+                }
+        }
+
+        <span class="cov0" title="0">msg, err := user.From.UpdateCommunity(userid, reqcom.ToCoreWithId(communityid))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+
+func (user *Delivery) JoinCommunity(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+        <span class="cov0" title="0">msg, er := user.From.JoinCommunity(userid, communityid)
+        if er != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+
+func (user *Delivery) GetDetailCommunity(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+        <span class="cov0" title="0">data, msg, errs := user.From.GetCommunityFeed(userid, communityid)
+        if errs != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessDataResponseHelper(msg, ResponseWithFeedNoComment(data)))</span>
+}
+
+func (user *Delivery) AddFeed(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        communityid, err := strconv.Atoi(c.Param("communityid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+
+        <span class="cov0" title="0">var feed FeedRequst
+        errb := c.Bind(&amp;feed)
+        if errb != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+        }</span>
+
+        <span class="cov0" title="0">msg, errs := user.From.PostFeed(feed.ToCore(userid, communityid))
+        if errs != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+
+func (user *Delivery) GetDetailFeed(c echo.Context) error <span class="cov0" title="0">{
+        feedid, err := strconv.Atoi(c.Param("feedid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+        <span class="cov0" title="0">feed, msg, ers := user.From.GetDetailFeed(feedid)
+        if ers != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessFeedResponseHelper(msg, ResponseFeedWithComment(feed)))</span>
+}
+
+func (user *Delivery) AddComment(c echo.Context) error <span class="cov0" title="0">{
+        userid := middlewares.ExtractToken(c)
+        feedid, err := strconv.Atoi(c.Param("feedid"))
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Parameter must be number"))
+        }</span>
+        <span class="cov0" title="0">var req CommentRequst
+        errb := c.Bind(&amp;req)
+        if errb != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
+        }</span>
+
+        <span class="cov0" title="0">msg, errs := user.From.AddComment(req.ToCore(userid, feedid))
+        if errs != nil </span><span class="cov0" title="0">{
+                return c.JSON(400, helper.FailedResponseHelper(msg))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(200, helper.SuccessResponseHelper(msg))</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package delivery
+
+import "capstone/happyApp/features/community"
+
+type Request struct {
+        Title        string `json:"title" form:"title"`
+        Descriptions string `json:"descriptions" form:"descriptions"`
+        Logo         string `json:"logo" form:"logo"`
+}
+
+type FeedRequst struct {
+        Text string `json:"text" form:"text"`
+}
+
+type CommentRequst struct {
+        Text string `json:"text" form:"text"`
+}
+
+func (req *Request) ToCore() community.CoreCommunity <span class="cov0" title="0">{
+        return community.CoreCommunity{
+                Title:        req.Title,
+                Descriptions: req.Descriptions,
+                Logo:         req.Logo,
         }
 }</span>
 
-func (service *Service) AddToCart(userid, productid int) (string, error) <span class="cov8" title="1">{
-        id, msgc, erc := service.do.CheckCommunity(productid)
-        if erc != nil </span><span class="cov8" title="1">{
-                return msgc, erc
-        }</span>
-
-        <span class="cov8" title="1">absent, msgm, erm := service.do.CheckMember(userid, id)
-        if erm != nil </span><span class="cov8" title="1">{
-                return msgm, erm
-        }</span> else<span class="cov8" title="1"> if absent == 0 </span><span class="cov8" title="1">{
-                return "Anda Bukan Anggota Community Dari Pemilik Product", errors.New("Denied")
-        }</span>
-
-        <span class="cov8" title="1">msg, err := service.do.InsertIntoCart(userid, productid) //tambah pengecekan bergabung belum
-        return msg, err</span>
-}
-
-func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity, []cart.CoreCart, string, error) <span class="cov8" title="1">{
-        corecommunity, msg1, ers := service.do.GetCommunity(communityid)
-        if ers != nil </span><span class="cov8" title="1">{
-                return cart.CoreCommunity{}, nil, msg1, ers
-        }</span>
-
-        <span class="cov8" title="1">listcart, msg, err := service.do.SelectCartList(userid, communityid)
-        return corecommunity, listcart, msg, err</span>
-}
-
-func (service *Service) DeleteFromCart(userid, cartid int) (string, error) <span class="cov8" title="1">{
-        msg, err := service.do.DeleteFromCart(userid, cartid)
-        return msg, err
+func (req *Request) ToCoreWithId(communityid int) community.CoreCommunity <span class="cov0" title="0">{
+        return community.CoreCommunity{
+                ID:           uint(communityid),
+                Title:        req.Title,
+                Descriptions: req.Descriptions,
+                Logo:         req.Logo,
+        }
 }</span>
 
-func (service *Service) InsertIntoTransaction(core cart.CoreHistory) (int, int, string, error) <span class="cov8" title="1">{
-        // check stock
-        listProduct, msgp, errp := service.do.CheckStock(core.Carts)
-        if errp != nil </span><span class="cov8" title="1">{
-                return 0, 0, msgp, errp
-        }</span>
-        // update stock
-        <span class="cov8" title="1">msgu, erru := service.do.UpdateStock(listProduct)
-        if erru != nil </span><span class="cov8" title="1">{
-                return 0, 0, msgu, erru
-        }</span>
-        // insert to Transaction
-        <span class="cov8" title="1">transid, msg, err := service.do.InsertIntoTransaction(core)
-        if err != nil </span><span class="cov8" title="1">{
-                return 0, 0, msg, err
-        }</span>
-
-        // Get Gross
-        <span class="cov8" title="1">gross, msg2, err2 := service.do.GetTotalTransaction(transid)
-        if err2 != nil </span><span class="cov8" title="1">{
-                return 0, 0, msg2, err2
-        }</span>
-
-        // delete cart
-        <span class="cov8" title="1">msg3, err3 := service.do.DeleteCart(core)
-
-        return transid, gross, msg3, err3</span>
-}
-
-func (service *Service) GetCharge(transid, gross int, payment, table string) (coreapi.ChargeReq, string, error) <span class="cov8" title="1">{
-        var charge coreapi.ChargeReq
-        time := time.Now().Unix()
-
-        switch </span>{
-        case payment == "GOPAY":<span class="cov8" title="1">
-                charge = coreapi.ChargeReq{
-                        TransactionDetails: midtrans.TransactionDetails{
-                                OrderID:  helper.GenerateTransactionID(table, transid) + "-GOPAY-" + fmt.Sprintf("%v", time),
-                                GrossAmt: int64(gross),
-                        },
-                }</span>
-        case payment == "BCA_VIRTUAL_ACCOUNT":<span class="cov8" title="1">
-                charge = coreapi.ChargeReq{
-                        TransactionDetails: midtrans.TransactionDetails{
-                                OrderID:  helper.GenerateTransactionID(table, transid) + "-BCA-" + fmt.Sprintf("%v", time),
-                                GrossAmt: int64(gross),
-                        },
-                        BankTransfer: &amp;coreapi.BankTransferDetails{
-                                Bank: midtrans.BankBca,
-                        },
-                }</span>
-        case payment == "MANDIRI_VIRTUAL_ACCOUNT":<span class="cov8" title="1">
-                charge = coreapi.ChargeReq{
-                        TransactionDetails: midtrans.TransactionDetails{
-                                OrderID:  helper.GenerateTransactionID(table, transid) + "-MANDIRI-" + fmt.Sprintf("%v", time),
-                                GrossAmt: int64(gross),
-                        },
-                        EChannel: &amp;coreapi.EChannelDetail{
-                                BillInfo1: "Makasih",
-                                BillInfo2: "Buy At Alterra",
-                        },
-                }</span>
-        default:<span class="cov8" title="1">
-                return coreapi.ChargeReq{}, "case tidak terpenuhi", errors.New("Failed")</span>
+func (feed *FeedRequst) ToCore(userid, communityid int) community.CoreFeed <span class="cov0" title="0">{
+        return community.CoreFeed{
+                UserID:      uint(userid),
+                CommunityID: uint(communityid),
+                Text:        feed.Text,
         }
-
-        <span class="cov8" title="1">return charge, charge.TransactionDetails.OrderID, nil</span>
-}
-
-func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (coreapi.ChargeReq, string, error) <span class="cov8" title="1">{
-        var corecharge coreapi.ChargeReq
-        switch </span>{
-        case payment == config.BCA_VIRTUAL_ACCOUNT:<span class="cov8" title="1">
-                corecharge = delivery.ToCoreBCA(core)</span>
-        case payment == config.MANDIRI_VIRTUAL_ACCOUNT:<span class="cov8" title="1">
-                corecharge = delivery.ToCoreMandiri(core)</span>
-        case payment == config.GOPAY:<span class="cov8" title="1">
-                corecharge = delivery.ToCoreGopay(core)</span>
-        default:<span class="cov8" title="1">
-                corecharge = delivery.ToCoreMidtransBank(core)
-                return corecharge, "Gagal Format Charge ke Core", errors.New("Failed")</span>
-        }
-
-        <span class="cov8" title="1">return corecharge, "Success To Core", nil</span>
-}
-
-func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) <span class="cov8" title="1">{
-        msg, err := service.do.UpdateHistory(core)
-        return msg, err
 }</span>
 
-func (service *Service) GetCommunityHistory(userid, communityid int) (cart.CoreCommunity, []cart.CoreProductResponse, string, error) <span class="cov8" title="1">{
-        role, errr := service.do.GetUserRole(userid, communityid)
-        if errr != nil </span><span class="cov8" title="1">{
-                return cart.CoreCommunity{}, nil, "Error Mendapatkan role", errr
-        }</span> else<span class="cov8" title="1"> if role != "admin" </span><span class="cov8" title="1">{
-                return cart.CoreCommunity{}, nil, "Hanya Admin Yang Bisa Melihat History", errors.New("Access Illegal")
-        }</span>
+func (coment *CommentRequst) ToCore(userid, feedid int) community.CoreComment <span class="cov0" title="0">{
+        return community.CoreComment{
+                UserID: uint(userid),
+                FeedID: uint(feedid),
+                Text:   coment.Text,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package delivery
 
-        <span class="cov8" title="1">cart, msg1, err1 := service.do.SelectCommunity(communityid)
-        if err1 != nil </span><span class="cov8" title="1">{
-                return cart, nil, msg1, err1
-        }</span>
+import (
+        "capstone/happyApp/features/community"
+        "fmt"
+        "time"
+)
 
-        <span class="cov8" title="1">listhistory, msg2, err2 := service.do.ListHistoryProduct(communityid)
-        return cart, listhistory, msg2, err2</span>
-
+type Respose struct {
+        ID           uint   `json:"id"`
+        Title        string `json:"title"`
+        Descriptions string `json:"descriptions"`
+        Logo         string `json:"logo"`
+        Members      int64  `json:"members"`
 }
 
-//
+type ResponseFeed struct {
+        ID       uint              `json:"id"`
+        Name     string            `json:"name"`
+        Text     string            `json:"text"`
+        Date     string            `json:"date"`
+        Comments []ResponseComment `json:"comments"`
+}
+
+type ResponseFeedNoComment struct {
+        ID   uint   `json:"id"`
+        Name string `json:"name"`
+        Text string `json:"text"`
+        Date string `json:"date"`
+}
+
+type ResponseComment struct {
+        Name string `json:"name"`
+        Text string `json:"text"`
+        Date string `json:"date"`
+}
+
+type DetailCommunity struct {
+        ID           uint   `json:"id"`
+        Role         string `json:"role"`
+        Title        string `json:"title"`
+        Descriptions string `json:"descriptions"`
+        Logo         string `json:"logo"`
+        Members      int64  `json:"members"`
+        Feeds        []ResponseFeed
+}
+type DetailCommunityNoComment struct {
+        ID           uint   `json:"id"`
+        Role         string `json:"role"`
+        Title        string `json:"title"`
+        Descriptions string `json:"descriptions"`
+        Logo         string `json:"logo"`
+        Members      int64  `json:"members"`
+        Feeds        []ResponseFeedNoComment
+}
+
+func ToResponse(core community.CoreCommunity) Respose <span class="cov8" title="1">{
+        return Respose{
+                ID:           core.ID,
+                Logo:         core.Logo,
+                Title:        core.Title,
+                Members:      core.Members,
+                Descriptions: core.Descriptions,
+        }
+}</span>
+
+func ToResponseList(core []community.CoreCommunity) []Respose <span class="cov8" title="1">{
+        var list []Respose
+        for _, v := range core </span><span class="cov8" title="1">{
+                list = append(list, ToResponse(v))
+        }</span>
+
+        <span class="cov8" title="1">return list</span>
+}
+
+func ToFeedResponse(data community.CoreFeed) ResponseFeed <span class="cov0" title="0">{
+        return ResponseFeed{
+                ID:   data.ID,
+                Name: data.Name,
+                Text: data.Text,
+                Date: GetDateHour(data.Date),
+        }
+}</span>
+
+func ToFeedResponseList(data []community.CoreFeed) []ResponseFeed <span class="cov0" title="0">{
+        var list []ResponseFeed
+        for _, v := range data </span><span class="cov0" title="0">{
+                list = append(list, ToFeedResponse(v))
+        }</span>
+
+        <span class="cov0" title="0">return list</span>
+}
+
+func ResponseWithFeed(core community.CoreCommunity) DetailCommunity <span class="cov0" title="0">{
+        return DetailCommunity{
+                ID:           core.ID,
+                Title:        core.Title,
+                Role:         core.Role,
+                Descriptions: core.Descriptions,
+                Logo:         core.Logo,
+                Members:      core.Members,
+                Feeds:        ToFeedResponseList(core.Feeds),
+        }
+}</span>
+
+func GetDateHour(data time.Time) string <span class="cov0" title="0">{
+        time := fmt.Sprintf("%v", data)
+        tanggal := time[:10]
+        jam := time[11:19]
+        return tanggal + " " + jam
+}</span>
+
+func ToResponseComment(data community.CoreComment) ResponseComment <span class="cov0" title="0">{
+        return ResponseComment{
+                Name: data.Name,
+                Text: data.Text,
+                Date: GetDateHour(data.Date),
+        }
+}</span>
+
+func ToResponseCommentList(data []community.CoreComment) []ResponseComment <span class="cov0" title="0">{
+        var list []ResponseComment
+        for _, v := range data </span><span class="cov0" title="0">{
+                list = append(list, ToResponseComment(v))
+        }</span>
+
+        <span class="cov0" title="0">return list</span>
+}
+
+func ResponseFeedWithComment(core community.CoreFeed) ResponseFeed <span class="cov0" title="0">{
+        return ResponseFeed{
+                ID:       core.ID,
+                Name:     core.Name,
+                Text:     core.Text,
+                Date:     GetDateHour(core.Date),
+                Comments: ToResponseCommentList(core.Comments),
+        }
+}</span>
+
+func ToFeedResponseNoComment(data community.CoreFeed) ResponseFeedNoComment <span class="cov0" title="0">{
+        return ResponseFeedNoComment{
+                ID:   data.ID,
+                Name: data.Name,
+                Text: data.Text,
+                Date: GetDateHour(data.Date),
+        }
+}</span>
+
+func ToFeedResponseListNoComment(data []community.CoreFeed) []ResponseFeedNoComment <span class="cov0" title="0">{
+        var list []ResponseFeedNoComment
+        for _, v := range data </span><span class="cov0" title="0">{
+                list = append(list, ToFeedResponseNoComment(v))
+        }</span>
+
+        <span class="cov0" title="0">return list</span>
+}
+
+func ResponseWithFeedNoComment(core community.CoreCommunity) DetailCommunityNoComment <span class="cov0" title="0">{
+        return DetailCommunityNoComment{
+                ID:           core.ID,
+                Title:        core.Title,
+                Role:         core.Role,
+                Descriptions: core.Descriptions,
+                Logo:         core.Logo,
+                Members:      core.Members,
+                Feeds:        ToFeedResponseListNoComment(core.Feeds),
+        }
+}</span>
 </pre>
 		
 		</div>
