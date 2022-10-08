@@ -17,6 +17,11 @@ type BodyEmail struct {
 	Url   string
 }
 
+type Email struct {
+	Name   string
+	Status string
+}
+
 func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 	t, err := template.ParseFiles(templateFileName)
 	if err != nil {
@@ -69,4 +74,14 @@ func SendEmailVerify(to, subject string, data interface{}) {
 		panic(err)
 	}
 
+}
+
+func SendEmailTransNotif(to, subject string, data interface{}) {
+
+	template := "./utils/helper/template/transnotif.html"
+
+	err := SendEmail(to, subject, template, data)
+	if err != nil {
+		panic(err)
+	}
 }

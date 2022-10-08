@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">capstone/happyApp/features/community/delivery/handler.go (7.3%)</option>
+				<option value="file0">capstone/happyApp/features/community/delivery/handler.go (8.8%)</option>
 				
 				<option value="file1">capstone/happyApp/features/community/delivery/request.go (0.0%)</option>
 				
@@ -157,14 +157,14 @@ func (user *Delivery) ListCommunity(c echo.Context) error <span class="cov8" tit
                 listcore, msg, err := user.From.GetListCommunityWithParam(param)
                 if err != nil </span><span class="cov8" title="1">{
                         return c.JSON(400, helper.FailedResponseHelper(msg))
-                }</span> else<span class="cov8" title="1"> if len(listcore) == 0 </span><span class="cov0" title="0">{
+                }</span> else<span class="cov8" title="1"> if len(listcore) == 0 </span><span class="cov8" title="1">{
                         return c.JSON(200, helper.SuccessResponseHelper("Title tidak ditemukan"))
                 }</span>
                 <span class="cov8" title="1">return c.JSON(200, helper.SuccessDataResponseHelper(msg, ToResponseList(listcore)))</span>
         }
 
         <span class="cov8" title="1">listcore, msg, err := user.From.GetListCommunity()
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return c.JSON(400, helper.FailedResponseHelper(msg))
         }</span>
 

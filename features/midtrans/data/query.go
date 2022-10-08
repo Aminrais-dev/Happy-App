@@ -3,7 +3,6 @@ package data
 import (
 	"capstone/happyApp/config"
 	cart "capstone/happyApp/features/cart/data"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -24,7 +23,7 @@ func New(db *gorm.DB) midtrans.DataInterface {
 	}
 }
 
-func (storage *Storage) WeebHookUpdateTransaction(orderid, status string) (string, error) {
+func (storage *Storage) WeebHookUpdateTransaction(orderid, status string) (midtrans.Data, string, error) {
 	var trans cart.Transaction
 	trans.Status_Payment = status
 	trans.OrderID = orderid
@@ -32,46 +31,67 @@ func (storage *Storage) WeebHookUpdateTransaction(orderid, status string) (strin
 	slice := strings.Split(orderid, "-")
 	id, err := strconv.Atoi(slice[1])
 	if err != nil {
-		return "Id Hanya Bisa Angka", err
+		return midtrans.Data{}, "Id Hanya Bisa Angka", err
 	}
 
 	tx := storage.query.Model(&cart.Transaction{}).Where("id = ?", id).Updates(trans)
 	if tx.Error != nil {
-		return "Gagal Update Data Transaction", tx.Error
+		return midtrans.Data{}, "Gagal Update Data Transaction", tx.Error
 	}
 
 	var back cart.Transaction
 	tx2 := storage.query.Find(&back, "id = ?", id)
 	if tx2.Error != nil {
-		return "Gagal Update Data Transaction", tx2.Error
+		return midtrans.Data{}, "Gagal Update Data Transaction", tx2.Error
 	}
 	if back.Status_Payment == "deny" || back.Status_Payment == "cancel" || back.Status_Payment == "expire" {
 		var zonk []cart.TransactionCart
 		tx3 := storage.query.Find(&zonk, "transaction_id = ?", id)
 		if tx3.Error != nil {
-			return "Gagal Mengambil data yang akan di kembalikan", tx3.Error
+			return midtrans.Data{}, "Gagal Mengambil data yang akan di kembalikan", tx3.Error
 		}
 
 		for _, v := range zonk {
 			var cartback cart.Cart
 			tx4 := storage.query.Find(&cartback, "transaction_id = ?", v.CartID)
 			if tx4.Error != nil {
-				return "Gagal Mengambil id cart yang akan di kembalikan", tx4.Error
+				return midtrans.Data{}, "Gagal Mengambil id cart yang akan di kembalikan", tx4.Error
 			}
 			var product cart.Product
 			tx5 := storage.query.Find(&product, "transaction_id = ?", cartback.ProductID)
 			if tx5.Error != nil {
-				return "Gagal Mengambil id product akan di kembalikan", tx5.Error
+				return midtrans.Data{}, "Gagal Mengambil id product akan di kembalikan", tx5.Error
 			}
 			product.Stock += 1
 			tx6 := storage.query.Model(&cart.Product{}).Where("id = ?", product.ID).Updates(product)
 			if tx6.Error != nil {
-				return "Gagal Mengembalikan Pembatalan Checkout", tx6.Error
+				return midtrans.Data{}, "Gagal Mengembalikan Pembatalan Checkout", tx6.Error
 			}
 		}
 	}
+	var junk cart.TransactionCart
+	txx := storage.query.First(&junk, "transaction_id = ?", id)
+	if txx.Error != nil {
+		return midtrans.Data{}, "Gagal Mendapatkan Cart Id", txx.Error
+	}
+	var car cart.Cart
+	txx2 := storage.query.First(&car, "id = ?", junk.CartID)
+	if txx2.Error != nil {
+		return midtrans.Data{}, "Gagal Mendapatkan User Id", txx2.Error
+	}
 
-	return fmt.Sprintf("Pembelian atas id %s Sukses", orderid), nil
+	var user user.User
+	txx3 := storage.query.First(&user, "id = ?", car.UserID)
+	if txx3.Error != nil {
+		return midtrans.Data{}, "Gagal Mendapatkan Name dan Email Pembeli", txx3.Error
+	}
+
+	data := midtrans.Data{
+		Name:  user.Name,
+		Email: user.Email,
+	}
+
+	return data, "Sukses", nil
 }
 
 func (storage *Storage) WeebHookUpdateJoinEvent(orderID, status string) (midtrans.DropData, error) {

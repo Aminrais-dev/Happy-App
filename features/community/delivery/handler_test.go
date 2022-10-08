@@ -154,7 +154,7 @@ func TestListCommunity(t *testing.T) {
 		rec := httptest.NewRecorder()
 		echoContext := e.NewContext(req, rec)
 		echoContext.SetPath("/community?title=shin")
-		response := ResponseList{}
+		response := ResponsePesan{}
 
 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(hand.ListCommunity))(echoContext)
 
@@ -165,62 +165,59 @@ func TestListCommunity(t *testing.T) {
 				assert.Error(t, err, "error")
 			}
 			assert.Equal(t, http.StatusBadRequest, rec.Code)
-			// assert.Equal(t, )
+			assert.Equal(t, "Pesan", response.Message)
 		}
 		UsecaseMock.AssertExpectations(t)
 	})
-	// t.Run("Success 2", func(t *testing.T) {
-	// 	UsecaseMock.On("GetListCommunityWithParam", mock.Anything).Return(Com, "Pesan", nil).Once()
-	// 	req := httptest.NewRequest(http.MethodGet, "/community?title=shin", nil)
-	// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	// 	rec := httptest.NewRecorder()
-	// 	echoContext := e.NewContext(req, rec)
-	// 	echoContext.SetPath("/community?title=shin")
-	// 	fmt.Println(echoContext)
-	// 	response := ResponseList{}
+	t.Run("Failed 2", func(t *testing.T) {
+		UsecaseMock.On("GetListCommunityWithParam", mock.Anything).Return([]community.CoreCommunity{}, "Pesan", nil).Once()
+		req := httptest.NewRequest(http.MethodGet, "/community?title=shin", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/community?title=shin")
+		fmt.Println(echoContext)
+		response := ResponsePesan{}
 
-	// 	callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(hand.ListCommunity))(echoContext)
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(hand.ListCommunity))(echoContext)
 
-	// 	// if assert.NoError(t, srv.AddUser(echoContext)) {
-	// 	if assert.NoError(t, callFunc) {
-	// 		responseBody := rec.Body.String()
-	// 		err := json.Unmarshal([]byte(responseBody), &response)
-	// 		// fmt.Println("res", responseBody)
-	// 		if err != nil {
-	// 			assert.Error(t, err, "error")
-	// 		}
-	// 		assert.Equal(t, http.StatusOK, rec.Code)
-	// 		assert.Equal(t, Res[0].Title, response.Data[0].Title)
-	// 	}
-	// 	UsecaseMock.AssertExpectations(t)
-	// })
-	// t.Run("Success 2", func(t *testing.T) {
-	// 	UsecaseMock.On("GetListCommunityWithParam", mock.Anything).Return(Com, "Pesan", nil).Once()
-	// 	req := httptest.NewRequest(http.MethodGet, "/community?title=shin", nil)
-	// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	// 	rec := httptest.NewRecorder()
-	// 	echoContext := e.NewContext(req, rec)
-	// 	echoContext.SetPath("/community?title=shin")
-	// 	fmt.Println(echoContext)
-	// 	response := ResponseList{}
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &response)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Equal(t, "Title tidak ditemukan", response.Message)
+		}
+		UsecaseMock.AssertExpectations(t)
+	})
+	t.Run("Failed 3", func(t *testing.T) {
+		UsecaseMock.On("GetListCommunity").Return(Com, "Pesan", errors.New("Error")).Once()
+		req := httptest.NewRequest(http.MethodGet, "/community", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/community")
+		response := ResponsePesan{}
 
-	// 	callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(hand.ListCommunity))(echoContext)
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(hand.ListCommunity))(echoContext)
 
-	// 	// if assert.NoError(t, srv.AddUser(echoContext)) {
-	// 	if assert.NoError(t, callFunc) {
-	// 		responseBody := rec.Body.String()
-	// 		err := json.Unmarshal([]byte(responseBody), &response)
-	// 		// fmt.Println("res", responseBody)
-	// 		if err != nil {
-	// 			assert.Error(t, err, "error")
-	// 		}
-	// 		assert.Equal(t, http.StatusOK, rec.Code)
-	// 		assert.Equal(t, Res[0].Title, response.Data[0].Title)
-	// 	}
-	// 	UsecaseMock.AssertExpectations(t)
-	// })
+		// if assert.NoError(t, srv.AddUser(echoContext)) {
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &response)
+			// fmt.Println("res", responseBody)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Equal(t, "Pesan", response.Message)
+		}
+		UsecaseMock.AssertExpectations(t)
+	})
 
 }
 
