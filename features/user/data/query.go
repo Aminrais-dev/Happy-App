@@ -31,7 +31,7 @@ func (repo *userData) InsertUser(data user.CoreUser) (int, string) {
 
 	}
 
-	return -2, ""
+	return -3, ""
 
 }
 

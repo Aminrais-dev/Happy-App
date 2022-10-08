@@ -43,7 +43,7 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("please input all request"))
 	} else if row == -1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed sign up"))
-	} else if row == -2 {
+	} else if row == -3 {
 		return c.JSON(400, helper.FailedResponseHelper("email sudah terdaftar"))
 	}
 
