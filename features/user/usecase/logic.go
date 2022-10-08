@@ -31,7 +31,7 @@ func (usecase *usecaseInterface) PostUser(data user.CoreUser) int {
 	data.Status = status
 
 	row, name := usecase.userData.InsertUser(data)
-	if row == 1 {
+	if row > 0 {
 
 		bodyEmail := helper.BodyEmail{
 			Name: name,

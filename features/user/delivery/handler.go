@@ -41,8 +41,10 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 	row := delivery.userUsecase.PostUser(reqData.reqToCore(config.DEFAULT_PROFILE))
 	if row == -2 {
 		return c.JSON(400, helper.FailedResponseHelper("please input all request"))
-	} else if row != 1 {
+	} else if row == -1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed sign up"))
+	} else if row == -2 {
+		return c.JSON(400, helper.FailedResponseHelper("email sudah terdaftar"))
 	}
 
 	return c.JSON(200, helper.SuccessResponseHelper("success sign up"))
