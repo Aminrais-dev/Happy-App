@@ -41,10 +41,7 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 		}
 
 		subject := fmt.Sprintf("Sukses bergabung dalam event %s", data.TitleEvent)
-		errNotif := helper.SendEmail(data.Email, subject, dataEmail)
-		if errNotif != nil {
-			panic(errNotif)
-		}
+		helper.SendEmailNotif(data.Email, subject, dataEmail)
 
 	}
 

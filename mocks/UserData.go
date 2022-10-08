@@ -13,6 +13,20 @@ type DataUser struct {
 	mock.Mock
 }
 
+// CheckStatus provides a mock function with given fields: _a0, _a1
+func (_m *DataUser) CheckStatus(_a0 string, _a1 int) string {
+	ret := _m.Called(_a0, _a1)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(string, int) string); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // DelUser provides a mock function with given fields: _a0
 func (_m *DataUser) DelUser(_a0 int) int {
 	ret := _m.Called(_a0)
@@ -28,7 +42,7 @@ func (_m *DataUser) DelUser(_a0 int) int {
 }
 
 // InsertUser provides a mock function with given fields: _a0
-func (_m *DataUser) InsertUser(_a0 user.CoreUser) int {
+func (_m *DataUser) InsertUser(_a0 user.CoreUser) (int, string) {
 	ret := _m.Called(_a0)
 
 	var r0 int
@@ -38,7 +52,14 @@ func (_m *DataUser) InsertUser(_a0 user.CoreUser) int {
 		r0 = ret.Get(0).(int)
 	}
 
-	return r0
+	var r1 string
+	if rf, ok := ret.Get(1).(func(user.CoreUser) string); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	return r0, r1
 }
 
 // SelectUser provides a mock function with given fields: id
@@ -69,6 +90,20 @@ func (_m *DataUser) SelectUser(id int) (user.CoreUser, []user.CommunityProfile, 
 	}
 
 	return r0, r1, r2
+}
+
+// UpdtStatus provides a mock function with given fields: id, status
+func (_m *DataUser) UpdtStatus(id int, status string) int {
+	ret := _m.Called(id, status)
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func(int, string) int); ok {
+		r0 = rf(id, status)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	return r0
 }
 
 // UpdtUser provides a mock function with given fields: _a0

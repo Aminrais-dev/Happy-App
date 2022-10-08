@@ -11,9 +11,10 @@ type User struct {
 	Name      string
 	Username  string `gorm:"unique"`
 	Gender    string
-	Email     string `gorm:"unique"`
+	Email     string
 	Password  string
 	Photo     string
+	Status    string
 	Community []JoinCommunity
 	Feeds     []Feed
 	Comments  []Comment
@@ -103,6 +104,7 @@ func fromCore(data user.CoreUser) User {
 		Email:    data.Email,
 		Password: data.Password,
 		Photo:    data.Photo,
+		Status:   data.Status,
 	}
 }
 

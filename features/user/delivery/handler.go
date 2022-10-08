@@ -26,6 +26,7 @@ func New(e *echo.Echo, data user.UsecaseInterface) {
 	e.DELETE("/user/profile", handler.DeleteAccount, middlewares.JWTMiddleware())
 	e.PUT("/user/profile", handler.UpdateAccount, middlewares.JWTMiddleware())
 	e.GET("/user/profile", handler.GetProfile, middlewares.JWTMiddleware())
+	e.GET("/user/verify/:id", handler.GmailVerify)
 
 }
 
@@ -137,5 +138,19 @@ func (delivery *userDelivery) GetProfile(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get profile", toRespon(data, comu)))
+
+}
+
+func (delivery *userDelivery) GmailVerify(c echo.Context) error {
+
+	id := c.Param("id")
+	userId, _ := strconv.Atoi(id)
+
+	row := delivery.userUsecase.UpdateStatus(userId)
+	if row == -1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed to verify account"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success confirm your account"))
 
 }

@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"capstone/happyApp/features/user"
+	"capstone/happyApp/utils/helper"
+	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -25,7 +27,20 @@ func (usecase *usecaseInterface) PostUser(data user.CoreUser) int {
 	hashPass, _ := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	data.Password = string(hashPass)
 
-	row := usecase.userData.InsertUser(data)
+	status := usecase.userData.CheckStatus(data.Email, 0)
+	data.Status = status
+
+	row, name := usecase.userData.InsertUser(data)
+	if row == 1 {
+
+		bodyEmail := helper.BodyEmail{
+			Name: name,
+			Url:  "https://tugas.website/user/verify/" + strconv.Itoa(row),
+		}
+
+		helper.SendEmailVerify(data.Email, "Email Verification", bodyEmail)
+
+	}
 	return row
 
 }
@@ -57,5 +72,15 @@ func (usecase *usecaseInterface) GetUser(id int) (user.CoreUser, []user.Communit
 	}
 
 	return data, comu, nil
+
+}
+
+func (usecase *usecaseInterface) UpdateStatus(id int) int {
+
+	status := usecase.userData.CheckStatus("", id)
+
+	row := usecase.userData.UpdtStatus(id, status)
+
+	return row
 
 }

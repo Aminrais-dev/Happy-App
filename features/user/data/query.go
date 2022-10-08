@@ -1,6 +1,7 @@
 package data
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/user"
 
 	"gorm.io/gorm"
@@ -16,15 +17,21 @@ func New(db *gorm.DB) user.DataInterface {
 	}
 }
 
-func (repo *userData) InsertUser(data user.CoreUser) int {
+func (repo *userData) InsertUser(data user.CoreUser) (int, string) {
 
-	newData := fromCore(data)
-	tx := repo.db.Create(&newData)
-	if tx.Error != nil || tx.RowsAffected < 1 {
-		return -1
+	if data.Status != config.VERIFY {
+
+		newData := fromCore(data)
+		tx := repo.db.Create(&newData)
+		if tx.Error != nil || tx.RowsAffected < 1 {
+			return -1, ""
+		}
+
+		return int(newData.ID), newData.Name
+
 	}
 
-	return 1
+	return -2, ""
 
 }
 
@@ -67,4 +74,39 @@ func (repo *userData) SelectUser(id int) (user.CoreUser, []user.CommunityProfile
 	}
 
 	return data.toCore(), toList(comu), nil
+}
+
+func (repo *userData) CheckStatus(email string, id int) string {
+
+	var data User
+	if email != "" {
+		tx := repo.db.First(&data, "email = ? ", email)
+		if tx.Error != nil {
+			return config.DEFAULT_STATUS
+		}
+	} else {
+		tx := repo.db.First(&data, "id = ? ", id)
+		if tx.Error != nil {
+			return config.DEFAULT_STATUS
+		}
+	}
+
+	return data.Status
+
+}
+
+func (repo *userData) UpdtStatus(id int, status string) int {
+
+	if status == config.DEFAULT_STATUS {
+
+		tx := repo.db.Model(&User{}).Where("id = ? ", id).Update("status", config.VERIFY)
+		if tx.Error != nil {
+			return -1
+		}
+
+		return 1
+	}
+
+	return -2
+
 }
