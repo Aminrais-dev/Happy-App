@@ -10,9 +10,6 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-// var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL")
-// var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD")
-
 type BodyEmail struct {
 	Name  string
 	Event string
