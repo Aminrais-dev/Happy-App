@@ -10,6 +10,7 @@ type CoreUser struct {
 	Email     string
 	Password  string
 	Photo     string
+	Status    string
 	Community []JoinCommunityCore
 }
 
@@ -37,10 +38,12 @@ type CommunityProfile struct {
 }
 
 type DataInterface interface {
-	InsertUser(CoreUser) int
+	InsertUser(CoreUser) (int, string)
 	DelUser(int) int
 	UpdtUser(CoreUser) int
 	SelectUser(id int) (CoreUser, []CommunityProfile, error)
+	CheckStatus(string, int) string
+	UpdtStatus(id int, status string) int
 }
 
 type UsecaseInterface interface {
@@ -48,4 +51,5 @@ type UsecaseInterface interface {
 	DeleteUser(int) int
 	UpdateUser(CoreUser) int
 	GetUser(id int) (CoreUser, []CommunityProfile, error)
+	UpdateStatus(id int) int
 }

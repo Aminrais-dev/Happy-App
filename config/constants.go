@@ -17,3 +17,6 @@ const SMTP_PORT = 587
 const SENDER_NAME = "Happy App <muhammadamin.rais13@gmail.com>"
 
 const SUCCESS = "paid"
+
+const DEFAULT_STATUS = "pending"
+const VERIFY = "verify"

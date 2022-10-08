@@ -24,6 +24,7 @@ type User struct {
 	Email     string `gorm:"unique"`
 	Password  string
 	Photo     string
+	Status    string
 	Community []JoinCommunity
 	Feeds     []Feed
 	Comments  []Comment

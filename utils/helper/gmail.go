@@ -17,6 +17,7 @@ type BodyEmail struct {
 	Name  string
 	Event string
 	Date  string
+	Url   string
 }
 
 func ParseTemplate(templateFileName string, data interface{}) (string, error) {
@@ -32,16 +33,11 @@ func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 	return buf.String(), nil
 }
 
-func SendEmail(to, subject string, data interface{}) error {
-
-	// if err := godotenv.Load(".env"); err != nil {
-	// 	log.Fatal(err)
-	// }
+func SendEmail(to, subject, template string, data interface{}) error {
 
 	var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL")
 	var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD")
 
-	template := "./utils/helper/template/notif.html"
 	result, _ := ParseTemplate(template, data)
 
 	m := gomail.NewMessage()
@@ -49,12 +45,31 @@ func SendEmail(to, subject string, data interface{}) error {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", result)
-	// m.Attach(templateFile) // attach whatever you want
 	d := gomail.NewDialer(config.SMTP_HOST, config.SMTP_PORT, CONFIG_AUTH_EMAIL, CONFIG_AUTH_PASSWORD)
 
 	err := d.DialAndSend(m)
+
+	return err
+}
+
+func SendEmailNotif(to, subject string, data interface{}) {
+
+	template := "./utils/helper/template/notif.html"
+
+	err := SendEmail(to, subject, template, data)
 	if err != nil {
 		panic(err)
 	}
-	return nil
+
+}
+
+func SendEmailVerify(to, subject string, data interface{}) {
+
+	template := "./utils/helper/template/verify.html"
+
+	err := SendEmail(to, subject, template, data)
+	if err != nil {
+		panic(err)
+	}
+
 }
