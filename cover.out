@@ -22,8 +22,8 @@ capstone/happyApp/features/community/delivery/handler.go:81.17,83.17 2 1
 capstone/happyApp/features/community/delivery/handler.go:88.3,88.86 1 1
 capstone/happyApp/features/community/delivery/handler.go:83.17,85.4 1 1
 capstone/happyApp/features/community/delivery/handler.go:85.9,85.32 1 1
-capstone/happyApp/features/community/delivery/handler.go:85.32,87.4 1 0
-capstone/happyApp/features/community/delivery/handler.go:92.16,94.3 1 0
+capstone/happyApp/features/community/delivery/handler.go:85.32,87.4 1 1
+capstone/happyApp/features/community/delivery/handler.go:92.16,94.3 1 1
 capstone/happyApp/features/community/delivery/handler.go:99.66,101.16 2 0
 capstone/happyApp/features/community/delivery/handler.go:104.2,105.17 2 0
 capstone/happyApp/features/community/delivery/handler.go:109.2,109.68 1 0
