@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/cart"
 
 	"github.com/midtrans/midtrans-go"
@@ -77,4 +78,16 @@ func ToCoreMidtransBank(dataReq coreapi.ChargeReq) coreapi.ChargeReq {
 			Bank: dataReq.BankTransfer.Bank,
 		},
 	}
+}
+func typePayment(tipe string) string {
+
+	if tipe == "GOPAY" {
+		return config.GOPAY
+	} else if tipe == "BCA Virtual Account" {
+		return config.BCA_VIRTUAL_ACCOUNT
+	} else if tipe == "Mandiri Virtual Account" {
+		return config.MANDIRI_VIRTUAL_ACCOUNT
+	}
+
+	return ""
 }
