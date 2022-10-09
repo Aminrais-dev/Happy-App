@@ -31,6 +31,7 @@ type User struct {
 	Comments  []Comment
 	Event     []event.JoinEvent
 	Carts     []Cart
+	Payments  []Payment
 }
 
 type Cart struct {
@@ -83,7 +84,7 @@ type Payment struct {
 	gorm.Model
 	UserID  uint
 	OrderID string
-	Groos   int
+	Groos   string
 }
 type Feed struct {
 	gorm.Model

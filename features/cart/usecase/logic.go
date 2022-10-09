@@ -141,8 +141,8 @@ func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (c
 	return corecharge, "Success To Core", nil
 }
 
-func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) {
-	msg, err := service.do.UpdateHistory(core)
+func (service *Service) UpdateHistory(core cart.CoreHistory, userid int) (string, error) {
+	msg, err := service.do.UpdateHistory(core, userid)
 	return msg, err
 }
 

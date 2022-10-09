@@ -82,7 +82,7 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 	midtrans.ServerKey = config.MidtransServerKey()
 	transaction.New(midtrans.ServerKey, midtrans.Sandbox)
 
-	// userid := middlewares.ExtractToken(c)
+	userid := middlewares.ExtractToken(c)
 	var buy RequestHistory
 	erb := c.Bind(&buy)
 	if erb != nil {
@@ -122,7 +122,7 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 		upda.OrderID = midtransresp.OrderID
 		upda.Virtual_Account = midtransresp.TransactionID
 
-		msgpayi, errpayid := user.From.UpdateHistory(upda)
+		msgpayi, errpayid := user.From.UpdateHistory(upda, userid)
 		if errpayid != nil {
 			return c.JSON(400, helper.FailedResponseHelper(msgpayi))
 		}
