@@ -3,6 +3,7 @@ package data
 import (
 	"capstone/happyApp/features/cart"
 	community "capstone/happyApp/features/community/data"
+	event "capstone/happyApp/features/event/data"
 
 	"gorm.io/gorm"
 )
@@ -15,6 +16,22 @@ type Community struct {
 	Member       []JoinCommunity
 	Feeds        []Feed
 	Products     []Product
+}
+type User struct {
+	gorm.Model
+	Name      string
+	Username  string `gorm:"unique"`
+	Gender    string
+	Email     string `gorm:"unique"`
+	Password  string
+	Photo     string
+	Status    string
+	Community []JoinCommunity
+	Feeds     []Feed
+	Comments  []Comment
+	Event     []event.JoinEvent
+	Carts     []Cart
+	Payments  []Payment
 }
 
 type Cart struct {
@@ -67,7 +84,7 @@ type Payment struct {
 	gorm.Model
 	UserID  uint
 	OrderID string
-	Groos   int
+	Groos   string
 }
 type Feed struct {
 	gorm.Model
