@@ -112,7 +112,7 @@ func (service *Service) AddToCart(userid, productid int) (string, error) <span c
 }
 
 func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity, []cart.CoreCart, string, error) <span class="cov8" title="1">{
-        corecommunity, msg1, ers := service.do.GetCommunity(communityid)
+        corecommunity, msg1, ers := service.do.GetCommunity(userid, communityid)
         if ers != nil </span><span class="cov8" title="1">{
                 return cart.CoreCommunity{}, nil, msg1, ers
         }</span>
