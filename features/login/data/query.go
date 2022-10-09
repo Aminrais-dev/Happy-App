@@ -24,10 +24,6 @@ func (repo *loginData) LoginUser(email string) (login.Core, error) {
 		return login.Core{}, txEmail.Error
 	}
 
-	if txEmail.RowsAffected != 1 {
-		return login.Core{}, txEmail.Error
-	}
-
 	var dataUser = toCore(data)
 
 	return dataUser, nil

@@ -1,10 +1,14 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"sync"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type AppConfig struct {
@@ -60,4 +64,27 @@ func initConfig() *AppConfig {
 
 	return &defaultConfig
 
+}
+
+func InitDBTest() *gorm.DB {
+	config := map[string]string{
+		"DBTest_Username": "root",
+		"DBTest_Password": "aminrais19",
+		"DBTest_Port":     "3306",
+		"DBTest_Host":     "localhost",
+		"DBTest_Name":     "happyApp_Test",
+	}
+
+	connectionStringTest := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=UTC",
+		config["DBTest_Username"],
+		config["DBTest_Password"],
+		config["DBTest_Host"],
+		config["DBTest_Port"],
+		config["DBTest_Name"])
+
+	db, e := gorm.Open(mysql.Open(connectionStringTest), &gorm.Config{})
+	if e != nil {
+		panic(e)
+	}
+	return db
 }
