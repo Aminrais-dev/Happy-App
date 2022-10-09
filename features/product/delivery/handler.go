@@ -90,7 +90,7 @@ func (delivery *productDelivery) DeleteProductCommunity(c echo.Context) error {
 	id := c.Param("id")
 	idProduct, errConv := strconv.Atoi(id)
 	if errConv != nil {
-		return c.JSON(400, "param must be number")
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
 	}
 
 	row := delivery.productUsecase.DeleteProduct(idProduct, userId)
@@ -179,7 +179,7 @@ func (delivery *productDelivery) GetProductDetail(c echo.Context) error {
 	id := c.Param("id")
 	idProduct, errConv := strconv.Atoi(id)
 	if errConv != nil {
-		return c.JSON(400, "param must be number")
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
 	}
 
 	dataComu, dataProduct, err := delivery.productUsecase.GetProduct(idProduct, userId)
@@ -199,7 +199,7 @@ func (delivery *productDelivery) GetListProductCommunity(c echo.Context) error {
 	id := c.Param("id")
 	idComu, errConv := strconv.Atoi(id)
 	if errConv != nil {
-		return c.JSON(400, "param must be number")
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
 	}
 
 	dataComu, dataProduct, err := delivery.productUsecase.GetProductComu(idComu, userId)
