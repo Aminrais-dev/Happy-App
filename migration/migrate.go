@@ -2,7 +2,6 @@ package migration
 
 import (
 	cartModel "capstone/happyApp/features/cart/data"
-	communityModel "capstone/happyApp/features/community/data"
 	eventModel "capstone/happyApp/features/event/data"
 
 	// userModel "capstone/happyApp/features/user/data"
@@ -16,8 +15,8 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(cartModel.JoinCommunity{})
 	db.AutoMigrate(eventModel.Event{})
 	db.AutoMigrate(eventModel.JoinEvent{})
-	db.AutoMigrate(communityModel.Feed{})
-	db.AutoMigrate(communityModel.Comment{})
+	db.AutoMigrate(cartModel.Feed{})
+	db.AutoMigrate(cartModel.Comment{})
 	db.AutoMigrate(cartModel.Product{})
 	db.AutoMigrate(cartModel.Cart{})
 	db.AutoMigrate(cartModel.Transaction{})
