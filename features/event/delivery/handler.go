@@ -72,7 +72,7 @@ func (delivery *eventDelivery) GetEventList(c echo.Context) error {
 
 	return c.JSON(200, map[string]interface{}{
 		"event":   ResponEventList(data),
-		"massage": "success get list event",
+		"message": "success get list event",
 	})
 }
 
