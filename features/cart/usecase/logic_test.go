@@ -63,7 +63,7 @@ func TestGetCartList(t *testing.T) {
 	cart := []cart.CoreCart{{Name: "Ayaka", Descriptions: "Female", Photo: config.DEFAULT_PROFILE, Price: 10000}}
 
 	t.Run("Success", func(t *testing.T) {
-		DataMock.On("GetCommunity", mock.Anything).Return(community, "Pesan", nil).Once()
+		DataMock.On("GetCommunity", mock.Anything, mock.Anything).Return(community, "Pesan", nil).Once()
 		DataMock.On("SelectCartList", mock.Anything, mock.Anything).Return(cart, "Pesan", nil).Once()
 		logic := New(DataMock)
 		com, car, msg, err := logic.GetCartList(1, 1)
@@ -74,7 +74,7 @@ func TestGetCartList(t *testing.T) {
 		DataMock.AssertExpectations(t)
 	})
 	t.Run("Failed", func(t *testing.T) {
-		DataMock.On("GetCommunity", mock.Anything).Return(community, "Pesan", errors.New("Error"))
+		DataMock.On("GetCommunity", mock.Anything, mock.Anything).Return(community, "Pesan", errors.New("Error"))
 		logic := New(DataMock)
 		_, _, msg, err := logic.GetCartList(1, 1)
 		assert.Equal(t, msg, "Pesan")
