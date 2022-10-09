@@ -38,13 +38,9 @@ A happy app with the following features:
 
 
 # Contributor
-- Muhammad Amin Rais
-  Reach me:
-  [![GitHub](https://img.shields.io/badge/amin-rais-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Aminrais-dev)
+- Muhammad Amin Rais  :  [![GitHub](https://img.shields.io/badge/amin-rais-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Aminrais-dev)
 
-- Nawi Husein
-  Reach me:
-  [![GitHub](https://img.shields.io/badge/nawi-husein-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nawihusen)
+- Nawi Husein  :  [![GitHub](https://img.shields.io/badge/nawi-husein-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nawihusen)
 
 
 
