@@ -101,6 +101,7 @@ func TestListCommunity(t *testing.T) {
 	}
 	UsecaseMock := new(mocks.UsecaseInterface)
 	e := echo.New()
+	New(e, UsecaseMock)
 	hand := &Delivery{
 		From: UsecaseMock,
 	}

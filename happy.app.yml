@@ -1070,7 +1070,7 @@ components:
           example:
             title: Anniversary
             descriptions: Perayaan Ulang Tahun
-            date_event: "2022-10-20 14:30:00"
+            date_event: "2022-10-20T14:30"
             price: 250000
             location: Japan
     feedrequestbody:
@@ -1380,7 +1380,7 @@ components:
                 status: join
                 descriptions: Perayaan ulang tahun yang ke 1000
                 penyelenggara: XXX
-                date_event: "2022-10-20 14:30:00"
+                date_event: "Sunday, 20-Nov-22 10:30 WIB"
                 partisipasi: 34
                 price: 250000
                 location: Japan
@@ -1390,7 +1390,7 @@ components:
                 status: not join
                 descriptions: Perayaan ulang tahun yang ke 1000
                 penyelenggara: XXX
-                date_event: "2022-10-20 14:30:00"
+                date_event: "Sunday, 20-Nov-22 10:30 WIB"
                 partisipasi: 34
                 price: 250000
                 location: Malang
