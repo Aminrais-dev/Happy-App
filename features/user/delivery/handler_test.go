@@ -263,146 +263,6 @@ func TestDeleteData(t *testing.T) {
 
 }
 
-// func TestUpdateData(t *testing.T) {
-// 	e := echo.New()
-// 	usecase := new(mocks.UsecaseUser)
-// 	New(e, usecase)
-// 	handlerTest := &userDelivery{
-// 		userUsecase: usecase,
-// 	}
-
-// 	token, errToken := middlewares.CreateToken(1)
-// 	if errToken != nil {
-// 		assert.Error(t, errToken)
-// 	}
-
-// 	input := user.CoreUser{
-// 		ID:       uint(1),
-// 		Name:     "amin",
-// 		Email:    "amin@gmail.com",
-// 		Username: "amin rais",
-// 		Gender:   "Male",
-// 		Password: "amin",
-// 	}
-
-// 	body := new(bytes.Buffer)
-// 	writer := multipart.NewWriter(body)
-// 	writer.WriteField("name", "amin")
-// 	writer.WriteField("email", "amin@gmail.com")
-// 	writer.WriteField("username", "amin rais")
-// 	writer.WriteField("gender", "male")
-// 	writer.WriteField("password", "amin")
-// 	writer.Close()
-
-// 	t.Run("Success update data", func(t *testing.T) {
-// 		usecase.On("UpdateUser", input).Return(1).Once()
-
-// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
-// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
-// 		rec := httptest.NewRecorder()
-// 		echoContext := e.NewContext(req, rec)
-// 		echoContext.SetPath("/user/profile")
-
-// 		responseData := ResponseMassage{}
-
-// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
-// 		if assert.NoError(t, callFunc) {
-// 			responseBody := rec.Body.String()
-// 			err := json.Unmarshal([]byte(responseBody), &responseData)
-// 			if err != nil {
-// 				assert.Error(t, err, "error")
-// 			}
-// 			assert.Equal(t, http.StatusOK, rec.Code)
-// 			assert.Equal(t, "success update account", responseData.Message)
-// 		}
-// 		usecase.AssertExpectations(t)
-// 	})
-
-// 	t.Run("failed error bind", func(t *testing.T) {
-
-// 		dataFail := map[string]int{
-// 			"Name":     7777,
-// 			"Password": 7777,
-// 		}
-
-// 		requestFail, err := json.Marshal(dataFail)
-// 		if err != nil {
-// 			t.Error(t, err, "error")
-// 		}
-
-// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", bytes.NewBuffer(requestFail))
-// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
-// 		rec := httptest.NewRecorder()
-// 		echoContext := e.NewContext(req, rec)
-// 		echoContext.SetPath("/user/profile")
-
-// 		responseData := ResponseMassage{}
-
-// 		if assert.NoError(t, handlerTest.UpdateAccount(echoContext)) {
-// 			responseBody := rec.Body.String()
-// 			err := json.Unmarshal([]byte(responseBody), &responseData)
-// 			if err != nil {
-// 				assert.Error(t, err, "error")
-// 			}
-// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
-// 			assert.Equal(t, "error bind", responseData.Message)
-// 		}
-// 		usecase.AssertExpectations(t)
-// 	})
-
-// 	t.Run("failed update data", func(t *testing.T) {
-// 		usecase.On("UpdateUser", input).Return(-4).Once()
-
-// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
-// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
-// 		rec := httptest.NewRecorder()
-// 		echoContext := e.NewContext(req, rec)
-// 		echoContext.SetPath("/user/profile")
-
-// 		responseData := ResponseMassage{}
-
-// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
-// 		if assert.NoError(t, callFunc) {
-// 			responseBody := rec.Body.String()
-// 			err := json.Unmarshal([]byte(responseBody), &responseData)
-// 			if err != nil {
-// 				assert.Error(t, err, "error")
-// 			}
-// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
-// 			assert.Equal(t, "username sudah ada", responseData.Message)
-// 		}
-// 		usecase.AssertExpectations(t)
-// 	})
-
-// 	t.Run("failed update data", func(t *testing.T) {
-// 		usecase.On("UpdateUser", input).Return(-1).Once()
-
-// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
-// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
-// 		rec := httptest.NewRecorder()
-// 		echoContext := e.NewContext(req, rec)
-// 		echoContext.SetPath("/user/profile")
-
-// 		responseData := ResponseMassage{}
-
-// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
-// 		if assert.NoError(t, callFunc) {
-// 			responseBody := rec.Body.String()
-// 			err := json.Unmarshal([]byte(responseBody), &responseData)
-// 			if err != nil {
-// 				assert.Error(t, err, "error")
-// 			}
-// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
-// 			assert.Equal(t, "failed update data", responseData.Message)
-// 		}
-// 		usecase.AssertExpectations(t)
-// 	})
-
-// }
-
 func TestGetData(t *testing.T) {
 	e := echo.New()
 	usecase := new(mocks.UsecaseUser)
@@ -528,3 +388,144 @@ func TestGetGmailVerify(t *testing.T) {
 	})
 
 }
+
+// func TestUpdateData(t *testing.T) {
+// 	e := echo.New()
+// 	usecase := new(mocks.UsecaseUser)
+// 	New(e, usecase)
+// 	handlerTest := &userDelivery{
+// 		userUsecase: usecase,
+// 	}
+
+// 	token, errToken := middlewares.CreateToken(1)
+// 	if errToken != nil {
+// 		assert.Error(t, errToken)
+// 	}
+
+// 	input := user.CoreUser{
+// 		ID:       uint(1),
+// 		Name:     "amin",
+// 		Email:    "amin@gmail.com",
+// 		Username: "amin rais",
+// 		Gender:   "Male",
+// 		Password: "amin",
+// 	}
+
+// 	body := new(bytes.Buffer)
+// 	writer := multipart.NewWriter(body)
+// 	writer.WriteField("name", input.Name)
+// 	writer.WriteField("email", input.Email)
+// 	writer.WriteField("username", input.Username)
+// 	writer.WriteField("gender", input.Gender)
+// 	writer.WriteField("password", input.Password)
+// 	writer.Close()
+// 	fmt.Println(body)
+
+// 	t.Run("Success update data", func(t *testing.T) {
+// 		usecase.On("UpdateUser", input).Return(1).Once()
+
+// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
+// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
+// 		rec := httptest.NewRecorder()
+// 		echoContext := e.NewContext(req, rec)
+// 		echoContext.SetPath("/user/profile")
+
+// 		responseData := ResponseMassage{}
+
+// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
+// 		if assert.NoError(t, callFunc) {
+// 			responseBody := rec.Body.String()
+// 			err := json.Unmarshal([]byte(responseBody), &responseData)
+// 			if err != nil {
+// 				assert.Error(t, err, "error")
+// 			}
+// 			assert.Equal(t, http.StatusOK, rec.Code)
+// 			assert.Equal(t, "success update account", responseData.Message)
+// 		}
+// 		usecase.AssertExpectations(t)
+// 	})
+
+// 	t.Run("failed error bind", func(t *testing.T) {
+
+// 		dataFail := map[string]int{
+// 			"Name":     7777,
+// 			"Password": 7777,
+// 		}
+
+// 		requestFail, err := json.Marshal(dataFail)
+// 		if err != nil {
+// 			t.Error(t, err, "error")
+// 		}
+
+// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", bytes.NewBuffer(requestFail))
+// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
+// 		rec := httptest.NewRecorder()
+// 		echoContext := e.NewContext(req, rec)
+// 		echoContext.SetPath("/user/profile")
+
+// 		responseData := ResponseMassage{}
+
+// 		if assert.NoError(t, handlerTest.UpdateAccount(echoContext)) {
+// 			responseBody := rec.Body.String()
+// 			err := json.Unmarshal([]byte(responseBody), &responseData)
+// 			if err != nil {
+// 				assert.Error(t, err, "error")
+// 			}
+// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
+// 			assert.Equal(t, "error bind", responseData.Message)
+// 		}
+// 		usecase.AssertExpectations(t)
+// 	})
+
+// 	t.Run("failed update data", func(t *testing.T) {
+// 		usecase.On("UpdateUser", input).Return(-4).Once()
+
+// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
+// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
+// 		rec := httptest.NewRecorder()
+// 		echoContext := e.NewContext(req, rec)
+// 		echoContext.SetPath("/user/profile")
+
+// 		responseData := ResponseMassage{}
+
+// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
+// 		if assert.NoError(t, callFunc) {
+// 			responseBody := rec.Body.String()
+// 			err := json.Unmarshal([]byte(responseBody), &responseData)
+// 			if err != nil {
+// 				assert.Error(t, err, "error")
+// 			}
+// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
+// 			assert.Equal(t, "username sudah ada", responseData.Message)
+// 		}
+// 		usecase.AssertExpectations(t)
+// 	})
+
+// 	t.Run("failed update data", func(t *testing.T) {
+// 		usecase.On("UpdateUser", input).Return(-1).Once()
+
+// 		req := httptest.NewRequest(http.MethodPut, "/user/profile", body)
+// 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+// 		req.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
+// 		rec := httptest.NewRecorder()
+// 		echoContext := e.NewContext(req, rec)
+// 		echoContext.SetPath("/user/profile")
+
+// 		responseData := ResponseMassage{}
+
+// 		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(handlerTest.UpdateAccount))(echoContext)
+// 		if assert.NoError(t, callFunc) {
+// 			responseBody := rec.Body.String()
+// 			err := json.Unmarshal([]byte(responseBody), &responseData)
+// 			if err != nil {
+// 				assert.Error(t, err, "error")
+// 			}
+// 			assert.Equal(t, http.StatusBadRequest, rec.Code)
+// 			assert.Equal(t, "failed update data", responseData.Message)
+// 		}
+// 		usecase.AssertExpectations(t)
+// 	})
+
+// }
