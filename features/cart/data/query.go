@@ -191,7 +191,7 @@ func (storage *Storage) DeleteCart(core cart.CoreHistory) (string, error) {
 	return "Sucess MenJalankan Semua Metod", nil
 }
 
-func (storage *Storage) UpdateHistory(core cart.CoreHistory) (string, error) {
+func (storage *Storage) UpdateHistory(core cart.CoreHistory, userid int) (string, error) {
 	var upda Transaction
 	upda.Gross = core.Gross
 	upda.OrderID = core.OrderID
@@ -199,6 +199,14 @@ func (storage *Storage) UpdateHistory(core cart.CoreHistory) (string, error) {
 	tx := storage.query.Model(&Transaction{}).Where("id = ?", core.ID).Updates(upda)
 	if tx.Error != nil {
 		return "Gagal Mengupdate Transaction", tx.Error
+	}
+	var pay Payment            //
+	pay.UserID = uint(userid)  //
+	pay.OrderID = core.OrderID //
+	pay.Groos = core.Gross     //
+	txc := storage.query.Create(&pay)
+	if txc.Error != nil { //
+		return "Gagal Insert ke Payment", txc.Error //
 	}
 
 	return "Success Insert Payment", nil

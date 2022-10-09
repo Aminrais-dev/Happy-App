@@ -22,7 +22,7 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(cartModel.Cart{})
 	db.AutoMigrate(cartModel.Transaction{})
 	db.AutoMigrate(cartModel.TransactionCart{})
-	// db.AutoMigrate(cartModel.Payment{})
+	db.AutoMigrate(cartModel.Payment{})
 
 }
 

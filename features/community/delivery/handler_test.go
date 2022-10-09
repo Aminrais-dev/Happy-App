@@ -218,7 +218,8 @@ func TestListCommunity(t *testing.T) {
 		}
 		UsecaseMock.AssertExpectations(t)
 	})
-
 }
 
-//
+// func TestListMember(t *testing.T) {
+
+// }
