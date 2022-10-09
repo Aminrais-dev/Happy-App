@@ -20,9 +20,9 @@ type Community struct {
 type User struct {
 	gorm.Model
 	Name      string
-	Username  string `gorm:"unique"`
+	Username  string
 	Gender    string
-	Email     string `gorm:"unique"`
+	Email     string
 	Password  string
 	Photo     string
 	Status    string

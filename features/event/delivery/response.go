@@ -139,7 +139,7 @@ func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 		Status:        data.Status,
 		Penyelenggara: data.Penyelenggara,
 		Partisipasi:   data.Partisipasi,
-		Date:          date.Format(layoutRes),
+		Date:          date.Format(time.RFC1123),
 		Price:         data.Price,
 		Location:      data.Location,
 	}
