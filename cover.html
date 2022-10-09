@@ -212,8 +212,8 @@ func (service *Service) ChargeRequest(core coreapi.ChargeReq, payment string) (c
         <span class="cov8" title="1">return corecharge, "Success To Core", nil</span>
 }
 
-func (service *Service) UpdateHistory(core cart.CoreHistory) (string, error) <span class="cov8" title="1">{
-        msg, err := service.do.UpdateHistory(core)
+func (service *Service) UpdateHistory(core cart.CoreHistory, userid int) (string, error) <span class="cov8" title="1">{
+        msg, err := service.do.UpdateHistory(core, userid)
         return msg, err
 }</span>
 

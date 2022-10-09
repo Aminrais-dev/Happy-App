@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+type Data struct {
+	Name  string
+	Email string
+}
+
 type DropData struct {
 	Date       time.Time
 	Name       string
@@ -12,7 +17,7 @@ type DropData struct {
 }
 
 type DataInterface interface {
-	WeebHookUpdateTransaction(orderid, status string) (string, error)
+	WeebHookUpdateTransaction(orderid, status string) (Data, string, error)
 	WeebHookUpdateJoinEvent(orderid, status string) (DropData, error)
 }
 

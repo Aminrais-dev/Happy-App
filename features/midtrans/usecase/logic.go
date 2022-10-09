@@ -18,8 +18,19 @@ func New(data midtrans.DataInterface) midtrans.UsecaseInterface {
 }
 
 func (service *Service) WeebHookTransaction(orderid, transactionstatus string) (string, error) {
-	msg, err := service.do.WeebHookUpdateTransaction(orderid, transactionstatus)
-	return msg, err
+	data, msg, err := service.do.WeebHookUpdateTransaction(orderid, transactionstatus)
+	if err != nil {
+		return msg, err
+	}
+	if transactionstatus == "settlement" || transactionstatus == "capture" {
+		email := helper.Email{
+			Name:   data.Name,
+			Status: "Success",
+		}
+		subject := fmt.Sprintf("Pembayaran Atas Item dengan Id %s, Telah Selesai", orderid)
+		helper.SendEmailTransNotif(data.Email, subject, email)
+	}
+	return "Success Update", nil
 }
 
 func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (string, error) {
@@ -48,3 +59,5 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 	return "success update", nil
 
 }
+
+// nothing
