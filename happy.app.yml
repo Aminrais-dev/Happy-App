@@ -1070,7 +1070,7 @@ components:
           example:
             title: Anniversary
             descriptions: Perayaan Ulang Tahun
-            date_event: "2022-10-20 14:30:00"
+            date_event: "2022-10-20T14:30"
             price: 250000
             location: Japan
     feedrequestbody:
