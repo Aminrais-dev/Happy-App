@@ -79,6 +79,7 @@ func CoreToResCommunity(data cart.CoreCommunity) ResposeCommunity {
 		Descriptions: data.Descriptions,
 		Logo:         data.Logo,
 		Members:      data.Members,
+		Role:         data.Role,
 	}
 }
 
