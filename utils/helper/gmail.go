@@ -59,7 +59,7 @@ func SendEmailNotif(to, subject string, data interface{}) {
 
 	template := "./utils/helper/template/notif.html"
 
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(10)
 	go SendEmail(to, subject, template, data)
 }
 
@@ -67,7 +67,7 @@ func SendEmailVerify(to, subject string, data interface{}) {
 
 	template := "./utils/helper/template/verify.html"
 
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(10)
 	go SendEmail(to, subject, template, data)
 
 }
@@ -76,8 +76,7 @@ func SendEmailTransNotif(to, subject string, data interface{}) {
 
 	template := "./utils/helper/template/transnotif.html"
 
-	err := SendEmail(to, subject, template, data)
-	if err != nil {
-		panic(err)
-	}
+	runtime.GOMAXPROCS(10)
+	go SendEmail(to, subject, template, data)
+
 }
