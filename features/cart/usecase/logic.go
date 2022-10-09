@@ -41,7 +41,7 @@ func (service *Service) AddToCart(userid, productid int) (string, error) {
 }
 
 func (service *Service) GetCartList(userid, communityid int) (cart.CoreCommunity, []cart.CoreCart, string, error) {
-	corecommunity, msg1, ers := service.do.GetCommunity(communityid)
+	corecommunity, msg1, ers := service.do.GetCommunity(userid, communityid)
 	if ers != nil {
 		return cart.CoreCommunity{}, nil, msg1, ers
 	}

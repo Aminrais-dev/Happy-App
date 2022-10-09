@@ -12,6 +12,7 @@ type ResposeCommunity struct {
 	Descriptions string `json:"descriptions"`
 	Logo         string `json:"logo"`
 	Members      int64  `json:"members"`
+	Role         string `json:"role"`
 }
 
 type ResponseCart struct {
@@ -78,6 +79,7 @@ func CoreToResCommunity(data cart.CoreCommunity) ResposeCommunity {
 		Descriptions: data.Descriptions,
 		Logo:         data.Logo,
 		Members:      data.Members,
+		Role:         data.Role,
 	}
 }
 

@@ -124,6 +124,16 @@ func ToCoreCommunity(data community.Community, sum int64) cart.CoreCommunity {
 		Members:      sum,
 	}
 }
+func ToCoreCommunity2(data community.Community, sum int64, role string) cart.CoreCommunity {
+	return cart.CoreCommunity{
+		ID:           data.ID,
+		Title:        data.Title,
+		Descriptions: data.Descriptions,
+		Logo:         data.Logo,
+		Members:      sum,
+		Role:         role,
+	}
+}
 
 func ProductToCart(data Product, cartId uint) cart.CoreCart {
 	return cart.CoreCart{
