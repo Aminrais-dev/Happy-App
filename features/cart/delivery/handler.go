@@ -88,6 +88,7 @@ func (user *Delivery) BuyInCart(c echo.Context) error {
 	if erb != nil {
 		return c.JSON(400, helper.FailedResponseHelper("Gagal Bind Data"))
 	}
+	buy.Type_Payment = typePayment(buy.Type_Payment)
 
 	if buy.City == "" || buy.Street == "" || buy.Province == "" || buy.CartID == nil || buy.Type_Payment == "" {
 		return c.JSON(400, helper.FailedResponseHelper("Semua data harus di isi"))

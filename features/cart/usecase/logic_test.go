@@ -17,7 +17,7 @@ import (
 )
 
 func TestAddToCart(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 
 	t.Run("Sukses", func(t *testing.T) {
 		DataMock.On("CheckCommunity", mock.Anything).Return(1, "pesan", nil).Once()
@@ -58,7 +58,7 @@ func TestAddToCart(t *testing.T) {
 }
 
 func TestGetCartList(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 	community := cart.CoreCommunity{ID: 1, Title: "Genshin", Members: 5, Descriptions: "Ini", Logo: config.DEFAULT_COMMUNITY}
 	cart := []cart.CoreCart{{Name: "Ayaka", Descriptions: "Female", Photo: config.DEFAULT_PROFILE, Price: 10000}}
 
@@ -84,7 +84,7 @@ func TestGetCartList(t *testing.T) {
 }
 
 func TestDeleteFromCart(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 	t.Run("Success", func(t *testing.T) {
 		DataMock.On("DeleteFromCart", mock.Anything, mock.Anything).Return("Pesan", nil).Once()
 		logic := New(DataMock)
@@ -96,7 +96,7 @@ func TestDeleteFromCart(t *testing.T) {
 }
 
 func TestInsertIntoTransaction(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 
 	t.Run("Success", func(t *testing.T) {
 		DataMock.On("CheckStock", mock.Anything).Return([]int{1, 2, 3, 4}, "Pesan", nil).Once()
@@ -161,7 +161,7 @@ func TestInsertIntoTransaction(t *testing.T) {
 }
 
 func TestGetCharge(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 
 	t.Run("Success 1", func(t *testing.T) {
 		logic := New(DataMock)
@@ -190,7 +190,7 @@ func TestGetCharge(t *testing.T) {
 }
 
 func TestChargeRequest(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 	time := time.Now().Unix()
 	bca := coreapi.ChargeReq{
 		TransactionDetails: midtrans.TransactionDetails{
@@ -244,7 +244,7 @@ func TestChargeRequest(t *testing.T) {
 }
 
 func TestUpdateHistory(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 
 	t.Run("Success", func(t *testing.T) {
 		DataMock.On("UpdateHistory", mock.Anything, mock.Anything).Return("Pesan", nil).Once()
@@ -257,7 +257,7 @@ func TestUpdateHistory(t *testing.T) {
 }
 
 func TestCommunityHistory(t *testing.T) {
-	DataMock := new(mocks.CartData2)
+	DataMock := new(mocks.CartData)
 	commun := cart.CoreCommunity{Title: "Genshin", Descriptions: "Genshin Player", Logo: config.DEFAULT_COMMUNITY}
 	cart := []cart.CoreProductResponse{{ID: 1, Name: "Pedang", Photo: config.DEFAULT_PRODUCT, Price: 10000, Buyer: "Husen"}}
 

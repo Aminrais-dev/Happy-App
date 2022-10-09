@@ -22,6 +22,7 @@ type CoreCommunity struct {
 	Descriptions string
 	Logo         string
 	Members      int64
+	Role         string
 }
 
 type CoreHistory struct {
@@ -61,7 +62,7 @@ type CorePayment struct {
 
 type DataInterface interface {
 	InsertIntoCart(userid, productid int) (string, error)
-	GetCommunity(communityid int) (CoreCommunity, string, error)
+	GetCommunity(userid, communityid int) (CoreCommunity, string, error)
 	SelectCartList(userid, communityid int) ([]CoreCart, string, error)
 	DeleteFromCart(userid, cartid int) (string, error)
 	InsertIntoTransaction(core CoreHistory) (int, string, error)

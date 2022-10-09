@@ -37,7 +37,7 @@ func (storage *Storage) InsertIntoCart(userid, productid int) (string, error) {
 	return "Sukses Menambahkan Ke Cart", nil
 }
 
-func (storage *Storage) GetCommunity(communityId int) (cart.CoreCommunity, string, error) {
+func (storage *Storage) GetCommunity(userid, communityId int) (cart.CoreCommunity, string, error) {
 	var cartcommun community.Community
 	tx := storage.query.Find(&cartcommun, "id = ?", communityId)
 	if tx.Error != nil {
@@ -49,8 +49,13 @@ func (storage *Storage) GetCommunity(communityId int) (cart.CoreCommunity, strin
 	if Count.Error != nil {
 		return cart.CoreCommunity{}, "Terjadi Kesalahan Saat Menghitung Member", Count.Error
 	}
+	var role JoinCommunity
+	txx := storage.query.Find(&role, "user_id = ? and community_id = ?", userid, communityId)
+	if txx.Error != nil {
+		return cart.CoreCommunity{}, "Gagal Mendapatkan role User ", txx.Error
+	}
 
-	return ToCoreCommunity(cartcommun, sum), "", nil
+	return ToCoreCommunity2(cartcommun, sum, role.Role), "", nil
 }
 
 func (storage *Storage) SelectCartList(userid, communityid int) ([]cart.CoreCart, string, error) {

@@ -12,6 +12,7 @@ type ResposeCommunity struct {
 	Descriptions string `json:"descriptions"`
 	Logo         string `json:"logo"`
 	Members      int64  `json:"members"`
+	Role         string `json:"role"`
 }
 
 type ResponseCart struct {
