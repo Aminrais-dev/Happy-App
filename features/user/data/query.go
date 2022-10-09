@@ -116,9 +116,9 @@ func (repo *userData) CheckUsername(username string) int {
 	var data User
 	tx := repo.db.First(&data, "username = ? ", username)
 	if tx.Error != nil {
-		return -4
+		return 1
 	}
 
-	return 1
+	return -4
 
 }
