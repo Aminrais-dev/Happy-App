@@ -24,7 +24,7 @@ func TestGetAll(t *testing.T) {
 	e := echo.New()
 	usecase := new(mocks.UsecaseLogin)
 	New(e, usecase)
-	handler := &loginDelivery{
+	handlerTest := &loginDelivery{
 		loginUsecase: usecase,
 	}
 
@@ -50,7 +50,7 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
 			if err != nil {
@@ -82,7 +82,7 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
 			if err != nil {
@@ -105,7 +105,7 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
 			if err != nil {
@@ -127,7 +127,7 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
 			if err != nil {
@@ -150,7 +150,7 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
 			if err != nil {
@@ -183,15 +183,48 @@ func TestGetAll(t *testing.T) {
 
 		responseData := Response{}
 
-		if assert.NoError(t, handler.LoginUser(echoContext)) {
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
 			responseBody := rec.Body.String()
 			err := json.Unmarshal([]byte(responseBody), &responseData)
-			// fmt.Println("res", responseBody)
 			if err != nil {
 				assert.Error(t, err, "error")
 			}
 			assert.Equal(t, http.StatusBadRequest, rec.Code)
 			assert.Equal(t, "please input email and password", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+
+	})
+
+	t.Run("Failed status not confirm", func(t *testing.T) {
+		usecase.On("LoginAuthorized", mock.Anything, mock.Anything).Return("please confirm your account in gmail", nil).Once()
+
+		requestLoginNull := Request{
+			Email:    "amin@gmail.com",
+			Password: "",
+		}
+
+		reqBodyNotPassword, err := json.Marshal(requestLoginNull)
+		if err != nil {
+			t.Error(t, err, "error")
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBodyNotPassword))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/login")
+
+		responseData := Response{}
+
+		if assert.NoError(t, handlerTest.LoginUser(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Equal(t, "please confirm your account in gmail", responseData.Message)
 		}
 		usecase.AssertExpectations(t)
 

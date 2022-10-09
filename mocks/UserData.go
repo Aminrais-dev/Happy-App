@@ -27,6 +27,20 @@ func (_m *DataUser) CheckStatus(_a0 string, _a1 int) string {
 	return r0
 }
 
+// CheckUsername provides a mock function with given fields: _a0
+func (_m *DataUser) CheckUsername(_a0 string) int {
+	ret := _m.Called(_a0)
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func(string) int); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	return r0
+}
+
 // DelUser provides a mock function with given fields: _a0
 func (_m *DataUser) DelUser(_a0 int) int {
 	ret := _m.Called(_a0)
@@ -42,7 +56,7 @@ func (_m *DataUser) DelUser(_a0 int) int {
 }
 
 // InsertUser provides a mock function with given fields: _a0
-func (_m *DataUser) InsertUser(_a0 user.CoreUser) (int, string) {
+func (_m *DataUser) InsertUser(_a0 user.CoreUser) int {
 	ret := _m.Called(_a0)
 
 	var r0 int
@@ -52,14 +66,7 @@ func (_m *DataUser) InsertUser(_a0 user.CoreUser) (int, string) {
 		r0 = ret.Get(0).(int)
 	}
 
-	var r1 string
-	if rf, ok := ret.Get(1).(func(user.CoreUser) string); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Get(1).(string)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // SelectUser provides a mock function with given fields: id

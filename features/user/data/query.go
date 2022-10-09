@@ -17,21 +17,21 @@ func New(db *gorm.DB) user.DataInterface {
 	}
 }
 
-func (repo *userData) InsertUser(data user.CoreUser) (int, string) {
+func (repo *userData) InsertUser(data user.CoreUser) int {
 
 	if data.Status != config.VERIFY {
 
 		newData := fromCore(data)
 		tx := repo.db.Create(&newData)
 		if tx.Error != nil || tx.RowsAffected < 1 {
-			return -1, ""
+			return -1
 		}
 
-		return int(newData.ID), newData.Name
+		return int(newData.ID)
 
 	}
 
-	return -3, ""
+	return -3
 
 }
 
@@ -108,5 +108,17 @@ func (repo *userData) UpdtStatus(id int, status string) int {
 	}
 
 	return -2
+
+}
+
+func (repo *userData) CheckUsername(username string) int {
+
+	var data User
+	tx := repo.db.First(&data, "username = ? ", username)
+	if tx.Error != nil {
+		return -4
+	}
+
+	return 1
 
 }

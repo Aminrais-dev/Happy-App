@@ -59,7 +59,7 @@ type ResponseEventDetail struct {
 	Location      string `json:"location"`
 }
 
-var layout = "2006-01-02 15:04:05"
+var layout = "2006-01-02 15:04"
 
 func FromMidtransToPayment(resMidtrans *coreapi.ChargeResponse, payment_type string) Payment {
 

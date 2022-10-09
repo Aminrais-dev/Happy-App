@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/features/login"
 	"capstone/happyApp/mocks"
 	"errors"
@@ -12,9 +13,9 @@ import (
 
 func TestLogin(t *testing.T) {
 	repo := new(mocks.DataLogin)
-	dataInput := login.Core{ID: 1, Email: "amin@mail.id", Password: "$2a$10$3qSIi7BiTknraN3A9tRX/eoI4N9yuln/oWI8Ft9KcrZNF3ec6jIHK"}
+	dataInput := login.Core{ID: 1, Email: "amin@mail.id", Password: "$2a$10$3qSIi7BiTknraN3A9tRX/eoI4N9yuln/oWI8Ft9KcrZNF3ec6jIHK", Status: config.VERIFY}
 
-	t.Run("success password.", func(t *testing.T) {
+	t.Run("success login.", func(t *testing.T) {
 		repo.On("LoginUser", mock.Anything, mock.Anything).Return(dataInput, nil).Once()
 
 		usecase := New(repo)
@@ -26,7 +27,7 @@ func TestLogin(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("empty passwor", func(t *testing.T) {
+	t.Run("empty password", func(t *testing.T) {
 		usecase := New(repo)
 		result, _ := usecase.LoginAuthorized("amin@mail.id", "")
 		assert.Equal(t, "please input email and password", result)
@@ -37,6 +38,15 @@ func TestLogin(t *testing.T) {
 		usecase := New(repo)
 		result, _ := usecase.LoginAuthorized("", "amin123")
 		assert.Equal(t, "please input email and password", result)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Status pending", func(t *testing.T) {
+		repo.On("LoginUser", mock.Anything).Return(login.Core{Email: "amin@mail.id", Password: "$2a$10$3qSIi7BiTknraN3A9tRX/eoI4N9yuln/oWI8Ft9KcrZNF3ec6jIHK", Status: config.DEFAULT_PROFILE}, nil).Once()
+
+		usecase := New(repo)
+		result, _ := usecase.LoginAuthorized("amin@mail.id", "12345")
+		assert.Equal(t, "please confirm your account in gmail", result)
 		repo.AssertExpectations(t)
 	})
 

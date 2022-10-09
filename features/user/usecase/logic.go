@@ -30,11 +30,16 @@ func (usecase *usecaseInterface) PostUser(data user.CoreUser) int {
 	status := usecase.userData.CheckStatus(data.Email, 0)
 	data.Status = status
 
-	row, name := usecase.userData.InsertUser(data)
+	checkUsername := usecase.userData.CheckUsername(data.Username)
+	if checkUsername == -4 {
+		return checkUsername
+	}
+
+	row := usecase.userData.InsertUser(data)
 	if row > 0 {
 
 		bodyEmail := helper.BodyEmail{
-			Name: name,
+			Name: data.Name,
 			Url:  "https://tugas.website/user/verify/" + strconv.Itoa(row),
 		}
 
@@ -59,6 +64,14 @@ func (usecase *usecaseInterface) UpdateUser(data user.CoreUser) int {
 		data.Password = string(hashPass)
 
 	}
+
+	if data.Username != "" {
+		checkUsername := usecase.userData.CheckUsername(data.Username)
+		if checkUsername == -4 {
+			return checkUsername
+		}
+	}
+
 	row := usecase.userData.UpdtUser(data)
 	return row
 

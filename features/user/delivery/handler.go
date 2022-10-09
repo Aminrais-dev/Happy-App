@@ -41,13 +41,15 @@ func (delivery *userDelivery) CreateUser(c echo.Context) error {
 	row := delivery.userUsecase.PostUser(reqData.reqToCore(config.DEFAULT_PROFILE))
 	if row == -2 {
 		return c.JSON(400, helper.FailedResponseHelper("please input all request"))
+	} else if row == -4 {
+		return c.JSON(400, helper.FailedResponseHelper("username sudah ada"))
 	} else if row == -1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed sign up"))
 	} else if row == -3 {
 		return c.JSON(400, helper.FailedResponseHelper("email sudah terdaftar"))
 	}
 
-	return c.JSON(200, helper.SuccessResponseHelper("success sign up"))
+	return c.JSON(200, helper.SuccessResponseHelper("success sign up, please confirm email in gmail"))
 
 }
 
@@ -122,7 +124,9 @@ func (delivery *userDelivery) UpdateAccount(c echo.Context) error {
 	Update.ID = uint(idToken)
 
 	row := delivery.userUsecase.UpdateUser(Update)
-	if row == -1 {
+	if row == -4 {
+		return c.JSON(400, helper.FailedResponseHelper("username sudah ada"))
+	} else if row == -1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed update account"))
 	}
 

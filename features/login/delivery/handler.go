@@ -30,7 +30,7 @@ func (delivery *loginDelivery) LoginUser(c echo.Context) error {
 	}
 
 	str, err := delivery.loginUsecase.LoginAuthorized(req.Email, req.Password)
-	if str == "please input email and password" || str == "email not found" || str == "wrong password" || str == "please confirm your account in gmail" {
+	if str == "please input email and password" || str == "email not found" || str == "please confirm your account in gmail" || str == "wrong password" {
 		return c.JSON(400, helper.FailedResponseHelper(str))
 	} else if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper(str))
