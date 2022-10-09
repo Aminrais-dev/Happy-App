@@ -44,7 +44,7 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 		dataEmail := helper.BodyEmail{
 			Name:  data.Name,
 			Event: data.TitleEvent,
-			Date:  data.Date.Format("Monday, 02-Jan-06 15:04") + " WIB",
+			Date:  data.Date.Format("Monday, 02-Jan-06 15:04:05") + " WIB",
 		}
 
 		subject := fmt.Sprintf("Sukses bergabung dalam event %s", data.TitleEvent)
