@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"runtime"
 
 	"gopkg.in/gomail.v2"
 )
@@ -53,20 +54,15 @@ func SendEmailNotif(to, subject string, data interface{}) {
 
 	template := "./utils/helper/template/notif.html"
 
-	err := SendEmail(to, subject, template, data)
-	if err != nil {
-		panic(err)
-	}
-
+	runtime.GOMAXPROCS(2)
+	go SendEmail(to, subject, template, data)
 }
 
 func SendEmailVerify(to, subject string, data interface{}) {
 
 	template := "./utils/helper/template/verify.html"
 
-	err := SendEmail(to, subject, template, data)
-	if err != nil {
-		panic(err)
-	}
+	runtime.GOMAXPROCS(2)
+	go SendEmail(to, subject, template, data)
 
 }

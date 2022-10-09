@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"capstone/happyApp/config"
 	"capstone/happyApp/mocks"
 	"errors"
 	"testing"
@@ -56,6 +57,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("update succes", func(t *testing.T) {
 
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
 		userMock.On("UpdtUser", input).Return(1).Once()
 
 		useCase := New(userMock)
@@ -67,6 +69,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("update failed", func(t *testing.T) {
 
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
 		userMock.On("UpdtUser", input).Return(-1).Once()
 
 		useCase := New(userMock)
@@ -76,8 +79,20 @@ func TestUpdateUser(t *testing.T) {
 
 	})
 
+	t.Run("update failed username", func(t *testing.T) {
+
+		userMock.On("CheckUsername", mock.Anything).Return(-4).Once()
+
+		useCase := New(userMock)
+		res := useCase.UpdateUser(input)
+		assert.Equal(t, -4, res)
+		userMock.AssertExpectations(t)
+
+	})
+
 	t.Run("update success", func(t *testing.T) {
 
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
 		userMock.On("UpdtUser", mock.Anything).Return(1).Once()
 
 		input.Password = "123"
@@ -92,25 +107,54 @@ func TestUpdateUser(t *testing.T) {
 func TestPostData(t *testing.T) {
 
 	userMock := new(mocks.DataUser)
-	input := user.CoreUser{Name: "amin", Username: "aminrais89", Gender: "Male", Email: "amin@a.com", Password: "12345"}
+	input := user.CoreUser{Name: "amin", Username: "aminrais89", Gender: "Male", Email: "muhammadamin.rais13@gmail.com", Password: "12345"}
 
-	t.Run("create success", func(t *testing.T) {
+	// t.Run("create success", func(t *testing.T) {
 
-		userMock.On("InsertUser", mock.Anything).Return(1).Once()
+	// 	userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.DEFAULT_PROFILE).Once()
+	// 	userMock.On("CheckUsername", mock.Anything).Return(1).Once()
+	// 	userMock.On("InsertUser", mock.Anything).Return(1).Once()
 
-		useCase := New(userMock)
-		res := useCase.PostUser(input)
-		assert.Equal(t, 1, res)
-		userMock.AssertExpectations(t)
-	})
+	// 	useCase := New(userMock)
+	// 	res := useCase.PostUser(input)
+	// 	assert.Equal(t, 1, res)
+	// 	userMock.AssertExpectations(t)
+	// })
 
 	t.Run("create failed", func(t *testing.T) {
 
+		userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.DEFAULT_PROFILE).Once()
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
 		userMock.On("InsertUser", mock.Anything).Return(-1).Once()
 
 		useCase := New(userMock)
 		res := useCase.PostUser(input)
 		assert.Equal(t, -1, res)
+		userMock.AssertExpectations(t)
+
+	})
+
+	t.Run("create failed status verify", func(t *testing.T) {
+
+		userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.VERIFY).Once()
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
+		userMock.On("InsertUser", mock.Anything).Return(-3).Once()
+
+		useCase := New(userMock)
+		res := useCase.PostUser(input)
+		assert.Equal(t, -3, res)
+		userMock.AssertExpectations(t)
+
+	})
+
+	t.Run("create failed status verify", func(t *testing.T) {
+
+		userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.DEFAULT_PROFILE).Once()
+		userMock.On("CheckUsername", mock.Anything).Return(-4).Once()
+
+		useCase := New(userMock)
+		res := useCase.PostUser(input)
+		assert.Equal(t, -4, res)
 		userMock.AssertExpectations(t)
 
 	})
@@ -150,6 +194,49 @@ func TestDelete(t *testing.T) {
 
 		useCase := New(userMock)
 		res := useCase.DeleteUser(param)
+		assert.Equal(t, -1, res)
+		userMock.AssertExpectations(t)
+
+	})
+
+}
+
+func TestUpdateStatus(t *testing.T) {
+
+	userMock := new(mocks.DataUser)
+	param := 1
+
+	t.Run("Update status success", func(t *testing.T) {
+
+		userMock.On("CheckStatus", mock.Anything, mock.Anything).Return(config.DEFAULT_STATUS).Once()
+		userMock.On("UpdtStatus", param, mock.Anything).Return(1).Once()
+
+		useCase := New(userMock)
+		res := useCase.UpdateStatus(param)
+		assert.Equal(t, 1, res)
+		userMock.AssertExpectations(t)
+
+	})
+
+	t.Run("Update status failed", func(t *testing.T) {
+
+		userMock.On("CheckStatus", mock.Anything, mock.Anything).Return(config.VERIFY).Once()
+		userMock.On("UpdtStatus", param, mock.Anything).Return(-2).Once()
+
+		useCase := New(userMock)
+		res := useCase.UpdateStatus(param)
+		assert.Equal(t, -2, res)
+		userMock.AssertExpectations(t)
+
+	})
+
+	t.Run("Update status failed", func(t *testing.T) {
+
+		userMock.On("CheckStatus", mock.Anything, mock.Anything).Return(config.DEFAULT_STATUS).Once()
+		userMock.On("UpdtStatus", param, mock.Anything).Return(-1).Once()
+
+		useCase := New(userMock)
+		res := useCase.UpdateStatus(param)
 		assert.Equal(t, -1, res)
 		userMock.AssertExpectations(t)
 

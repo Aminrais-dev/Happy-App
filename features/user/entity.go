@@ -38,12 +38,13 @@ type CommunityProfile struct {
 }
 
 type DataInterface interface {
-	InsertUser(CoreUser) (int, string)
+	InsertUser(CoreUser) int
 	DelUser(int) int
 	UpdtUser(CoreUser) int
 	SelectUser(id int) (CoreUser, []CommunityProfile, error)
 	CheckStatus(string, int) string
 	UpdtStatus(id int, status string) int
+	CheckUsername(string) int
 }
 
 type UsecaseInterface interface {
