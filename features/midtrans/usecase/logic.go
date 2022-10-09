@@ -4,7 +4,6 @@ import (
 	"capstone/happyApp/features/midtrans"
 	"capstone/happyApp/utils/helper"
 	"fmt"
-	"time"
 )
 
 type Service struct {
@@ -42,13 +41,10 @@ func (service *Service) WeebHookJoinEvent(orderid, transactionstatus string) (st
 
 	if transactionstatus == "settlement" || transactionstatus == "capture" {
 
-		dataZone, _ := time.LoadLocation("Asia/Jakarta")
-		date := data.Date.UTC().In(dataZone)
-
 		dataEmail := helper.BodyEmail{
 			Name:  data.Name,
 			Event: data.TitleEvent,
-			Date:  date.Format(time.RFC850),
+			Date:  data.Date.Format("Monday, 02-Jan-06 15:04") + " WIB",
 		}
 
 		subject := fmt.Sprintf("Sukses bergabung dalam event %s", data.TitleEvent)

@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"capstone/happyApp/features/event"
-	"time"
 
 	"github.com/midtrans/midtrans-go/coreapi"
 )
@@ -60,7 +59,7 @@ type ResponseEventDetail struct {
 }
 
 var layout = "2006-01-02 15:04"
-var layoutRes = "Monday, 02-Jan-06 20:04 MST"
+var layoutRes = "Monday, 02-Jan-06 20:04"
 
 func FromMidtransToPayment(resMidtrans *coreapi.ChargeResponse, payment_type string) Payment {
 
@@ -129,9 +128,6 @@ func ResponseEventListComu(dataComu event.CommunityEvent) ResponseCommunityEvent
 
 func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 
-	dataZone, _ := time.LoadLocation("Asia/Jakarta")
-	date := data.Date.UTC().In(dataZone)
-
 	return ResponseEventDetail{
 		ID:            data.ID,
 		Title:         data.Title,
@@ -139,7 +135,7 @@ func ResponseEventDetails(data event.EventDetail) ResponseEventDetail {
 		Status:        data.Status,
 		Penyelenggara: data.Penyelenggara,
 		Partisipasi:   data.Partisipasi,
-		Date:          date.Format(time.RFC1123),
+		Date:          data.Date.Format(layoutRes) + " WIB",
 		Price:         data.Price,
 		Location:      data.Location,
 	}
