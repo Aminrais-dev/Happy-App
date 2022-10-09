@@ -1,4 +1,4 @@
-# HAPPY APP
+# :iphone: HAPPY APP
 
 # About The Project
 
