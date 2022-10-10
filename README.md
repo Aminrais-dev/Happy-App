@@ -35,7 +35,7 @@ A happy app with the following features:
 2. base url : https://tugas.website/
 
 # Database Schema
-
+![Gmail](https://tugasproject3.s3.ap-southeast-1.amazonaws.com/Screenshot+2022-10-10+021256.jpg)
 
 # Contributor
 - Muhammad Amin Rais  :  [![GitHub](https://img.shields.io/badge/amin-rais-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Aminrais-dev)
