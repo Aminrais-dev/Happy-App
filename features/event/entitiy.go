@@ -2,8 +2,6 @@ package event
 
 import (
 	"time"
-
-	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type EventCore struct {
@@ -54,13 +52,26 @@ type EventDetail struct {
 	Location      string
 }
 
+type JoinEventCore struct {
+	ID               uint
+	UserID           uint
+	EventID          uint
+	Order_id         string
+	Type_payment     string
+	Payment_method   string
+	Status_payment   string
+	Midtrans_virtual string
+	GrossAmount      string
+}
+
 type DataInterface interface {
 	InsertEvent(EventCore, int) int
 	SelectEvent(string) ([]Response, error)
 	SelectEventComu(idComu, userId int) (CommunityEvent, error)
 	SelectEventDetail(idEvent, userId int) (EventDetail, error)
 	SelectAmountEvent(idEvent int) uint64
-	CreatePayment(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)
+	CheckJoin(userId, EventId int) error
+	InsertTransaction(JoinEventCore) error
 	GetMembers([]Response) []Response
 }
 
@@ -70,5 +81,6 @@ type UsecaseInterface interface {
 	GetEventComu(idComu, userId int) (CommunityEvent, error)
 	GetEventDetail(idEvent, userId int) (EventDetail, error)
 	GetAmountEvent(idEvent int) uint64
-	CreatePaymentMidtrans(reqMidtrans coreapi.ChargeReq, userId, EventId int, method string) (*coreapi.ChargeResponse, error)
+	CheckStatus(userId, EventId int) error
+	PostTransaction(JoinEventCore) error
 }

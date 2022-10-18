@@ -4,7 +4,6 @@ import (
 	"capstone/happyApp/features/event"
 	"time"
 
-	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
 )
 
@@ -129,25 +128,16 @@ func EventDetails(data tempDetail, role string) event.EventDetail {
 	}
 }
 
-func toModelJoinEvent(data *coreapi.ChargeResponse, userId, idEvent int, method string) JoinEvent {
-
-	var midtransVirtual string
-	if data.VaNumbers != nil {
-		midtransVirtual = data.VaNumbers[0].VANumber
-	} else if data.BillKey != "" {
-		midtransVirtual = data.BillKey
-	} else if data.Actions != nil {
-		midtransVirtual = data.Actions[0].URL
-	}
+func toModelJoinEvent(data event.JoinEventCore) JoinEvent {
 
 	return JoinEvent{
-		UserID:           uint(userId),
-		EventID:          uint(idEvent),
-		Type_payment:     data.PaymentType,
-		Payment_method:   method,
-		Order_id:         data.OrderID,
-		Status_payment:   data.TransactionStatus,
-		Midtrans_virtual: midtransVirtual,
+		UserID:           data.UserID,
+		EventID:          data.EventID,
+		Type_payment:     data.Type_payment,
+		Payment_method:   data.Payment_method,
+		Order_id:         data.Order_id,
+		Status_payment:   data.Status_payment,
+		Midtrans_virtual: data.Midtrans_virtual,
 		GrossAmount:      data.GrossAmount,
 	}
 }

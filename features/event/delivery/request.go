@@ -85,3 +85,26 @@ func typePayment(tipe string) string {
 
 	return ""
 }
+
+func midtransToCore(data *coreapi.ChargeResponse, userId, idEvent int, method string) event.JoinEventCore {
+
+	var midtransVirtual string
+	if data.VaNumbers != nil {
+		midtransVirtual = data.VaNumbers[0].VANumber
+	} else if data.BillKey != "" {
+		midtransVirtual = data.BillKey
+	} else if data.Actions != nil {
+		midtransVirtual = data.Actions[0].URL
+	}
+
+	return event.JoinEventCore{
+		UserID:           uint(userId),
+		EventID:          uint(idEvent),
+		Type_payment:     data.PaymentType,
+		Payment_method:   method,
+		Order_id:         data.OrderID,
+		Status_payment:   data.TransactionStatus,
+		Midtrans_virtual: midtransVirtual,
+		GrossAmount:      data.GrossAmount,
+	}
+}

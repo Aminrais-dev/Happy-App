@@ -149,11 +149,21 @@ func (delivery *eventDelivery) CreatePaymentJoinEvent(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("payment type not allowed"))
 	}
 
-	chargeResponse, errCreate := delivery.eventUsecase.CreatePaymentMidtrans(reqToMidrans, userId, idEvent, paymentReq.Payment_type)
+	errCreate := delivery.eventUsecase.CheckStatus(userId, idEvent)
 	if errCreate != nil {
-		return c.JSON(400, helper.FailedResponseHelper("failed to create transaction"))
+		return c.JSON(400, helper.FailedResponseHelper("anda telah bergabung dalam event"))
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper("success create transactions", FromMidtransToPayment(chargeResponse, paymentReq.Payment_type)))
+	response, errTransaction := coreapi.ChargeTransaction(&reqToMidrans)
+	if errTransaction != nil {
+		return c.JSON(400, helper.FailedResponseHelper("failed create transaction"))
+	}
+
+	errInsert := delivery.eventUsecase.PostTransaction(midtransToCore(response, userId, idEvent, paymentReq.Payment_type))
+	if errInsert != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error insert to database"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success create transactions", FromMidtransToPayment(response, paymentReq.Payment_type)))
 
 }
