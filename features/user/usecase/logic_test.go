@@ -109,17 +109,17 @@ func TestPostData(t *testing.T) {
 	userMock := new(mocks.DataUser)
 	input := user.CoreUser{Name: "amin", Username: "aminrais89", Gender: "Male", Email: "muhammadamin.rais13@gmail.com", Password: "12345"}
 
-	// t.Run("create success", func(t *testing.T) {
+	t.Run("create success", func(t *testing.T) {
 
-	// 	userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.DEFAULT_PROFILE).Once()
-	// 	userMock.On("CheckUsername", mock.Anything).Return(1).Once()
-	// 	userMock.On("InsertUser", mock.Anything).Return(1).Once()
+		userMock.On("CheckStatus", mock.Anything, mock.AnythingOfType("int")).Return(config.DEFAULT_PROFILE).Once()
+		userMock.On("CheckUsername", mock.Anything).Return(1).Once()
+		userMock.On("InsertUser", mock.Anything).Return(1).Once()
 
-	// 	useCase := New(userMock)
-	// 	res := useCase.PostUser(input)
-	// 	assert.Equal(t, 1, res)
-	// 	userMock.AssertExpectations(t)
-	// })
+		useCase := New(userMock)
+		res := useCase.PostUser(input)
+		assert.Equal(t, 1, res)
+		userMock.AssertExpectations(t)
+	})
 
 	t.Run("create failed", func(t *testing.T) {
 

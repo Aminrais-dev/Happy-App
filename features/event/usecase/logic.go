@@ -2,8 +2,6 @@ package usecase
 
 import (
 	"capstone/happyApp/features/event"
-
-	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type usecaseEvent struct {
@@ -70,12 +68,16 @@ func (usecase *usecaseEvent) GetAmountEvent(idEvent int) uint64 {
 
 }
 
-func (usecase *usecaseEvent) CreatePaymentMidtrans(reqMidtrans coreapi.ChargeReq, userId, idEvent int, method string) (*coreapi.ChargeResponse, error) {
+func (usecase *usecaseEvent) PostTransaction(data event.JoinEventCore) error {
 
-	chargeResponse, err := usecase.eventData.CreatePayment(reqMidtrans, userId, idEvent, method)
-	if err != nil {
-		return nil, err
-	}
+	err := usecase.eventData.InsertTransaction(data)
+	return err
 
-	return chargeResponse, nil
+}
+
+func (usecase *usecaseEvent) CheckStatus(userId, idEvent int) error {
+
+	err := usecase.eventData.CheckJoin(userId, idEvent)
+	return err
+
 }

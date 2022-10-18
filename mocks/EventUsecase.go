@@ -5,8 +5,6 @@ package mocks
 import (
 	event "capstone/happyApp/features/event"
 
-	coreapi "github.com/midtrans/midtrans-go/coreapi"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,27 +13,18 @@ type UsecaseEvent struct {
 	mock.Mock
 }
 
-// CreatePaymentMidtrans provides a mock function with given fields: reqMidtrans, userId, EventId, method
-func (_m *UsecaseEvent) CreatePaymentMidtrans(reqMidtrans coreapi.ChargeReq, userId int, EventId int, method string) (*coreapi.ChargeResponse, error) {
-	ret := _m.Called(reqMidtrans, userId, EventId, method)
+// CheckStatus provides a mock function with given fields: userId, EventId
+func (_m *UsecaseEvent) CheckStatus(userId int, EventId int) error {
+	ret := _m.Called(userId, EventId)
 
-	var r0 *coreapi.ChargeResponse
-	if rf, ok := ret.Get(0).(func(coreapi.ChargeReq, int, int, string) *coreapi.ChargeResponse); ok {
-		r0 = rf(reqMidtrans, userId, EventId, method)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int) error); ok {
+		r0 = rf(userId, EventId)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*coreapi.ChargeResponse)
-		}
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(coreapi.ChargeReq, int, int, string) error); ok {
-		r1 = rf(reqMidtrans, userId, EventId, method)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // GetAmountEvent provides a mock function with given fields: idEvent
@@ -126,6 +115,20 @@ func (_m *UsecaseEvent) PostEvent(_a0 event.EventCore, _a1 int) int {
 		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Get(0).(int)
+	}
+
+	return r0
+}
+
+// PostTransaction provides a mock function with given fields: _a0
+func (_m *UsecaseEvent) PostTransaction(_a0 event.JoinEventCore) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(event.JoinEventCore) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
 	}
 
 	return r0

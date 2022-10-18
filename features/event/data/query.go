@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/midtrans/midtrans-go/coreapi"
 	"gorm.io/gorm"
 )
 
@@ -125,27 +124,28 @@ func (repo *eventData) SelectAmountEvent(idEvent int) uint64 {
 
 }
 
-func (repo *eventData) CreatePayment(reqMidtrans coreapi.ChargeReq, userId, idEvent int, method string) (*coreapi.ChargeResponse, error) {
+func (repo *eventData) CheckJoin(userId, idEvent int) error {
 
 	var check JoinEvent
 	paid := "paid"
 	repo.db.First(&check, "user_id = ? AND event_id = ? AND status_payment = ?", userId, idEvent, paid)
 	if check.UserID == uint(userId) {
-		return nil, errors.New("sudah join dalam event")
+		return errors.New("sudah join dalam event")
 	}
 
-	chargeResponse, errCreate := coreapi.ChargeTransaction(&reqMidtrans)
-	if errCreate != nil {
-		return nil, errCreate
+	return nil
+
+}
+
+func (repo *eventData) InsertTransaction(data event.JoinEventCore) error {
+
+	dataInsert := toModelJoinEvent(data)
+	tx := repo.db.Create(&dataInsert)
+	if tx.Error != nil {
+		return tx.Error
 	}
 
-	data := toModelJoinEvent(chargeResponse, userId, idEvent, method)
-	tx := repo.db.Create(&data)
-	if tx.Error != nil || tx.RowsAffected == 0 {
-		return nil, tx.Error
-	}
-
-	return chargeResponse, nil
+	return nil
 
 }
 
